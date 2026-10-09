@@ -46,6 +46,9 @@ const FSC_FP32 = { tier: 'large', modelId: 'whisper-small-fsc-fp32', approxMB: 1
 export const SETUPS: Setup[] = [
   { label: 'base q8 (WASM)', tier: { ...TIERS.small, device: 'wasm' }, dtype: 'q8' },
   { label: 'base q4 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: 'q4' },
+  // Candidates to fix q4 reading worse than q8: keep the encoder at full precision, or use half precision (#75 review).
+  { label: 'base enc fp32 + dec q4 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' } },
+  { label: 'base fp16 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: 'fp16' },
   // Phone candidate: about 39 MB in total, so it fits the 150 MB phone target.
   { label: 'tiny q8 (WASM)', tier: { ...TIERS.small, modelId: 'onnx-community/whisper-tiny', approxMB: 40, device: 'wasm' }, dtype: 'q8' },
   {
