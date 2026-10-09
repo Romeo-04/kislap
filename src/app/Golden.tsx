@@ -1,6 +1,6 @@
-// Golden recordings page (/#/golden) for issue #18.
-// 1. Record: tap a clip, read the sentence, a file named <clip>__<reader>.webm downloads. Put it in fixtures/.
-// 2. Check: load the clip files, pick setups, and see the heard text per clip. Copy the table for the scorer owner.
+// Golden recordings check page (/#/golden) for issue #18.
+// Record the clips listed in fixtures/expected.json with any recorder, name them <clip id>__<reader>.<ext>,
+// load them here, pick setups, and see the heard text per clip. Copy the table for the scorer owner.
 // Audio stays on this device. The files are gitignored.
 import { useState } from 'react'
 import expected from '../../fixtures/expected.json'
@@ -15,7 +15,6 @@ interface Clip {
 }
 
 const CLIPS = expected.clips as Clip[]
-const RECORD_MS = 8000
 
 interface Row {
   clip: string
@@ -33,35 +32,11 @@ function parseName(name: string): { clip: string; reader: string } {
 }
 
 export function Golden() {
-  const [reader, setReader] = useState('')
-  const [status, setStatus] = useState('Step 1: type your name, then record each sentence.')
+  const [status, setStatus] = useState('Load your clip files, pick setups, then transcribe.')
   const [files, setFiles] = useState<File[]>([])
   const [picked, setPicked] = useState<boolean[]>(SETUPS.map((_, i) => i === 0))
   const [rows, setRows] = useState<Row[]>([])
   const [busy, setBusy] = useState(false)
-
-  const record = async (clip: Clip) => {
-    if (!reader.trim()) return setStatus('Type your name first. It goes in the file name.')
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const rec = new MediaRecorder(stream)
-      const chunks: Blob[] = []
-      rec.ondataavailable = (e) => chunks.push(e.data)
-      rec.onstop = () => {
-        stream.getTracks().forEach((tr) => tr.stop())
-        const a = document.createElement('a')
-        a.href = URL.createObjectURL(new Blob(chunks, { type: rec.mimeType }))
-        a.download = `${clip.id}__${reader.trim().toLowerCase().replace(/\s+/g, '-')}.webm`
-        a.click()
-        setStatus(`Saved ${a.download}. Move it into the fixtures folder.`)
-      }
-      rec.start()
-      setStatus(`Recording ${RECORD_MS / 1000} s. Read: "${clip.text}" (${clip.variant})`)
-      setTimeout(() => rec.stop(), RECORD_MS)
-    } catch (err) {
-      setStatus(`mic error: ${(err as Error).message}`)
-    }
-  }
 
   const run = async () => {
     setBusy(true)
@@ -98,19 +73,14 @@ export function Golden() {
       <h1>Golden recordings</h1>
       <p>{status}</p>
 
-      <h2>1. Record</h2>
-      <label>
-        Your name <input value={reader} onChange={(e) => setReader(e.target.value)} />
-      </label>
       <ul>
         {CLIPS.map((c) => (
           <li key={c.id}>
-            <button onClick={() => record(c)} disabled={busy}>🎤 {c.id}</button> {c.text} <em>({c.variant})</em>
+            <strong>{c.id}</strong>: {c.text} <em>({c.variant})</em>
           </li>
         ))}
       </ul>
 
-      <h2>2. Check</h2>
       <input type="file" accept="audio/*" multiple onChange={(e) => setFiles([...(e.target.files ?? [])])} />
       <p>{files.length} clip file(s) loaded.</p>
       {SETUPS.map((s, i) => (
