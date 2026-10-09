@@ -1,9 +1,10 @@
 // PLACEHOLDER screen — design: issue #10 (designer); real wiring: issue #3 (lead).
-// Runs on the fake recorder and fake model: the fake "hears" the sentence minus its last word.
-import { useMemo, useState } from 'react'
+// Real mic (#2) + fake model: the fake "hears" the sentence minus its last word until #14 lands.
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import { getStory } from '../content/stories'
-import { createRecorder } from '../asr/audio'
+import { createRecorder, MicError } from '../asr/audio'
+import { isMostlySilence } from '../asr/meter'
 import { setFakeHeard, transcribe } from '../asr/transcribe'
 import { scoreReading, type WordResult } from '../scoring/score'
 import { createSession } from '../game/session'
@@ -21,29 +22,59 @@ export function Reading({ storyId }: { storyId: string }) {
   const [phase, setPhase] = useState<Phase>('ready')
   const [words, setWords] = useState<WordResult[]>([])
   const [mood, setMood] = useState<MascotMood>('idle')
+  const [notice, setNotice] = useState('')
+  const finishRef = useRef<() => void>(() => {})
 
-  if (!story) return <p>Story not found.</p>
-  const sentence = story.sentences[index]
+  useEffect(() => {
+    const off = recorder.onAutoStop(() => finishRef.current())
+    return () => {
+      off()
+      recorder.release()
+    }
+  }, [recorder])
+
+  const sentence = story?.sentences[index]
+
+  const finish = async () => {
+    if (!sentence) return
+    setPhase('thinking')
+    setMood(moodFor('mic-off'))
+    const pcm = await recorder.stop()
+    // Silence gate (ADR-0006): never send silence to Whisper, never mark words for it.
+    if (isMostlySilence(pcm)) {
+      setNotice(t('reading.silence'))
+      setMood(moodFor('silence'))
+      setPhase('ready')
+      return
+    }
+    setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
+    const { text } = await transcribe(pcm)
+    const scored = scoreReading(sentence.text, text)
+    session.attempts.push({ sentenceIndex: index, heard: text, ...scored })
+    setWords(scored.words)
+    setMood(moodFor('scored', scored.accuracy))
+    setPhase('reviewed')
+  }
 
   const onMic = async () => {
-    if (phase === 'listening') {
-      setPhase('thinking')
-      setMood(moodFor('mic-off'))
-      const pcm = await recorder.stop()
-      setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
-      const { text } = await transcribe(pcm)
-      const scored = scoreReading(sentence.text, text)
-      session.attempts.push({ sentenceIndex: index, heard: text, ...scored })
-      setWords(scored.words)
-      setMood(moodFor('scored', scored.accuracy))
-      setPhase('reviewed')
-    } else {
+    if (phase === 'listening') return finish()
+    try {
+      setNotice('')
       await recorder.start()
       setWords([])
       setMood(moodFor('mic-on'))
       setPhase('listening')
+    } catch (err) {
+      setNotice(err instanceof MicError ? t('mic.denied') : String(err))
     }
   }
+
+  // Auto-stop calls the latest finish() (it closes over the current sentence).
+  useEffect(() => {
+    finishRef.current = () => void finish()
+  })
+
+  if (!story || !sentence) return <p>Story not found.</p>
 
   const onNext = () => {
     if (index + 1 < story.sentences.length) {
@@ -73,6 +104,7 @@ export function Reading({ storyId }: { storyId: string }) {
       <p className="muted">
         {phase === 'listening' ? t('reading.listening') : phase === 'thinking' ? t('reading.thinking') : t('reading.tapMic')}
       </p>
+      {notice && <p role="status">{notice}</p>}
       {phase === 'reviewed' && (
         <div className="row">
           <button onClick={onMic}>{t('reading.retry')}</button>

@@ -28,8 +28,8 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | 🔨 PR open; phone mic check left |
-| #2 | Audio recorder, level meter, silence gate, auto-stop | CP1 | ⏳ |
+| #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | ✅ merged; phone mic check left |
+| #2 | Audio recorder, level meter, silence gate, auto-stop | CP1 | 🔨 PR open (verified in Chrome with fake mic) |
 | #3 | Reading loop integration | CP2 | ⏳ |
 | #4 | On-device progress | CP2 | ⏳ |
 | #5 | Offline ready | Freeze | ⏳ |
