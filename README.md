@@ -23,8 +23,9 @@ stickers. Missed words come back in a short practice game.
   them to practise aloud.
 - **Mic check.** Say "Kumusta, Ningning!" to test the microphone and the room before reading.
 - **Daily streak.** It counts days played and never resets to zero.
-- **Privacy meter.** An on-screen counter shows that 0 network requests leave the device
-  while the child reads.
+- **Privacy meter.** An on-screen counter of the requests the reading screen makes while the child
+  reads (the speech model's worker is not counted). It should read 0. The browser's network tab is
+  the full check.
 - **Filipino and English interface**, switchable at any time.
 - **Works offline** after the first load.
 - **Feels like a phone app.** Install it to the home screen: bottom tabs, a settings sheet, the mic
@@ -48,8 +49,8 @@ the device.
 
 A child's voice is sensitive data. Kislap processes it on the device, and it never goes to a
 server. After the first download, the app works with no internet, in places with weak signal.
-Anyone can check this: open the browser's network tab, or look at the Privacy meter, while a
-child reads.
+Anyone can check this: open the browser's network tab (the full check), or look at the Privacy
+meter, while a child reads.
 
 ## How it works
 

@@ -1,4 +1,4 @@
-// On-screen Privacy meter (issue #6). Styling: designer (#8). Shows requests that left the device this session.
+// On-screen Privacy meter (issue #6): this screen's own requests while the child reads (not the model worker's).
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { GameIcon } from './GameIcon'

@@ -1,4 +1,4 @@
-// Privacy meter (issue #6, ADR-0007): counts network requests that leave the device during a Reading session.
+// Privacy meter (issue #6, ADR-0007): counts the page's own network requests while the Reading screen is open.
 // Resource Timing reports bytes received, not sent, and hides cross-origin sizes, so the meter counts
 // *requests*: every cross-origin request, and every same-origin request not served from the cache.
 
@@ -29,7 +29,7 @@ export function summarize(entries: ResourceLike[], origin: string): PrivacySumma
 export interface PrivacyMeter {
   snapshot(): PrivacySummary
   onChange(cb: (s: PrivacySummary) => void): () => void
-  /** For requests the main thread cannot see, e.g. from the model worker. */
+  /** For requests the page cannot see, e.g. from the model worker. Not wired yet: nothing calls it. */
   report(entry: ResourceLike): void
   stop(): void
 }
