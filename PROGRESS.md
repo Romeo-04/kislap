@@ -81,7 +81,9 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | Device | Tier / model / dtype | Backend | Download MB | Load s | 4 s sentence s | Notes |
 |---|---|---|---|---|---|---|
-| Laptop (Chrome) | small / whisper-base / q8 | wasm | | | 3.3 (4.9 s clip) | First run 6.3 s. Heard "si Mini ay sa mga liit na pusa" for "Si Mimi ay isang maliit na pusa." |
+| Laptop (Chrome) | small / whisper-base / q8 | wasm | ~77 | 32.2 | 2.8 | Bench page `/#/bench`. First inference 3.4 s. Load includes download. |
+| Laptop (Chrome) | small / whisper-base / q4 | webgpu | | 53.3 | 1.3 | First inference 4.4 s. 2x faster than WASM, but the text was worse: "Simimi ay nasak inanin ng nangong lamesak ah." |
+| Laptop (Chrome) | large / whisper-small-pld-fil-ONNX / enc fp32 + dec q4 | webgpu | ~586 | 219.7 | – | **Fails at inference:** `Missing the following inputs: cache_position`. Transformers.js 4.3.1 never sends `cache_position`; the model's merged decoder asks for it. Blocks Q1 option A until fixed. |
 | Poco X6 Pro (Chrome) | | | | | | |
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
@@ -94,6 +96,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 - **2026-10-09 21:18** — #22: expanded both language dictionaries with incoming UI/offline keys and four cheering/encouraging variants each. Localized scaffold screen labels, mascot states, and accessible controls. Eight tests and build pass; lint has only the existing i18n Fast Refresh warning. Independent diff review found no blockers. The user approved the wording while asking to keep the issue open for suggestions. Final integrated UI and confirmed native-speaker review remain in `docs/i18n-review.md`.
 - **2026-10-09 19:30** — #11: sticker art mapped to stories by level (`src/content/stickers.ts`), soft Web Audio sounds (`src/game/sound.ts`), sound/night setting under `kislap.settings.v1`, D11 draft `docs/assets.md`.
 - **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
+- **2026-10-09 19:10** — #15: benchmark page at `/#/bench` (three setups, one worker each, copyable table). Laptop results are in the table above. The large Filipino model fails with `cache_position` missing. The Poco X6 Pro run is still open: the lead needs to open the page on the phone once it is deployed.
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
 - **2026-10-09 18:45** — #14: real Whisper worker and client in `src/asr/` (load with byte progress, transcribe with transferred audio, `isModelCached`, `warmUp`). Model check page at `/#/asrtest`. `transcribe()` loads the model itself (from the cache after the first download). Fake mode is dev only: add `?fake` to the URL. Worker contract gains `warmed`, `iscached`, and `cached` messages. A worker crash rejects every waiting request and the next call starts a fresh worker. ONNX Runtime files now come from our own site, not jsDelivr, and are cached at runtime for offline use. Tested on a laptop in Chrome with a real recording.
 - **2026-10-09 17:53** — #19 / PR #53: applied the three grammar corrections from review (Dumapo, Sabay silang umuwi, Dahan-dahan) and added quotation marks to Ben's dialogue. Story IDs, levels, and sentence counts are unchanged. Awaiting teammate approval.

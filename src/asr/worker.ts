@@ -29,7 +29,7 @@ async function load(msg: Extract<ToWorker, { type: 'load' }>): Promise<void> {
   const { tier } = msg
   asr = (await pipeline('automatic-speech-recognition', tier.modelId, {
     device: tier.device,
-    dtype: DTYPE[tier.tier],
+    dtype: msg.dtype ?? DTYPE[tier.tier],
     progress_callback: (p) => {
       if (p.status === 'progress') {
         ctx.postMessage({ type: 'progress', loaded: p.loaded, total: p.total, file: p.file })
