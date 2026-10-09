@@ -91,7 +91,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | Phone, not a Poco (Chrome) | small / whisper-base / q4 | webgpu | | 4.5 | 97.5 | Unusable. Never use WebGPU on this phone. |
 | Phone, not a Poco (Chrome) | large / whisper-small-pld-fil-ONNX | webgpu | ~586 | – | – | Download failed: network error. |
 | Phone, not a Poco (Chrome) | small / whisper-tiny / q8 | wasm | ~39 | 20.5 | 4.0 | Meets the 4 s target. Text is rougher: "Simimi, ay na sa ilalim na laversa." |
-| Poco X6 Pro (Chrome) | | | | | | Still open: the lead runs `/#/bench` on it. |
+| Poco X6 Pro (Chrome) | small / whisper-base / q8 | wasm | ~73 | | 4–5 (whole read, easy story) | Measured by the lead 06:45: marks correct. |
 
 All rows used the same sentence, "si Mimi ay nasa ilalim ng lamesa", but each run used a new recording, so the transcripts compare only roughly. The golden recordings (#18) are the fair test.
 

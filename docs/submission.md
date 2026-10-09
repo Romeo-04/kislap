@@ -8,12 +8,29 @@ into `README.md` where the README already has that section.
 
 **Kislap** (mascot: Ningning the firefly)
 
-Kislap is a free reading game for Filipino children in Grade 1 to 3. A child reads a short story
-aloud, one sentence at a time. A speech model runs in the browser, on the child's own device. It
-marks each word as correct, unclear, or missed. Ningning the firefly reacts, and the child earns
-stars and stickers. Missed words come back in a short practice game. The app understands
-Filipino and Taglish. It needs no account and no server. After the first load, it works with no
-internet. The child's voice never leaves the device.
+**The problem.** The World Bank reports that 91 percent of 10-year-olds in the Philippines
+cannot read and understand an age-appropriate text. Children learn to read by reading aloud,
+and reading aloud needs someone who listens. Many children practise alone: parents work long
+hours, classes are large, and mobile data is costly.
+
+**A story.** Imagine Lila, seven years old, in a barangay where the signal comes and goes. Her
+mother gets home after dark. Lila wants to read, but no one is free to listen, and when she
+stumbles on a word, no one helps her try again. With Kislap on the family phone, Ningning the
+firefly listens. Lila reads one sentence, and the words light up. The word she missed glows
+orange, and Ningning says "Subukan natin ulit!" She tries again, gets it, and earns a sticker.
+No one else sees her mistakes, nothing is uploaded, and it works with the data off.
+
+**What Kislap is.** A free reading game for Filipino children in Grade 1 to 3. A child reads a
+short story aloud, one sentence at a time. A speech model runs in the browser, on the child's
+own device, and marks each word as correct, unclear, or missed. Ningning reacts, the child earns
+stars and stickers, and missed words are saved for practice. It understands Filipino and
+Taglish, needs no account and no server, and works with no internet after the first load. The
+child's voice never leaves the device.
+
+**Why it would work.** It gives every child a patient listener at any hour, without waiting
+for an adult. It is kind by design: no timers, no "wrong", and a finished story always earns a
+sticker, so a struggling reader keeps going. Because the AI runs on the device, it works where
+the signal is weak and keeps a child's voice private.
 
 ## D2 Team members
 

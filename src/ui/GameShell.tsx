@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode, useReducer } from 'react'
 import { STORIES } from '../content/stories'
 import { useI18n } from '../i18n'
-import { loadProgress } from '../game/progress'
+import { loadProgress, PROGRESS_SAVED } from '../game/progress'
 import { loadSettings, saveSettings } from '../game/settings'
 import { GearIcon, SpeakerIcon } from './icons'
 import { GameIcon } from './GameIcon'
@@ -26,6 +26,12 @@ export function GameShell({ children, route }: { children: ReactNode; route: str
     setSyncedRoute(route)
     setSettings(loadSettings())
   }
+  // Re-render when progress is saved (Result saves after it renders), so the star count is current.
+  const [, progressSaved] = useReducer((n: number) => n + 1, 0)
+  useEffect(() => {
+    window.addEventListener(PROGRESS_SAVED, progressSaved)
+    return () => window.removeEventListener(PROGRESS_SAVED, progressSaved)
+  }, [])
   const progress = loadProgress()
   const stars = Object.values(progress.stars).reduce<number>((sum, n) => sum + n, 0)
   const fil = lang === 'fil'

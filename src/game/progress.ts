@@ -3,6 +3,8 @@ import type { ModelTier } from '../asr/tier'
 import type { Stars } from '../scoring/stars'
 
 export const PROGRESS_KEY = 'kislap.progress.v1'
+/** Fired on window after each save, so the header star count never shows a stale total. */
+export const PROGRESS_SAVED = 'kislap:progress-saved'
 
 export interface Progress {
   version: 1
@@ -97,6 +99,8 @@ export function loadProgress(): Progress {
 export function saveProgress(p: Progress): void {
   try {
     globalThis.localStorage?.setItem(PROGRESS_KEY, JSON.stringify(p))
+    // Screens that show progress (the header star count) re-read it after every save.
+    globalThis.dispatchEvent?.(new Event(PROGRESS_SAVED))
   } catch (err) {
     console.error('[progress] could not save', err)
   }

@@ -5,7 +5,23 @@
 Kislap is a free reading game for Filipino children in Grade 1 to 3. The child reads a short
 story aloud, one sentence at a time. A speech model runs **in the browser, on the child's own
 device**, and checks each word. Ningning the firefly reacts, and the child earns stars and
-stickers. Missed words come back in a short practice game.
+stickers. Missed words are saved for practice.
+
+## Why Kislap
+
+The World Bank reports that 91 percent of 10-year-olds in the Philippines cannot read and
+understand an age-appropriate text. Children learn to read by reading aloud, and reading aloud
+needs someone who listens. Many children practise alone.
+
+Imagine Lila, seven years old, in a barangay where the signal comes and goes. Her mother gets
+home after dark, and no one is free to listen when she reads. With Kislap on the family phone,
+Ningning listens. The word Lila missed glows orange, Ningning says "Subukan natin ulit!", she
+tries again, and she earns a sticker. No one else sees her mistakes, nothing is uploaded, and it
+works with the data off.
+
+Kislap gives every child a patient listener at any hour. It is kind by design: no timers, no
+"wrong", and a finished story always earns a sticker. Because the AI runs on the device, it
+works where the signal is weak and keeps a child's voice private.
 
 **Try it:** https://kislap.vercel.app (Chrome on a laptop or an Android phone)
 
@@ -21,6 +37,7 @@ stickers. Missed words come back in a short practice game.
   the firefly jar.
 - **Practice words.** Missed and unclear words are saved on the device; the Word Pop screen lists
   them to practise aloud.
+- **Syllable help.** Tap a word after reading to see its syllables (pantig), such as "ba · ta".
 - **Mic check.** Say "Kumusta, Ningning!" to test the microphone and the room before reading.
 - **Daily streak.** It counts days played and never resets to zero.
 - **Privacy meter.** An on-screen counter of the requests the reading screen makes while the child
@@ -31,7 +48,7 @@ stickers. Missed words come back in a short practice game.
 - **Feels like a phone app.** Install it to the home screen: bottom tabs, a settings sheet, the mic
   in thumb reach, light vibration feedback, and a status bar that follows day and night mode.
 
-**Not in this build yet:** Word Pop listening to each word, syllable help ("ba-ta"), echo reading
+**Not in this build yet:** Word Pop listening to each word, echo reading
 in a teammate's voice, a progress QR code for parents, and a Filipino fine-tuned model on laptops.
 
 ## Privacy and local AI
