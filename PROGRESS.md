@@ -46,7 +46,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #9 | Ningning SVG, 6 moods, glow | CP1 | ✅ done (PR #61); part 2 paper puppet redraw in PR #87 (wings on brass pins, stick, thinner edge) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: Home, Story map, Reading (five states) and Result in the paper look, phone and desktop |
 | #11 | Sounds and Sticker art | CP2 | ✅ done (PR #63); part 2 paper look for the stickers in PR #83 |
-| #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
+| #12 | Sticker jar + progress screen (Should) | Freeze | 🔨 PR open: firefly jar in the paper look (floating stickers, tap to see big, days, goal ring, stars), phone and desktop |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | 🔨 PR open: Mic check + Settings in the paper look, phone and desktop |
 | #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
@@ -92,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10** — #12: the firefly jar (`#/progress`) is a paper screen. Earned stickers float on their glow in the jar and the rest wait as cream paper outlines; tapping one shows it big with its name, and what earns it if it is still to come. Days of reading, a daily goal ring (2 stories a day, `src/game/dailyGoal.ts`, counted once per finish from Result) and stars per story sit below; desktop puts the jar on the left. Home marks the welcome back so the jar says it once.
 - **2026-10-10** — #10: Home, Story map, Reading and Result move to the paper puppet look, each with a desktop layout at 900px and wider. Reading and Result split into a view (`ReadingView`, `ResultView`) and the lead's logic, unchanged. The map covers use the sticker art, Ningning waits by the next story, and Result now shows confetti and the sticker at 0 stars too, as in the design. The readiness badge is a paper slip. `AdventureMap` is gone.
 - **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
 - **2026-10-10 01:45** — #11: the 12 stickers move to the part 2 paper look: a cream die-cut edge (half the handoff's width, per the team), printed lines in the cut line colour, every colour from the paper tokens, no dark outlines. Locked stickers are cream paper with a dashed cut line instead of a grey silhouette. Same art and mapping; 128 KB to about 35 KB without the provenance blocks.

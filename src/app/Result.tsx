@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { clearResult, resultFor } from '../game/session'
+import { countFinishOnce, localDay } from '../game/dailyGoal'
 import { addPracticeWords, loadProgress, recordStory, saveProgress } from '../game/progress'
 import { loadSettings } from '../game/settings'
 import { playSound } from '../game/sound'
@@ -28,10 +29,11 @@ export function Result({ storyId }: { storyId: string }) {
   useEffect(() => {
     if (!outcome) return
     saveProgress(outcome.progress)
+    if (result) countFinishOnce(result, localDay())
     clearResult(storyId)
     playSound(outcome.newSticker ? 'sticker' : 'star', loadSettings())
     if (outcome.newSticker) haptic([18, 60, 28])
-  }, [outcome, storyId])
+  }, [outcome, result, storyId])
 
   if (!result || !outcome) return <NotFound />
   return <ResultView storyId={storyId} stars={result.stars} newSticker={outcome.newSticker} />
