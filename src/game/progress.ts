@@ -7,6 +7,8 @@ export const PROGRESS_KEY = 'kislap.progress.v1'
 export interface Progress {
   version: 1
   lang: 'fil' | 'en'
+  /** set when someone picks the language; without it the UI opens in English */
+  langChosen?: true
   tier?: ModelTier
   stars: Record<string, Stars>
   stickers: string[]
@@ -15,7 +17,7 @@ export interface Progress {
 }
 
 export function defaultProgress(): Progress {
-  return { version: 1, lang: 'fil', stars: {}, stickers: [], practiceWords: [], streak: { days: 0, lastPlayed: '' } }
+  return { version: 1, lang: 'en', stars: {}, stickers: [], practiceWords: [], streak: { days: 0, lastPlayed: '' } }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -43,15 +45,25 @@ export function loadProgress(): Progress {
     const raw = globalThis.localStorage?.getItem(PROGRESS_KEY)
     if (!raw) return defaultProgress()
     const parsed: unknown = JSON.parse(raw)
-    if (!isRecord(parsed) || parsed.version !== 1) return defaultProgress()
+    if (!isRecord(parsed)) {
+      console.warn('[progress] saved progress is not an object; starting fresh')
+      return defaultProgress()
+    }
+    if (parsed.version !== 1) {
+      console.warn('[progress] unsupported save version; starting fresh', parsed.version)
+      return defaultProgress()
+    }
     // Recover each field independently so one damaged value does not erase earned rewards.
     const stars = isRecord(parsed.stars)
       ? Object.fromEntries(Object.entries(parsed.stars).filter((entry): entry is [string, Stars] => isStars(entry[1])))
       : {}
     const streak = isRecord(parsed.streak) ? parsed.streak : {}
-    return {
+    // Older saves wrote the old Filipino default on every Home visit: only a real pick keeps it.
+    const langChosen = parsed.langChosen === true
+    const recovered: Progress = {
       version: 1,
-      lang: parsed.lang === 'en' ? 'en' : 'fil',
+      lang: langChosen && (parsed.lang === 'fil' || parsed.lang === 'en') ? parsed.lang : 'en',
+      ...(langChosen ? { langChosen: true as const } : {}),
       ...(parsed.tier === 'small' || parsed.tier === 'large' ? { tier: parsed.tier } : {}),
       stars,
       stickers: stringList(parsed.stickers),
@@ -61,8 +73,17 @@ export function loadProgress(): Progress {
         lastPlayed: isCalendarDate(streak.lastPlayed) ? streak.lastPlayed : '',
       },
     }
-  } catch {
-    return defaultProgress() // bad JSON never blocks the child
+    // Home saves on every visit, so anything dropped here is gone for good: leave a trace.
+    const dropped = {
+      stars: isRecord(parsed.stars) ? Object.keys(parsed.stars).length - Object.keys(stars).length : parsed.stars === undefined ? 0 : 1,
+      stickers: Array.isArray(parsed.stickers) ? parsed.stickers.length - recovered.stickers.length : parsed.stickers === undefined ? 0 : 1,
+      streakReset: streak.days !== undefined && streak.days !== recovered.streak.days,
+    }
+    if (dropped.stars || dropped.stickers || dropped.streakReset) console.warn('[progress] recovered a damaged save', dropped)
+    return recovered
+  } catch (err) {
+    console.warn('[progress] could not load saved progress; starting fresh', err)
+    return defaultProgress() // bad JSON or blocked storage never blocks the child
   }
 }
 
