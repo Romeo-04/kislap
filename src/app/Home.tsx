@@ -18,7 +18,7 @@ export function Home() {
       <button onClick={() => setLang(lang === 'fil' ? 'en' : 'fil')}>{t('lang.toggle')}</button>
       <nav className="row">
         <a href="#/progress">{t('progress.title')}</a>
-        <a href="#/miccheck">🎤</a>
+        <a href="#/miccheck" aria-label={t('miccheck.title')}>🎤</a>
       </nav>
     </section>
   )

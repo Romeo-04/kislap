@@ -18,7 +18,7 @@ export function Result({ storyId }: { storyId: string }) {
   return (
     <section className="stack center">
       <h1>{t('result.title')}</h1>
-      <p className="stars" aria-label={`${stars} / 3`}>{'★'.repeat(stars)}{'☆'.repeat(3 - stars)}</p>
+      <p className="stars" aria-label={`${t('result.stars')}: ${stars} / 3`}>{'★'.repeat(stars)}{'☆'.repeat(3 - stars)}</p>
       {stars === 0 && <p>{t('result.lowStars')}</p>}
       {outcome.newSticker && <p data-sticker={outcome.newSticker}>{t('result.sticker')}</p>}
       <a className="big" href="#/map">{t('reading.next')}</a>
