@@ -44,7 +44,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 |---|---|---|---|
 | #8 | Design tokens and UI kit | CP1 | 🔨 PR open: part 2 paper puppet tokens, kit, `PaperScene`, `Wordmark` (`docs/design/paper-puppet.md`) |
 | #9 | Ningning SVG, 6 moods, glow | CP1 | ✅ done (PR #61); part 2 paper puppet redraw in PR #87 (wings on brass pins, stick, thinner edge) |
-| #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: candy adventure design + mobile-native shell |
+| #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: Home, Story map, Reading (five states) and Result in the paper look, phone and desktop |
 | #11 | Sounds and Sticker art | CP2 | ✅ done (PR #63); part 2 paper look for the stickers in PR #83 |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
@@ -92,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10** — #10: Home, Story map, Reading and Result move to the paper puppet look, each with a desktop layout at 900px and wider. Reading and Result split into a view (`ReadingView`, `ResultView`) and the lead's logic, unchanged. The map covers use the sticker art, Ningning waits by the next story, and Result now shows confetti and the sticker at 0 stars too, as in the design. The readiness badge is a paper slip. `AdventureMap` is gone.
 - **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
 - **2026-10-10 01:45** — #11: the 12 stickers move to the part 2 paper look: a cream die-cut edge (half the handoff's width, per the team), printed lines in the cut line colour, every colour from the paper tokens, no dark outlines. Locked stickers are cream paper with a dashed cut line instead of a grey silhouette. Same art and mapping; 128 KB to about 35 KB without the provenance blocks.
 - **2026-10-10 01:25** — #9: Ningning is the part 2 paper puppet in `src/ui/Ningning.tsx`: four wings turn on brass pins per mood, an optional puppet stick sways ±3°, the die-cut edge is half the handoff's. The v1 mood motion stays (idle bob, cheering and celebrating hops, encouraging lean, thought bubbles popping in); the halo screen-blends only on the paper sky. New app icon; the v1 mood SVGs are gone.

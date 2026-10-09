@@ -191,3 +191,8 @@
 
 /* the older candy-adventure styles fade disabled buttons; paper shows "not now" with a dashed cut */
 .k-btn:disabled, .k-mic:disabled, .k-icon-btn:disabled, .k-lang:disabled { opacity: 1; }
+
+/* readiness slip variants on Home (#10) */
+.k-offline-need { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.k-offline-need .k-btn { min-height: 56px; font-size: 22px; }
+.k-offline--note { font: 700 16px / 1.3 var(--font-read); text-align: center; text-wrap: pretty; }

@@ -54,15 +54,16 @@ export function GearIcon() {
 }
 
 export function JarIcon({ fireflies = true }: { fireflies?: boolean }) {
+  // paper jar (part 2): no outline, an orange lid on pale glass
   return (
     <svg width="32" height="40" viewBox="0 0 32 40" aria-hidden="true">
-      <rect x="7" y="2" width="18" height="6" rx="2" fill="var(--cap)" stroke={ink} strokeWidth="2.5" />
-      <path d="M8 8 Q3 12 3 18 L3 33 Q3 38 8 38 L24 38 Q29 38 29 33 L29 18 Q29 12 24 8 Z" fill="var(--surface)" stroke={ink} strokeWidth="2.5" />
+      <rect x="7" y="2" width="18" height="6" rx="2" fill="var(--cap)" />
+      <path d="M8 8 Q3 12 3 18 L3 33 Q3 38 8 38 L24 38 Q29 38 29 33 L29 18 Q29 12 24 8 Z" fill="#D6EEF9" />
       {fireflies && (
         <g fill="var(--glow)">
-          <circle cx="11" cy="26" r="3" />
-          <circle cx="20" cy="31" r="3" />
-          <circle cx="19" cy="20" r="3" />
+          <circle cx="11" cy="26" r="3.5" />
+          <circle cx="20" cy="31" r="3.5" />
+          <circle cx="19" cy="19" r="3.5" />
         </g>
       )}
     </svg>
