@@ -119,7 +119,7 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
   })
 
   const onMic = async () => {
-    if (state.phase === 'thinking' || state.noModel) return
+    if (state.phase === 'thinking' || (state.noModel && state.phase === 'ready')) return
     haptic(12)
     if (state.phase === 'listening') return finish()
     try {
@@ -238,7 +238,7 @@ export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onS
             <Button variant="secondary" icon={<RetryIcon />} onClick={onAgain}>{t('wordpop.again')}</Button>
             <a className="k-btn k-btn--primary" href="#/map">{t('result.more')}</a>
           </div>
-        ) : state.noModel ? (
+        ) : state.noModel && state.phase === 'ready' ? (
           <div className="rd-mic">
             <Button variant="secondary" className="rd-skip" onClick={onSkip}>{t('reading.skip')}</Button>
           </div>

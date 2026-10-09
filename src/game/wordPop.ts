@@ -40,7 +40,7 @@ export interface WordPopState {
   last?: PopKind | 'missed'
   /** Skip pops the current bubble: the model or the mic cannot run, or the model failed MAX_FAILS times. */
   canSkip?: boolean
-  /** No cached model: the screen must not record or call the model, which would download it. */
+  /** No cached model: the screen must not start a recording or call the model, which would download it. */
   noModel?: boolean
   /** Model failures in a row. */
   fails?: number
@@ -81,7 +81,8 @@ function kindRetry(s: WordPopState, notice: WordPopNotice): WordPopState {
 
 function failed(s: WordPopState): WordPopState {
   const fails = (s.fails ?? 0) + 1
-  return { ...kindRetry(s, 'reading.modelRetry'), fails, canSkip: s.canSkip || fails >= MAX_FAILS }
+  const notice = s.noModel ? 'reading.modelUnavailable' : 'reading.modelRetry'
+  return { ...kindRetry(s, notice), fails, canSkip: s.canSkip || fails >= MAX_FAILS }
 }
 
 // mark the current bubble popped and move on to the next one still floating

@@ -66,6 +66,10 @@ describe('Word Pop screen', () => {
     expect(out).toContain(fil['reading.skip'])
   })
 
+  it('keeps the stop control when the model goes missing mid-recording', () => {
+    expect(view(run(['bata'], { type: 'mic-started' }, { type: 'model-unavailable' }))).toContain('k-mic')
+  })
+
   it('promises syllables only when a bubble really splits', () => {
     expect(view(run(['bata', 'pusa']))).toContain(fil['wordpop.tap'])
     const out = view(run(['pusa', 'aso']), { open: 0 })

@@ -152,6 +152,11 @@ describe('word pop review fixes', () => {
     expect(wordPopReducer(thinking(), { type: 'model-unavailable' }).noModel).toBe(true)
   })
 
+  it('says the model is missing, not "try again", when a try ends after it went missing', () => {
+    const s = ([{ type: 'model-unavailable' }, { type: 'failed' }] as WordPopEvent[]).reduce(wordPopReducer, thinking())
+    expect(s).toMatchObject({ phase: 'ready', notice: 'reading.modelUnavailable', canSkip: true })
+  })
+
   it('does nothing on an empty round', () => {
     const empty = initialWordPop([])
     for (const e of [{ type: 'mic-started' }, { type: 'skip' }, { type: 'pick', index: 0 }] as WordPopEvent[]) {
