@@ -1,80 +1,103 @@
 # Release QA
 
-Owner: Emyol. Tracks [#24](https://github.com/Romeo-04/kislap/issues/24) and the final [#38](https://github.com/Romeo-04/kislap/issues/38) gate. This is a test plan with partial evidence, not release approval.
+Owner: Emyol. Tracks [#24](https://github.com/Romeo-04/kislap/issues/24) and the final [#38](https://github.com/Romeo-04/kislap/issues/38) gate. This is a test plan with partial evidence. It is not release approval.
 
-## Evidence recorded on 2026-10-09
+## Automated checks
+
+Run these on the release SHA before the device runs:
+
+```
+npx tsc -b
+npx vitest run
+npm run build
+```
+
+Record the test count. On 2026-10-10 (main merged into this branch), all three pass: 28 test files, 363 tests.
+
+## Evidence recorded
 
 | Check | Source | Result |
 | --- | --- | --- |
-| Saved-progress recovery probe | PR #52, `06bc4323796af7e0ac41dd8002cccfca9fa3e4e8` | Invalid JSON recovers; valid JSON with invalid fields is unsafe. Filed [#68](https://github.com/Romeo-04/kislap/issues/68). |
-| Progress test coverage inspection | Same PR, `src/game/progress.test.ts` | 16 tests already cover persistence, best stars, stickers, streak continuity and practice words. Inspected, not executed as a suite in this QA branch. |
-| Copy checks | PR #67, `b3d5c28` | Eight tests pass, including dictionary parity and server rendering; build passes. These do not prove interactive language switching. |
-| Integrated release candidate | Main snapshot `6e87e5f6b5e3927c1d86acca0ffe699cba361c17` | Scaffold only; dependent feature PRs remain unmerged at this inspection. |
+| Saved-progress recovery | [#68](https://github.com/Romeo-04/kislap/issues/68), fixed by #84 | **Fixed.** `loadProgress` in `src/game/progress.ts` checks each saved field on its own, keeps valid stars and Stickers, and logs `[progress] recovered a damaged save` in the console. Regression tests: the `saved progress recovery (#68)` block in `src/game/progress.test.ts`. |
+| Progress tests | `src/game/progress.test.ts` on main | 31 tests: persistence, best Stars, Stickers, Streak, Practice words, English default, #68 recovery. |
+| Integrated reading loop | PROGRESS.md log, 2026-10-10 05:30 | The lead finished a production Reading session offline with the real Speech model (8 of 8 Sentences, Sticker earned). Device, tier and Network log are not recorded. This does not replace a row in the device matrix. |
 
-The progress probe transpiled the unchanged PR #52 module with the installed TypeScript compiler, then invoked it in a Node VM with synthetic localStorage values. No real saved data was changed. For key `kislap.progress.v1`:
+History: the #68 probe ran on PR #52 (`06bc432`). Then, `{"version":1,"lang":"xx"}` was accepted, and `null` stars, stickers or streak, or a string `practiceWords`, caused a TypeError. On main now, all four values recover. An unknown or unchosen language falls back to English.
 
-| Stored value | Operation after loading | Observed result |
-| --- | --- | --- |
-| `{not json` | Read `lang` | `fil`, safe default |
-| `{"version":1,"lang":"xx"}` | Read `lang` | Unsupported `xx` accepted |
-| `{"version":1,"stars":null,"stickers":null,"streak":null}` | Read `streak.days` | TypeError |
-| `{"version":1,"practiceWords":"bata"}` | Call `addPracticeWords(progress, ['pusa'])` | TypeError |
+## Facts a tester needs
 
-Reuse the progress tests from PR #52 after integration; do not add a second copy. Fix #68 with regression tests for invalid field shapes, then rerun the full suite, typecheck and production build on the release candidate. The current probe documents a failure, not a passing regression test.
+- **Routes.** Home `#/`, Story map `#/map`, Reading `#/reading/story-1` (also `story-2`, `story-3`), Result `#/result/<id>`, Sticker jar `#/progress`, Word Pop `#/wordpop`, Mic check `#/miccheck`, Settings `#/settings`.
+- **Language.** The app opens in English. Story Sentences stay in Filipino. Switch with the toggle on Home or the Language pills in Settings. A choice made in the UI survives a reload.
+- **Offline ready.** Home shows a paper slip: "Works offline" / "Handa kahit offline" when the app shell and the Speech model are cached. Otherwise it shows "Download for offline" / "I-download para magamit offline", or "Connect to the internet first to get Ningning ready." when offline with no model.
+- **Speech model tier.** Both devices use the small tier by default: `onnx-community/whisper-base`, q8, WebAssembly, about 77 MB. `?tier=large` forces the large tier, which does not run in Transformers.js 4.3.1 (see `docs/submission.md` D8). Test the default. The tier shows on the dev page `#/asrtest`.
+- **Reading buttons (English / Filipino).** "Tap the mic and read" / "Pindutin ang mikropono at basahin", "I've finished reading" / "Tapos na akong magbasa", "Next" / "Susunod", "Try again", "Skip".
+- **Privacy meter.** It is on the Reading screen only. It reads "0 requests left this device" / "0 na kahilingan ang lumabas sa device na ito". Tap it to see the list of counted URLs. It starts from zero each time Reading opens.
+- **Privacy meter limits** (`src/privacy/meter.ts`). It counts requests, not bytes. It counts every cross-origin request, and every same-origin request that was not served from the cache. It sees the main thread only. The model worker's requests are **not** counted: `meter.report()` has no caller. So a meter at 0 is supporting evidence only. The DevTools Network log is the proof.
 
 ## Device evidence matrix
 
-Record the deployed URL, exact release SHA, tester, local time, OS/Chrome version, selected model/tier/dtype and evidence location for each run. Rerun affected checks after changes to the release candidate.
+For each run, record the deployed URL, the release SHA, the tester, the local time, the OS and Chrome version, the tier, and where the evidence is saved. Run the affected checks again after any change to the release.
 
 | Check | Laptop / Chrome | Poco X6 Pro / Chrome |
 | --- | --- | --- |
-| URL, SHA, tester, time, versions and model | Not recorded | Not recorded |
-| First setup and model download complete | Not run | Not run |
-| Cold offline reload and complete story | Not run | Not run |
-| No requests during reading; meter zero | Not run | Not run |
-| Filipino / English visible copy and accessible labels | Not run | Not run |
-| Mic denied, silence, retry and model failure | Not run | Not run |
-| Saved progress survives reload; best stars kept | Not run | Not run |
-| Streak continues after missed days | Not run | Not run |
+| URL, SHA, tester, time, versions, tier | Not recorded | Not recorded |
+| First load: Home shows "Works offline" | Not run | Not run |
+| Spec §12 offline check: Wi-Fi and data off, reload, finish one full Story | Not run | Not run |
+| Network tab: no request during the Reading session (worker included) | Not run | Not run |
+| Privacy meter reads 0 and matches the Network tab | Not run | Not run |
+| "Download for offline" restores a deleted cache | Not run | Not run |
+| Language toggle changes all interface text and survives reload | Not run | Not run |
+| Mic denied, no mic, silence, Try again, Skip | Not run | Not run |
+| Progress survives reload; best Stars kept; Sticker on every finish | Not run | Not run |
+| Damaged save recovers with no crash (#68) | Not run | Not run |
 
-No browser control surface or physical phone was available in this session. All device rows remain pending until a tester performs them.
+Mark each cell Pass or Fail with a link to the evidence. Never mark a check Pass from inference.
 
 ## Run procedure
 
-1. Use a dedicated test profile. Open the release URL online, record the metadata above, finish model setup and confirm the app reports offline readiness. Keep first-download traffic separate from reading traffic.
-2. Open DevTools Network with all request types visible and recording enabled. Clear the log after setup. Start the reading session and finish all eight sentences of a story. Record the Network log and privacy meter before leaving Reading. Any request during this window fails the zero-request criterion, even if it fails or uses the cache; investigate its initiator. Never filter the log to hide requests.
-3. Turn off Wi-Fi and cellular data (also disconnect other active network connections). Close and reopen the app or perform a normal cold reload. Do not use a cache-bypassing hard reload. Finish a complete story, inspect the result and saved reward, then reload again. Repeat on both devices. Record the selected tier; one device's result does not prove the other tier works.
-4. Switch Filipino to English and back through the actual UI. Visit setup/model loading, Home, story selection, mic check, Reading, Result, Progress and recovery screens. Check buttons, menus, statuses, errors, hints and accessible labels. Story reading text remains Filipino; bilingual titles and interface copy must follow the chosen language. Verify the selection persists after reload.
-5. Exercise denied mic permission, unsupported/unavailable microphone, silence, retry and model download failure. Re-enable permission and verify recovery. Use a fresh test profile for first-download failure so existing caches do not hide it. Check kind wording and absence of raw technical error messages in child-facing screens.
-6. Finish a story twice with a lower second score; best stars must remain. Check first-finish sticker and bonus rules. Verify same-day streak does not increase twice and missed days never reset it, using automated date inputs rather than changing the tester's system clock. After #68 is fixed, test corrupted saved fields in a disposable profile and confirm recovery without a startup crash.
-7. File failures as `qa` issues with SHA, device, exact steps, expected/actual behavior and synthetic data where possible. Link each issue in this document. Record pass/fail per row; do not replace unperformed checks with inferred passes.
-
-The privacy meter is supporting evidence. PR #54 uses ResourceTiming (received bytes, with cross-origin visibility limits), and worker requests need explicit reporting. A zero meter alone cannot prove that no audio/text was transmitted. Inspect the complete Network log and relevant worker traffic as well.
+1. **Setup.** Use a new Chrome profile on the laptop. On the phone, clear the site data for the release URL first. Open the release URL online. Record the metadata row. Wait until Home shows "Works offline". If it shows "Download for offline", tap it and wait.
+2. **Phone DevTools.** Connect the Poco X6 Pro by USB with USB debugging on. On the laptop, open `chrome://inspect` and inspect the phone tab. You need this to record the phone's Network log.
+3. **Network tab.** Open DevTools > Network. Select "All". Keep recording on. Do not filter. Clear the log after setup.
+4. **Offline check (spec §12).** Turn off Wi-Fi and mobile data (on the laptop, also unplug Ethernet). Close and open the tab, or do a normal reload. Do not do a hard reload. Home must still show "Works offline".
+5. **Reading session.** Open the Story map and pick a Story. Read all 8 Sentences aloud: tap the mic, read, tap "I've finished reading" (or wait for auto-stop), then tap "Next". Finish on the Result screen and check the Stars and the Sticker.
+6. **Network and Privacy meter.** Before you leave Reading, record:
+   - the Network log, including rows from the worker (check the Initiator column). Allowed: same-origin GET rows served "(ServiceWorker)" or "(disk cache)", such as the worker script and runtime files on the first Attempt. Fail: any cross-origin request, any request with a body (POST, upload), and any same-origin row that went to the network. Find the initiator of each failing row and file an issue.
+   - the Privacy meter text. Tap it and record the URL list. If the meter and the Network log disagree, the Network log wins. File the difference.
+7. **Meter blind spot.** In a new profile online, open Reading before the model is cached. The worker checks the cache when Reading opens. Compare the Network log with the meter. Record the result: it shows whether worker traffic is missed.
+8. **Reload offline.** Still offline, reload. Check that the Stars and the Sticker are still on the map and in the Sticker jar (`#/progress`).
+9. **Language.** Go online or stay offline. Switch English to Filipino on Home, then back in Settings. Visit Home, Story map, Reading, Result, Sticker jar, Word Pop, Mic check and Settings. Check buttons, hints, errors and screen-reader labels. Story Sentences stay Filipino. Reload and check the choice is kept.
+10. **Mic and model states.** Block the microphone in site settings and tap the mic: the kind "Ningning needs the microphone" message must show. Allow it again and tap "Try again". Read nothing and tap stop: "I couldn't hear you. Let's try again!". Clear site data and go offline, then open Reading: "Ningning isn't ready to listen yet…" with "Skip". No raw error text may show to the child.
+11. **Progress rules.** Finish a Story twice with a lower second result: the best Stars stay. The first finish earns a Sticker even at 0 Stars. A 3-Star finish earns a bonus Sticker. Streak rules (same day counts once, a missed day never resets) are covered by `src/game/progress.test.ts`. Do not change the system clock.
+12. **Damaged save (#68).** In a throwaway profile, in the DevTools console, run `localStorage.setItem('kislap.progress.v1', '{"version":1,"stars":null,"streak":null,"practiceWords":"bata"}')` and reload. The app must open with no crash, and the console shows `[progress] recovered a damaged save`.
+13. **File failures** as `qa` issues with the SHA, the device, the exact steps, the expected and actual result, and synthetic data. Link each issue here.
+14. **Cache restore.** Online, clear the site's storage (DevTools > Application > Clear site data, keep the profile). Reload. Tap "Download for offline". Repeat step 4.
+15. **Download failure.** In a new profile, tap "Download for offline", then turn off Wi-Fi before it ends. Expect "The download did not finish. Try again." and the button again. Go online and tap it: the download must finish.
 
 ## Submission claims review (#37 and #44)
 
-Reviewed the draft `docs/submission.md` on PR #57. Its why-local paragraph covers sensitive voice data, offline use and verifiability. Final approval remains pending integrated device/network evidence and comparison with the final README, videos and form.
+Reviewed `docs/submission.md` on main. Its why-local text covers sensitive voice data, offline use and checkable privacy. Final approval waits for the device and network evidence above and a comparison with the final README, videos and form.
 
-- D6 and D13 assert zero requests during reading. Keep these as unverified draft claims until both device runs above pass; the meter alone is insufficient evidence.
-- D7 says nothing else downloads after setup. Confirm all runtime/model assets are cached with a cold offline reload on both tiers before using that claim.
-- D8 still needs the final model identifiers, dtypes and any adapter details. Match the actual selected models and their documented terms.
-- D11 needs traceable asset and library credits; package.json alone is not a complete license record.
-- D12 needs each teammate's actual tool use. Do not fill in another teammate's disclosure by assumption.
+- D6, D13 and `README.md` say the Privacy meter and the network tab both show zero requests during reading. Keep this as a draft claim until both device runs pass. The meter cannot see the worker, so say "the browser network tab shows" as the proof, and treat the meter as a visual aid.
+- D7 says nothing else downloads after setup. Confirm with the offline reload on both devices before you use it.
+- D8: the code ships `onnx-community/whisper-base`, q8, about 77 MB, on every device (`src/asr/tier.ts`). Use this to settle the [confirm] marks.
+- D11 needs a source and a licence for each asset and library. `package.json` alone is not a full licence record.
+- D12 needs each teammate's own tool list. Do not fill in another teammate's tools.
 
-Suggested why-local wording for the lead to use after verification:
+Suggested why-local text for the lead, after the checks pass:
 
-> A child's voice is sensitive data. Kislap runs speech recognition and reading feedback on the device, without an account or audio upload. After the app and selected model finish downloading, children can practise offline where signal is weak or data is costly. The privacy meter reports observed requests, and our device QA checks the browser Network log during reading.
+> A child's voice is sensitive data. Kislap runs speech recognition and reading feedback on the device, with no account and no audio upload. After the app and the speech model download once, children can practise offline where signal is weak or data is costly. Anyone can open the browser network tab during reading and see that nothing leaves the device.
 
-This is a review suggestion, not a change to the lead's draft or a claim that the device checks have passed.
+This is a review suggestion. It does not change the lead's draft, and it does not claim the device checks passed.
 
 ## Final release gate (#38)
 
-- [ ] Record the final deployed URL and release SHA; repeat affected checks after changes.
-- [ ] Complete the laptop and Poco offline/network runs above on that release.
-- [ ] Open the site and public repository without signing in; verify README setup instructions and links.
+- [ ] Record the final deployed URL and release SHA. Repeat affected checks after changes.
+- [ ] Run the automated checks above on that SHA.
+- [ ] Complete the laptop and Poco X6 Pro rows above on that release.
+- [ ] Open the site and the public repository without signing in. Check the README setup steps and links.
 - [ ] Check public playback of the final X and LinkedIn videos and their links in the submission.
-- [ ] Compare the README, video and form claims with the evidence and final model configuration.
-- [ ] Confirm D1-D13 are closed and #37 review is complete; list any open item and owner.
+- [ ] Compare the README, video and form claims with the evidence and the shipped model.
+- [ ] Confirm D1 to D13 are closed and the #37 review is complete. List any open item and its owner.
 - [ ] Record the final verdict by 08:00 Oct 10, before the lead's 08:30 submission target.
 
 Keep #24 and #38 open until their remaining acceptance criteria have evidence.
