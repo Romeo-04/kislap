@@ -5,7 +5,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 ## Now
 
-- **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
+- **Phase:** Checkpoint 2 met (full loop with the real model, offline). Next gate: **feature freeze at 01:00**.
 - **Deployed URL:** https://kislap.vercel.app (device check: https://kislap.vercel.app/#/mictest)
 - **Speech model in use:** bootstrap `onnx-community/whisper-base` q8, in a Web Worker (#14; model check page: `/#/asrtest`); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
 - **Flutter spike:** closed, not run (#48). Web app stays (ADR-0002).
@@ -15,7 +15,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 | Gate | Time | Must be true | Status |
 |---|---|---|---|
-| Checkpoint 1 | 19:00 Oct 9 | Model transcribes a real recording in the browser (laptop + phone). UI works with fake data. Scorer tests pass. | ✅ met late: model in browser (#59), UI kit (#60–#63), scorer tests (#58); phone mic check passed |
+| Checkpoint 1 | 19:00 Oct 9 | Model transcribes a real recording in the browser (laptop + phone). UI works with fake data. Scorer tests pass. | ✅ met late on the laptop: model in browser (#59), UI kit (#60–#63), scorer tests (#58). Phone: mic check passed; phone transcription speed not yet measured (#15) |
 | Checkpoint 2 | 00:00 Oct 10 | Full Must loop works end to end | ✅ 23:10 on the integrated build: real Whisper-base, offline, Reading → Result (#72 + #59 + #58) |
 | Feature freeze | 01:00 Oct 10 | Offline check passes on laptop + Poco X6 Pro. Bug fixes only after this. | ⏳ |
 | Submission | 08:30 Oct 10 (hard 10:00) | Form submitted, X + LinkedIn posts up | ⏳ |
@@ -29,7 +29,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | ✅ merged; phone mic check left |
+| #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | ✅ closed; phone mic check passed |
 | #2 | Audio recorder, level meter, silence gate, auto-stop | CP1 | 🔨 PR open (verified in Chrome with fake mic) |
 | #3 | Reading loop integration | CP2 | ✅ merged (#72); full loop verified with the real model |
 | #4 | On-device progress | CP2 | 🔨 PR open (17 tests, verified in Chrome) |

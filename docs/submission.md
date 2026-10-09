@@ -53,9 +53,9 @@ handle before posting]**
 >
 > A child reads a short Filipino or Taglish story aloud. A Whisper speech model runs in the
 > browser, on the child's own device, and marks each word. Ningning the firefly cheers them on,
-> and missed words come back as practice.
+> and missed words are saved for practice.
 >
-> Why on the device? A child's voice is sensitive data. It never leaves the phone, and after the
+> Why on the device? A child's voice is sensitive data. It never leaves the device, and after the
 > first load Kislap works with no internet. You can check it yourself: the on-screen privacy
 > counter shows zero requests while a child reads.
 >
@@ -92,8 +92,8 @@ final offline check on the laptop and the Poco X6 Pro]**
 
 | Model | Use | Format | Download | Licence and data |
 |---|---|---|---|---|
-| Whisper (OpenAI), base | Phones and devices without WebGPU | `onnx-community/whisper-base`, dtype **[confirm]** | ~77 MB (q8) **[confirm]** | MIT (Whisper) |
-| `internetoftim/whisper-small-pld-fil-ONNX` (export of `sapinsapin/whisper-small-pld-fil`, a Whisper-small Filipino fine-tune) | Laptops with WebGPU | encoder fp32, decoder q4 **[confirm]** | ~586 MB **[confirm]** | Card: MIT. **Training data (UP-DSP PLD) is for research and non-commercial use.** Kislap is free and non-commercial. |
+| Whisper (OpenAI), base | Every device | `onnx-community/whisper-base`, dtype **[confirm]** | ~77 MB (q8) **[confirm]** | Apache-2.0 (`openai/whisper-base`); the ONNX export card states no licence |
+| `internetoftim/whisper-small-pld-fil-ONNX` (export of `sapinsapin/whisper-small-pld-fil`) | **Tested, not shipped** (does not run in Transformers.js 4.3.1) | — | — | Cards: MIT (export), Apache-2.0 (fine-tune). **Training data (UP-DSP PLD) is research and non-commercial use.** |
 
 No LoRA adapter shipped **[confirm]**. No model was trained by the team **[confirm]**.
 
@@ -108,7 +108,7 @@ oxlint. **[add any library added after 18:00]**
 | Service | Used for |
 |---|---|
 | Vercel | Static hosting of the app (HTTPS). No server functions, no analytics. |
-| Hugging Face Hub | Hosting the model files, downloaded once |
+| Hugging Face Hub (including its file CDN) | Hosting the model files, downloaded once |
 | GitHub | Source code |
 
 **No AI API and no cloud inference.**
