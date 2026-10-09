@@ -28,6 +28,7 @@ Run against the real scorer on 32 clips (24 clean, 8 with one deliberate mistake
 - A wrong sound ("pusga" for "pusa", "sampita" for "sampaguita") stayed unclear.
 - A wrong sentence earned a Star 1 % of the time, the same as before.
 - 0.75 / 0.45 added about one point of Accuracy but marks "bata" for "bato" (a different word) correct.
+  At 0.80 a four-letter word one letter away stays unclear.
 
 ## Limits
 
@@ -40,3 +41,7 @@ One reader, 32 clips, and the cut-offs were chosen on the same clips. A second v
   has been released yet, so this lands before `1.0.0`.
 - One wrong letter in a word of five or more letters counts as correct. In a word of four it is
   still unclear.
+- The trade-off: the scorer cannot tell a slip from a different real word. A different word one
+  letter away from a word of five or more letters is also marked correct ("sana" for "sanga",
+  "buhay" for "bahay"). Tests pin this. We accept it because the model mishears child voices more
+  often than a child reads a near-twin word, and a model error must never cost the child.

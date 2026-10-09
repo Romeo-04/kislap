@@ -1,6 +1,6 @@
 // All scoring numbers in one place so the team can tune them (spec §8, ADR-0005).
 export const SCORING = {
-  /** similarity ≥ correct → 'correct'. 0.80: one wrong letter in a word of five or more still counts. */
+  /** similarity ≥ correct → 'correct'. 0.80: one wrong letter in a word of five or more still counts (ADR-0011). */
   correct: 0.8,
   /** similarity ≥ unclear → 'unclear' (half credit) */
   unclear: 0.5,

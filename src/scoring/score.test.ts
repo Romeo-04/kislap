@@ -162,8 +162,11 @@ describe('cut-offs and spacing errors stay separate (review of the cut-off chang
   const statusOf = (expected: string, heard: string) => scoreReading(expected, heard).words.map((w) => w.status)
 
   it('counts one wrong letter in a five-letter word as correct, and in a four-letter word as unclear', () => {
+    // Known trade-off (ADR-0011): at 0.80 a different real word one letter away from a word of five
+    // or more letters is also marked correct. These pin that behaviour so a change is a choice.
     expect(statusOf('sanga', 'sana')).toEqual(['correct']) // 0.80
-    expect(statusOf('bata', 'bato')).toEqual(['unclear']) // 0.75: a different word, not a slip
+    expect(statusOf('bahay', 'buhay')).toEqual(['correct']) // 0.80
+    expect(statusOf('bata', 'bato')).toEqual(['unclear']) // 0.75
   })
 
   it('does not absorb a skipped short word into its long neighbour as a join', () => {
