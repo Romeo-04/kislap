@@ -7,6 +7,8 @@ export const PROGRESS_KEY = 'kislap.progress.v1'
 export interface Progress {
   version: 1
   lang: 'fil' | 'en'
+  /** set when someone picks the language; without it the UI opens in English */
+  langChosen?: true
   tier?: ModelTier
   stars: Record<string, Stars>
   stickers: string[]
@@ -23,7 +25,9 @@ export function loadProgress(): Progress {
     const raw = globalThis.localStorage?.getItem(PROGRESS_KEY)
     if (!raw) return defaultProgress()
     const parsed = JSON.parse(raw) as Partial<Progress>
-    return parsed.version === 1 ? { ...defaultProgress(), ...parsed } : defaultProgress()
+    if (parsed.version !== 1) return defaultProgress()
+    // older saves wrote the old Filipino default on every Home visit: only a real pick keeps it
+    return { ...defaultProgress(), ...parsed, lang: parsed.langChosen ? (parsed.lang ?? 'en') : 'en' }
   } catch {
     return defaultProgress() // bad JSON never blocks the child
   }

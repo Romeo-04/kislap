@@ -31,7 +31,7 @@ function fakeBrowser(startHash: string, otherSites = 3) {
   globalThis.window = { addEventListener: (_: string, f: () => void) => void (onHash = f) } as unknown as Window & typeof globalThis
   globalThis.history = history as unknown as History
   globalThis.location = location as unknown as Location
-  return { go, left: () => left, hash: () => location.hash, entries: () => entries.length }
+  return { go, left: () => left, hash: () => location.hash, entries: () => entries.length, at: () => i }
 }
 
 describe('goBack', () => {
@@ -74,8 +74,11 @@ describe('goUp', () => {
     b.go('#/reading/story-1')
     goUp('#/map')
     expect(b.hash()).toBe('#/map')
+    expect(b.at()).toBe(1) // went back to the map's own entry, nothing replaced
     goUp('#/')
     expect(b.hash()).toBe('#/')
+    expect(b.at()).toBe(0)
+    expect(b.entries()).toBe(3) // the story stays as forward history
   })
 
   it('jumps back past screens in between to the parent it came through', async () => {
@@ -87,6 +90,41 @@ describe('goUp', () => {
     b.go('#/map') // "more stories"
     goUp('#/')
     expect(b.hash()).toBe('#/')
+    expect(history.go).toHaveBeenCalledWith(-4)
+    expect(b.at()).toBe(0)
+  })
+
+  it('does nothing when already on the parent', async () => {
+    const b = fakeBrowser('#/')
+    const { goUp } = await import('./goBack')
+    goUp('#/')
+    expect(b.hash()).toBe('#/')
+    expect(b.entries()).toBe(1)
+    b.go('#/map')
+    expect(b.at()).toBe(1) // the next link still adds an entry
+  })
+
+  it('remembers the way back after a reload (an app update reloads open pages)', async () => {
+    const b = fakeBrowser('#/')
+    await import('./goBack')
+    b.go('#/map')
+    b.go('#/reading/story-1')
+    vi.resetModules() // the page reloads: the module starts over, history and its states stay
+    const { goUp } = await import('./goBack')
+    goUp('#/map')
+    expect(b.at()).toBe(1)
+    goUp('#/')
+    expect(b.at()).toBe(0)
+    expect(b.entries()).toBe(3)
+  })
+
+  it('replaces when the trail was lost, e.g. after a reload deep inside', async () => {
+    const b = fakeBrowser('#/reading/story-1')
+    history.replaceState({ kislapDepth: 2 }, '') // a reload two steps in: the depth survives, the trail does not
+    const { goUp } = await import('./goBack')
+    goUp('#/map')
+    expect(b.hash()).toBe('#/map')
+    expect(b.entries()).toBe(1)
   })
 
   it('replaces the entry when the parent is not behind it (a shared link)', async () => {

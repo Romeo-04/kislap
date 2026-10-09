@@ -9,6 +9,7 @@ import { PAPER_ROUTES } from '../ui/GameShell'
 import { getStory } from '../content/stories'
 import { initialReading } from '../game/readingMachine'
 import fil from '../i18n/fil.json'
+import en from '../i18n/en.json'
 import { savedFilipino } from '../test/lang'
 
 savedFilipino()
@@ -58,6 +59,13 @@ describe('Home', () => {
     expect(wrap(<Home />)).toMatch(/class="wordmark hm-sign"/)
   })
 
+  it('opens in English on a fresh start', () => {
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {} })
+    const out = wrap(<Home />)
+    expect(out).toContain(`>${en['home.play']}<`)
+    expect(out).not.toContain(`>${fil['home.play']}<`)
+  })
+
   it('has the language toggle, settings and the jar', () => {
     const out = wrap(<Home />)
     expect(out).toContain('class="k-lang"')
@@ -68,7 +76,7 @@ describe('Home', () => {
 
 const nextIs = (id: string) => new RegExp(`sm-stop sm-stop--next"><a class="sm-card" href="#/reading/${id}"`)
 const stubStars = (stars: Record<string, number>) =>
-  vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ version: 1, lang: 'fil', stars }), setItem: () => {} })
+  vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ version: 1, lang: 'fil', langChosen: true, stars }), setItem: () => {} })
 afterEach(() => vi.unstubAllGlobals())
 
 describe('StoryMap', () => {
@@ -78,8 +86,8 @@ describe('StoryMap', () => {
     expect(out.indexOf('#/reading/story-3')).toBeLessThan(out.indexOf('#/reading/story-1'))
   })
 
-  it('keeps story titles in Filipino first, with English under them, in either UI language', () => {
-    vi.unstubAllGlobals() // English UI, the default
+  it('keeps story titles in Filipino first, with English under them, in the English UI', () => {
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {} }) // a fresh start: English UI
     const out = wrap(<StoryMap />)
     expect(out).toMatch(/<strong class="sm-title" lang="fil">Ang Ilaw ni Ningning<\/strong><span class="sm-sub" lang="en">Ningning(’|&#x27;|')s Light</)
   })
@@ -156,6 +164,12 @@ describe('Reading', () => {
     expect(view({ state: { ...initialReading, canSkip: true, notice: 'reading.modelUnavailable' } })).toContain(fil['reading.skip'])
     for (const phase of ['listening', 'thinking'] as const)
       expect(view({ state: { ...initialReading, phase, canSkip: true } })).not.toContain(fil['reading.skip'])
+  })
+
+  it('goes up with a button, not a link that would add a history entry', () => {
+    const out = view()
+    expect(out).toContain(`<button type="button" class="k-icon-btn" aria-label="${fil['nav.back']}"`)
+    expect(out).not.toMatch(/rd-top[\s\S]*?href="#\/map"/)
   })
 
   it('keeps the privacy meter', () => {

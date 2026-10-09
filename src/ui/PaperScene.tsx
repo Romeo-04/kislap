@@ -21,7 +21,7 @@ function Cloud({ className }: { className: string }) {
   )
 }
 
-/** `children` is scenery set on the hill line (its top is the line), so it scrolls with the hills, never apart from them. */
+/** `children` is scenery set on the hill band (its top is the band's top). The scene is fixed, so it stays on the hills when the page scrolls. */
 export function PaperScene({ hills, children }: { hills: HillLine; children?: ReactNode }) {
   return (
     <div className="paper-scene" aria-hidden="true">

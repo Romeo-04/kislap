@@ -46,14 +46,14 @@ describe('bilingual copy', () => {
   })
 
   it('renders a missing-story message in the saved Filipino language', () => {
-    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang: 'fil' }) })
+    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang: 'fil', langChosen: true }) })
     const html = renderToStaticMarkup(createElement(I18nProvider, { children: createElement(Reading, { storyId: 'missing' }) }))
     expect(html).toContain('Hindi makita ang kuwento.')
     expect(html).not.toContain('Story not found')
   })
 
   it('renders progress labels in Filipino instead of the scaffold English labels', () => {
-    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang: 'fil' }) })
+    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang: 'fil', langChosen: true }) })
     const html = renderToStaticMarkup(createElement(I18nProvider, { children: createElement(Progress) }))
     expect(html).toContain('Mga sticker')
     expect(html).toContain('araw ng pagbasa')
@@ -61,7 +61,7 @@ describe('bilingual copy', () => {
   })
 
   it.each(['fil', 'en'] as const)('renders all scaffold screens using the saved %s language', (lang) => {
-    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang }) })
+    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang, langChosen: true }) })
     // The Result screen shows only a finished Reading session (a direct link records nothing).
     const sentences = getStory('story-1')!.sentences.length
     const session = createSession('story-1', sentences)

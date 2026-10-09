@@ -5,7 +5,7 @@ import { PROGRESS_KEY, defaultProgress } from '../game/progress'
 /** Call at the top of a test file: every test starts with Filipino saved as the chosen language. */
 export function savedFilipino(): void {
   beforeEach(() => {
-    const m = new Map([[PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil' })]])
+    const m = new Map([[PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil', langChosen: true })]])
     vi.stubGlobal('localStorage', {
       getItem: (k: string) => m.get(k) ?? null,
       setItem: (k: string, v: string) => void m.set(k, v),
