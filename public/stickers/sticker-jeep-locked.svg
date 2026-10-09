@@ -1,13 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="320" height="320" style="display:block;overflow:visible" role="img" aria-label="Dyip (not yet earned)">
 <defs>
-<filter id="kd-cut" x="-20%" y="-20%" width="140%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="4" result="d"/><feGaussianBlur in="d" stdDeviation="3" result="b"/><feOffset in="b" dy="5" result="o"/><feFlood flood-color="#1B3A52" flood-opacity="0.26"/><feComposite in2="o" operator="in" result="sh"/><feFlood flood-color="#FFF3D1"/><feComposite in2="d" operator="in" result="edge"/><feMerge><feMergeNode in="sh"/><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="kd-ghost" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="4" result="o"/><feFlood flood-color="#56634F" flood-opacity="0.2"/><feComposite in2="o" operator="in"/></filter>
+<style>.kd-locked [fill]:not([fill="none"]){fill:#FFF8E7!important}.kd-locked *{stroke:#A08566!important;stroke-width:2!important;stroke-dasharray:5 4}</style>
+<filter id="kd-cut" x="-20%" y="-20%" width="140%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="4" result="d"/><feGaussianBlur in="d" stdDeviation="3" result="b"/><feOffset in="b" dy="5" result="o"/><feFlood flood-color="#1B3A52" flood-opacity="0.18"/><feComposite in2="o" operator="in" result="sh"/><feFlood flood-color="#FFF3D1"/><feComposite in2="d" operator="in" result="edge"/><feMerge><feMergeNode in="sh"/><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="kd-ghost" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="4" result="d"/><feFlood flood-color="#FFF3D1"/><feComposite in2="d" operator="in" result="edge"/><feMerge><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <pattern id="kd-weave" width="7" height="7" patternUnits="userSpaceOnUse"><path d="M0 7 L7 0" stroke="#E9AE14" stroke-width="1.6"></path></pattern>
 </defs>
-<g filter="url(#kd-ghost)" stroke="#8A6236" stroke-opacity="0.6" stroke-linejoin="round" stroke-linecap="round">
+<g class="kd-locked" filter="url(#kd-ghost)" stroke="#A08566" stroke-linejoin="round" stroke-linecap="round">
 <g transform="rotate(-3 84 86)">
 <path d="M16 58 Q18 44 32 44 L122 44 Q132 44 132 58 Z" fill="#FFE27A" stroke-width="3"></path>
-<path d="M20 110 L20 68 Q20 58 30 58 L120 58 Q126 58 128 64 L132 78 L146 82 Q154 85 154 94 L154 108 Q154 112 150 112 L24 112 Q20 112 20 110 Z" fill="#F07F2A" stroke-width="3"></path>
+<path d="M20 110 L20 68 Q20 58 30 58 L120 58 Q126 58 128 64 L132 78 L146 82 Q154 85 154 94 L154 108 Q154 112 150 112 L24 112 Q20 112 20 110 Z" fill="#F58A2B" stroke-width="3"></path>
 <rect x="30" y="64" width="18" height="18" rx="5" fill="#FFFBEF" stroke-width="2.5"></rect><rect x="54" y="64" width="18" height="18" rx="5" fill="#FFFBEF" stroke-width="2.5"></rect><rect x="78" y="64" width="18" height="18" rx="5" fill="#FFFBEF" stroke-width="2.5"></rect><rect x="102" y="64" width="16" height="18" rx="5" fill="#FFFBEF" stroke-width="2.5"></rect>
 <rect x="21.5" y="90" width="131" height="2" fill="#FFE27A" stroke="none"></rect>
 <rect x="21.5" y="93" width="131" height="7" fill="#2F9E57" stroke="none"></rect>
@@ -15,9 +16,9 @@
 <circle cx="150" cy="89" r="4" fill="#FFF3B8" stroke-width="2"></circle>
 <rect x="140" y="108" width="18" height="6" rx="3" fill="#BFD3BC" stroke-width="2.5"></rect>
 <path d="M128 64 L136 56" fill="none" stroke-width="2.5"></path><circle cx="137" cy="54" r="3.5" fill="#BFD3BC" stroke-width="2"></circle>
-<circle cx="46" cy="114" r="13" fill="#4A2E17" stroke-width="2"></circle><circle cx="46" cy="114" r="6" fill="#BFD3BC" stroke-width="2"></circle>
-<circle cx="122" cy="114" r="13" fill="#4A2E17" stroke-width="2"></circle><circle cx="122" cy="114" r="6" fill="#BFD3BC" stroke-width="2"></circle>
-<text x="74" y="55" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="10" letter-spacing="1" fill="#4A2E17" stroke="none">KISLAP</text>
+<circle cx="46" cy="114" r="13" fill="#3B2412" stroke-width="2"></circle><circle cx="46" cy="114" r="6" fill="#BFD3BC" stroke-width="2"></circle>
+<circle cx="122" cy="114" r="13" fill="#3B2412" stroke-width="2"></circle><circle cx="122" cy="114" r="6" fill="#BFD3BC" stroke-width="2"></circle>
+<text x="74" y="55" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="10" letter-spacing="1" fill="#3B2412" stroke="none">KISLAP</text>
 </g>
 </g>
 </svg>
