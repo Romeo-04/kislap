@@ -80,7 +80,9 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | Device | Tier / model / dtype | Backend | Download MB | Load s | 4 s sentence s | Notes |
 |---|---|---|---|---|---|---|
-| Laptop (Chrome) | small / whisper-base / q8 | wasm | | | 3.3 (4.9 s clip) | First run 6.3 s. Heard "si Mini ay sa mga liit na pusa" for "Si Mimi ay isang maliit na pusa." |
+| Laptop (Chrome) | small / whisper-base / q8 | wasm | ~77 | 32.2 | 2.8 | Bench page `/#/bench`. First inference 3.4 s. Load includes download. |
+| Laptop (Chrome) | small / whisper-base / q4 | webgpu | | 53.3 | 1.3 | First inference 4.4 s. 2x faster than WASM, but the text was worse: "Simimi ay nasak inanin ng nangong lamesak ah." |
+| Laptop (Chrome) | large / whisper-small-pld-fil-ONNX / enc fp32 + dec q4 | webgpu | ~586 | 219.7 | – | **Fails at inference:** `Missing the following inputs: cache_position`. Transformers.js 4.3.1 never sends `cache_position`; the model's merged decoder asks for it. Blocks Q1 option A until fixed. |
 | Poco X6 Pro (Chrome) | | | | | | |
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
@@ -90,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-09 19:10** — #15: benchmark page at `/#/bench` (three setups, one worker each, copyable table). Laptop results are in the table above. The large Filipino model fails with `cache_position` missing. The Poco X6 Pro run is still open: the lead needs to open the page on the phone once it is deployed.
 - **2026-10-09 18:45** — #14: real Whisper worker and client in `src/asr/` (load with byte progress, transcribe with transferred audio, `isModelCached`, `warmUp`). Model check page at `/#/asrtest`. Fake mode stays on until `loadModel()` runs, so the Reading screen is unchanged. Worker contract gains a `warmed` message. Tested on a laptop in Chrome with a real recording.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.

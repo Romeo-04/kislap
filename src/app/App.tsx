@@ -9,6 +9,7 @@ import { Progress } from './Progress'
 import { MicCheck } from './MicCheck'
 import { MicTest } from './MicTest'
 import { AsrTest } from './AsrTest'
+import { Bench } from './Bench'
 
 export function App() {
   const route = useRoute()
@@ -24,6 +25,7 @@ export function App() {
         {route.name === 'miccheck' && <MicCheck />}
         {route.name === 'mictest' && <MicTest />}
         {route.name === 'asrtest' && <AsrTest />}
+        {route.name === 'bench' && <Bench />}
       </main>
     </I18nProvider>
   )
