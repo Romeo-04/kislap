@@ -2,6 +2,7 @@
 // in its own worker and times it. Copy the table into PROGRESS.md.
 // Load time includes the download on the first run. Run twice to see cached load time.
 import { useEffect, useRef, useState } from 'react'
+import type { DataType } from '@huggingface/transformers'
 import type { FromWorker, ToWorker } from '../asr/messages'
 import { TIERS, type TierInfo } from '../asr/tier'
 
@@ -10,18 +11,18 @@ const RATE = 16_000
 interface Setup {
   label: string
   tier: TierInfo
-  dtype: string | Record<string, string>
+  dtype: DataType | Record<string, DataType>
 }
 
+// Not listed on purpose: internetoftim/whisper-small-pld-fil-ONNX. It downloads 586 MB and then
+// fails at inference ("Missing the following inputs: cache_position"). See PROGRESS.md.
 const SETUPS: Setup[] = [
   { label: 'base q8 (WASM)', tier: { ...TIERS.small, device: 'wasm' }, dtype: 'q8' },
   { label: 'base q4 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: 'q4' },
-  {
-    label: 'small Filipino enc fp32 + dec q4 (WebGPU)',
-    tier: TIERS.large,
-    dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
-  },
 ]
+
+// Workers that are running now, so leaving the page can stop them (a download would carry on otherwise).
+const active = new Set<Worker>()
 
 interface Row {
   label: string
@@ -72,6 +73,7 @@ async function toPcm(blob: Blob): Promise<Float32Array> {
 function runSetup(setup: Setup, pcm: Float32Array, onProgress: (s: string) => void): Promise<Row> {
   return new Promise((resolve) => {
     const worker = new Worker(new URL('../asr/worker.ts', import.meta.url), { type: 'module' })
+    active.add(worker)
     const row: Row = { label: setup.label }
     const t0 = performance.now()
     let tInfer = 0
@@ -83,10 +85,15 @@ function runSetup(setup: Setup, pcm: Float32Array, onProgress: (s: string) => vo
     }
     const done = () => {
       worker.terminate()
+      active.delete(worker)
       resolve(row)
     }
     worker.onerror = (e) => {
       row.error = e.message || 'worker crashed'
+      done()
+    }
+    worker.onmessageerror = () => {
+      row.error = 'worker sent an unreadable message'
       done()
     }
     worker.onmessage = (e: MessageEvent<FromWorker>) => {
@@ -121,8 +128,17 @@ export function Bench() {
   const [busy, setBusy] = useState(false)
   const chunks = useRef<Blob[]>([])
 
+  const left = useRef(false)
+
   useEffect(() => {
+    left.current = false
     probeGpu().then(setGpu)
+    return () => {
+      // Leaving the page: stop the run and any worker still downloading.
+      left.current = true
+      active.forEach((w) => w.terminate())
+      active.clear()
+    }
   }, [])
 
   const record = async () => {
@@ -133,9 +149,13 @@ export function Bench() {
       rec.ondataavailable = (e) => chunks.current.push(e.data)
       rec.onstop = async () => {
         stream.getTracks().forEach((tr) => tr.stop())
-        const clip = await toPcm(new Blob(chunks.current, { type: rec.mimeType }))
-        setPcm(clip)
-        setStatus(`Clip ready (${(clip.length / RATE).toFixed(1)} s). Step 2: run the benchmark.`)
+        try {
+          const clip = await toPcm(new Blob(chunks.current, { type: rec.mimeType }))
+          setPcm(clip)
+          setStatus(`Clip ready (${(clip.length / RATE).toFixed(1)} s). Step 2: run the benchmark.`)
+        } catch (err) {
+          setStatus(`Could not read the recording: ${(err as Error).message}. Record again.`)
+        }
       }
       rec.start()
       setStatus('Recording 4 s… read a sentence')
@@ -156,6 +176,7 @@ export function Bench() {
       }
       setStatus(`Running ${setup.label}…`)
       const row = await runSetup(setup, pcm, setStatus)
+      if (left.current) return // the page was closed during the run
       setRows((r) => [...r, row])
     }
     setStatus('Done. Copy the table below into PROGRESS.md.')
