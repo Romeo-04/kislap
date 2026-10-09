@@ -43,6 +43,8 @@ _(Spec §20: one or two lines per change — what changed and why.)_
 
 - Energy-based silence gate before transcription, so Whisper does not invent text from silence (ADR-0006).
 - Live "0 bytes sent" privacy meter during reading (ADR-0007).
+- Finishing a story always earns a sticker, even with 0 stars (ADR-0010).
+- Syllable help, firefly-jar stickers, mic-check screen, echo reading (teammate voice recordings, not TTS), and a local progress QR code (grill Q5).
 
 ## Disclosures
 

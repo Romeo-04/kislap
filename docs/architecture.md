@@ -32,6 +32,9 @@ Diagrams: [component](uml/component.md) · [class](uml/class.md) ·
 | Content | `src/content/stories.json`, `src/content/syllables.ts` | Content-QA | nothing |
 | i18n | `src/i18n/fil.json`, `src/i18n/en.json`, `src/i18n/index.ts` | Designer (keys), Content-QA (copy) | nothing |
 | Privacy meter | `src/privacy/meter.ts` | Lead | Resource Timing API |
+| Mic check | `src/app/MicCheck.tsx` | Designer | asr/audio (energy only, no model) |
+| Echo reading audio | `public/audio/`, `audio` field in `stories.json` | Content-QA | nothing |
+| Progress QR | `src/app/ProgressShare.tsx` | Model engineer | game/progress, bundled QR library |
 
 **Rule:** `scoring/` and `content/` import nothing from React or the browser. Content-QA can test
 them in Node with Vitest alone.

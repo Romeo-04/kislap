@@ -24,6 +24,10 @@ _Avoid_: Line, page, prompt
 A word in the Sentence text, after normalization. Scoring is always counted per Expected word.
 _Avoid_: Target word, token
 
+**Echo reading**:
+The child first hears a Sentence read aloud in a teammate's recorded voice, then reads it.
+_Avoid_: TTS, read-aloud (in UI copy)
+
 **Heard text**:
 What the speech model wrote down from the child's recording. It is never shown as "what you said
 wrong".
@@ -80,6 +84,10 @@ _Avoid_: Badge, achievement, prize
 **Practice word**:
 A Missed or Unclear Expected word saved on the device for Word Pop.
 _Avoid_: Wrong word, error word
+
+**Syllable help**:
+Tapping a word shows it split into syllables (pantig), such as "ba-ta".
+_Avoid_: Phonics, spelling help
 
 **Word Pop**:
 The mini-game where Practice words float as bubbles and the child says each one to pop it.
