@@ -130,6 +130,11 @@ export function loadProgress(): Progress;     // key 'kislap.progress.v1', safe 
 export function saveProgress(p: Progress): void;
 export function recordStory(p: Progress, storyId: string, stars: 0|1|2|3): { progress: Progress; newSticker?: string };
 export function touchStreak(p: Progress, today: string): { progress: Progress; welcomeBack: boolean };
+export function addPracticeWords(p: Progress, words: string[]): Progress;   // normalized, deduped, newest 20
+export function localDate(d?: Date): string;   // local YYYY-MM-DD; the one "today" helper for streak and goals
+export function defaultProgress(): Progress;
+// recordStory: sticker-<storyId> on every first finish (ADR-0010), sticker-<storyId>-gold at 3 stars.
+// saveProgress never throws (logs on quota or blocked storage).
 
 // ---------- src/privacy/meter.ts (Lead) ----------
 export function startPrivacyMeter(): { bytesSent(): number; requests(): string[]; stop(): void };

@@ -8,6 +8,7 @@ import { isMostlySilence } from '../asr/meter'
 import { setFakeHeard, transcribe } from '../asr/transcribe'
 import { scoreReading, type WordResult } from '../scoring/score'
 import { createSession } from '../game/session'
+import { addPracticeWords, loadProgress, saveProgress } from '../game/progress'
 import { moodFor, type MascotMood } from '../game/mascot'
 import { go } from './router'
 
@@ -100,6 +101,7 @@ export function Reading({ storyId }: { storyId: string }) {
       setPhase('ready')
       setMood('idle')
     } else {
+      saveProgress(addPracticeWords(loadProgress(), session.practiceWords()))
       sessionStorage.setItem(`kislap.result.${storyId}`, String(session.accuracy()))
       go(`result/${storyId}`)
     }
