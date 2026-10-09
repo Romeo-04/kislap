@@ -23,5 +23,6 @@
   "progress.title": "My firefly jar",
   "miccheck.say": "Say: \"Kumusta, Ningning!\"",
   "nav.back": "Back",
-  "mic.denied": "Ningning needs the microphone to listen."
+  "mic.denied": "Ningning needs the microphone to listen.",
+  "home.welcomeBack": "Welcome back! Ningning missed you."
 }
