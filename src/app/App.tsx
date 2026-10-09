@@ -10,6 +10,7 @@ import { MicCheck } from './MicCheck'
 import { MicTest } from './MicTest'
 import { AsrTest } from './AsrTest'
 import { Bench } from './Bench'
+import { Golden } from './Golden'
 import { GameShell } from '../ui/GameShell'
 import { Settings } from './Settings'
 
@@ -29,6 +30,7 @@ export function App() {
         {route.name === 'mictest' && <MicTest />}
         {route.name === 'asrtest' && <AsrTest />}
         {route.name === 'bench' && <Bench />}
+        {route.name === 'golden' && <Golden />}
       </GameShell>
     </I18nProvider>
   )

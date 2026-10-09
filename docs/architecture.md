@@ -54,20 +54,23 @@ export interface Recorder {
   release(): void;                                  // free the mic when leaving the screen
 }
 export function createRecorder(opts?: { autoStopSilenceMs?: number /* 1500 */; maxMs?: number /* 15000 */ }): Recorder;
-// throws MicError { kind: 'denied' | 'unavailable' } from start()
+// throws MicError { kind: ldeniedl | lunavailablel } from start()
 
 // ---------- src/asr/meter.ts (Lead) ----------
 export function rms(pcm: Float32Array): number;
 export function isMostlySilence(pcm: Float32Array, threshold?: number): boolean;  // ADR-0006
-export function createSilenceDetector(o: { threshold: number; silenceMs: number; maxMs: number }): { push(level: number, tMs: number): 'continue' | 'stop' };
+export function createSilenceDetector(o: { threshold: number; silenceMs: number; maxMs: number }): { push(level: number, tMs: number): lcontinuel | lstopl };
 // src/asr/resample.ts: resample(pcm, fromRate, toRate), concatChunks(chunks)
 
 // ---------- src/asr/tier.ts (Model) ----------
-export type ModelTier = 'large' | 'small';
-export interface TierInfo { tier: ModelTier; modelId: string; device: 'webgpu' | 'wasm'; approxMB: number }
-export function pickTier(): Promise<TierInfo>;   // URL ?tier= override > saved > WebGPU probe
-
-// ---------- src/asr/transcribe.ts (Model) — main-thread API to the worker ----------
+export type ModelTier = llargel | lsmalll;
+export interface TierInfo { tier: ModelTier; modelId: string; device: lwebgpul | lwasml; approxMB: number }
+export function pickTier(saved?: ModelTier): Promise<TierInfo>;   // URL ?tier= override > saved tier > lsmalll (GPU_BY_DEFAULT is off)
+// lsmalll = whisper-base q8 on WASM (~73 MB), the default on every device. llargel = whisper-base fp16 on WebGPU (~139 MB),
+// only with ?tier=large until it passes the reading loop and the offline check on a real GPU. If llargel fails to load,
+// the client starts a fresh worker with lsmalll and saves tier: lsmalll in progress. The same happens if the GPU tier
+// fails on its first run, a warm-up, or later after a device loss (the request is retried once). A network error is
+// never blamed on the GPU and never saved. forgetSavedTier() undoes a saved fallback. Decided from PROGRESS.md.
 export interface TranscribeResult {
   text: string;
   ms: number;                                    // inference time, for the debug panel
@@ -80,22 +83,22 @@ export function warmUp(): Promise<void>;         // one silent inference so the 
 
 // Worker messages (src/asr/worker.ts)
 type ToWorker =
-  | { type: 'load'; tier: TierInfo }
-  | { type: 'transcribe'; id: number; audio: Float32Array }   // transfer audio.buffer
-  | { type: 'warmup' }
-  | { type: 'iscached'; tier: TierInfo };
+  | { type: lloadl; tier: TierInfo }
+  | { type: ltranscribel; id: number; audio: Float32Array }   // transfer audio.buffer
+  | { type: lwarmupl }
+  | { type: liscachedl; tier: TierInfo };
 type FromWorker =
-  | { type: 'progress'; loaded: number; total: number; file: string }
-  | { type: 'ready'; tier: TierInfo }
-  | { type: 'warmed' }
-  | { type: 'cached'; value: boolean }
-  | { type: 'result'; id: number; text: string; ms: number }
-  | { type: 'error'; id?: number; message: string };
+  | { type: lprogressl; loaded: number; total: number; file: string }
+  | { type: lreadyl; tier: TierInfo }
+  | { type: lwarmedl }
+  | { type: lcachedl; value: boolean }
+  | { type: lresultl; id: number; text: string; ms: number }
+  | { type: lerrorl; id?: number; message: string };
 // If the worker crashes, the client rejects every waiting request and starts a fresh worker on the next call.
 // Fake mode (dev only): add ?fake to the URL and transcribe() returns setFakeHeard() text without a model.
 
 // ---------- src/scoring/* (Content-QA) — pure ----------
-export type WordStatus = 'correct' | 'unclear' | 'missed';
+export type WordStatus = lcorrectl | lunclearl | lmissedl;
 export interface WordResult { word: string; status: WordStatus; heard?: string; similarity: number }
 export function normalize(text: string): string[];                 // normalize.ts
 export function similarity(a: string, b: string): number;          // align.ts, 0..1
@@ -123,21 +126,21 @@ export function resultFor(storyId: string): SessionResult | undefined;          
 // silence / model failure / mic failure → ready with a kind notice, never a Missed mark.
 
 // ---------- src/game/mascot.ts (Designer) ----------
-export type MascotMood = 'idle' | 'listening' | 'thinking' | 'cheering' | 'encouraging' | 'celebrating';
-export function moodFor(event: 'mic-on' | 'mic-off' | 'scored' | 'silence' | 'story-done', accuracy?: number): MascotMood;
-export function glowFor(accuracy: number): number;   // 0..1, Ningning's brightness
+export type MascotMood = lidlel | llisteningl | lthinkingl | lcheeringl | lencouragingl | lcelebratingl;
+export function moodFor(event: lmic-onl | lmic-offl | lscoredl | lsilencel | lstory-donel, accuracy?: number): MascotMood;
+export function glowFor(accuracy: number): number;   // 0..1, Ningningls brightness
 
 // ---------- src/game/progress.ts (Lead; tests by Content-QA) ----------
 export interface Progress {
   version: 1;
-  lang: 'fil' | 'en';
+  lang: lfill | lenl;
   tier?: ModelTier;
   stars: Record<string /* storyId */, 0 | 1 | 2 | 3>;
   stickers: string[];
   practiceWords: string[];
   streak: { days: number; lastPlayed: string /* YYYY-MM-DD local */ };
 }
-export function loadProgress(): Progress;     // key 'kislap.progress.v1', safe defaults on bad JSON
+export function loadProgress(): Progress;     // key lkislap.progress.v1l, safe defaults on bad JSON
 export function saveProgress(p: Progress): void;
 export function recordStory(p: Progress, storyId: string, stars: 0|1|2|3): { progress: Progress; newSticker?: string };
 export function touchStreak(p: Progress, today: string): { progress: Progress; welcomeBack: boolean };

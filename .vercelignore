@@ -1,0 +1,2 @@
+# Dev-only model weights (gitignored). A local `vercel` CLI deploy must never upload them.
+public/models
