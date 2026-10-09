@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dev-dist/
+.vercel/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+playwright-report/
+test-results/
+# model export work stays out of git (upload to Hugging Face instead)
+models/
+*.onnx
+.claude/settings.local.json
