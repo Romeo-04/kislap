@@ -35,7 +35,7 @@ describe('Ningning, paper puppet', () => {
   })
 
   it('uses a thinner die-cut edge than the handoff', () => {
-    expect(html(<Ningning mood="idle" />)).toContain('radius="4.5"')
+    expect(html(<Ningning mood="idle" />)).toContain('radius="3"')
   })
 
   it('stands on a puppet stick when asked, and the frame grows to fit it', () => {
