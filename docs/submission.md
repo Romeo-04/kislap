@@ -1,6 +1,6 @@
 # Submission answers (draft)
 
-Copy these into the form. Each section maps to a deliverable issue (D1–D13). Text marked
+Copy these into the form. **Before 08:00:** check D1 and the README feature list against what is merged (Word Pop, echo reading, and the progress QR may not ship). Each section maps to a deliverable issue (D1–D13). Text marked
 **[confirm]** must be checked against the final build before 08:00. The final versions also go
 into `README.md` where the README already has that section.
 
@@ -16,6 +16,8 @@ Filipino and Taglish. It needs no account and no server. After the first load, i
 internet. The child's voice never leaves the device.
 
 ## D2 Team members
+
+**Team name: stochastic4**
 
 | Name **[confirm spelling]** | Role | GitHub |
 |---|---|---|
@@ -33,6 +35,36 @@ https://github.com/Romeo-04/kislap · Live app: https://kislap.vercel.app
 - Video file: **[link after recording]**
 - X post (tags @cognition and Devin): **[URL]**
 - LinkedIn post (tags @cognition and Devin): **[URL]**
+
+### Post text for X (≤ 280 characters with the link)
+
+> Kislap ✨ a Filipino-first reading game. A child reads aloud, and Whisper runs on the device
+> to mark each word. No account, no upload, works offline. Built at #AppBuildersPH by stochastic4
+> @cognition @DevinAI
+> https://kislap.vercel.app
+
+**[confirm the X handles: the event page says "tag @cognition and Devin"; check Devin's exact
+handle before posting]**
+
+### Post text for LinkedIn
+
+> We built **Kislap** ✨ at the AppBuildersPH Hackathon 2026: a free reading game for Filipino
+> children in Grade 1 to 3.
+>
+> A child reads a short Filipino or Taglish story aloud. A Whisper speech model runs in the
+> browser, on the child's own device, and marks each word. Ningning the firefly cheers them on,
+> and missed words come back as practice.
+>
+> Why on the device? A child's voice is sensitive data. It never leaves the phone, and after the
+> first load Kislap works with no internet. You can check it yourself: the on-screen privacy
+> counter shows zero requests while a child reads.
+>
+> Try it: https://kislap.vercel.app · Code: https://github.com/Romeo-04/kislap
+>
+> Team stochastic4: [names]. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
+
+Rules for both posts: the video plays inline, the post is public, no accuracy or "first" claims
+(spec §19). Save both URLs here and in the README.
 
 ## D6 What runs locally
 
@@ -83,17 +115,20 @@ oxlint. **[add any library added after 18:00]**
 
 ## D11 Existing code and assets
 
-- Libraries: all from npm, listed in D9 with their licences in `package.json`.
+- Full list with sources and licences: `docs/assets.md` (libraries, fonts, sounds, art, models, datasets).
+- Fonts: Baloo 2 and Andika, SIL Open Font License 1.1, self-hosted.
 - Models and datasets: see D8.
-- Mascot, stories, and art: original, made during the event. **[confirm with the designer]**
-- Sounds and fonts: **[list from `docs/assets.md`]**
+- Mascot, stories, stickers, and sounds: made during the event. **[designer confirms on #35]**
 - No code from earlier projects. Everything was built during the hackathon.
 
 ## D12 AI development tools
 
-- **Claude Code (Claude)**: planning, spec validation, architecture and ADRs, issue breakdown,
-  and code for the app shell, audio recorder, progress, privacy meter, and offline mode.
-- **[each teammate adds their tools in a comment on the D12 issue]**
+- **Claude Code (Anthropic)**: spec validation, architecture and ADRs, issue breakdown, code
+  (app shell, audio recorder, progress, privacy meter, offline mode, reading loop, scorer fixes),
+  tests, and PR reviews with the pr-review-toolkit agents.
+- **Claude Design (Anthropic)**: the visual design handoff (tokens, UI kit, mascot, sticker art).
+- **CodeRabbit**: automated PR summaries on GitHub.
+- **[each teammate adds any other tool in a comment on #36, e.g. Blender MCP if the 3D mascot ships]**
 
 ## D13 Why does this product benefit from running AI locally?
 
