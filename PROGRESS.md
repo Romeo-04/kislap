@@ -68,7 +68,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #19 | Three original stories | CP1 | ⏳ |
+| #19 | Three original stories | CP1 | 🔨 Implemented and verified; awaiting PR review |
 | #20 | Forgiving scorer + ≥ 10 tests | CP1 | ⏳ |
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
 | #22 | i18n copy fil + en | CP2 | ⏳ |
@@ -91,7 +91,10 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-09 21:27** — #19 / PR #53: revised the stories for a clearer reading progression. The easy story uses short, familiar words and a complete cat-and-firefly plot; the medium story has a garden problem and resolution; the hard story uses longer clauses and Taglish. Each has eight sentences of four to ten words. Content checks, the existing test, typecheck, and build pass. Awaiting teammate review.
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
+- **2026-10-09 17:53** — #19 / PR #53: applied the three grammar corrections from review (Dumapo, Sabay silang umuwi, Dahan-dahan) and added quotation marks to Ben's dialogue. Story IDs, levels, and sentence counts are unchanged. Awaiting teammate approval.
+- **2026-10-09 17:37** — #19: replaced the scaffold stories with three original stories in Ningning's world. Eight sentences each, four to ten words per sentence, bilingual titles, and stable story IDs. Content checks, the existing test, build, and lint pass. Awaiting teammate review.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
 - **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
