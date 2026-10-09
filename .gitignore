@@ -18,3 +18,5 @@ models/
 .playwright-mcp/
 
 .vercel
+# Blender backups
+*.blend1
