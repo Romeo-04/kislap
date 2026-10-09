@@ -110,7 +110,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 | Filipino int8 (own export), WASM | 93% | 19 | 11.1 s |
 | Filipino int8 (own export), WebGPU | 92% | 19 | 24.4 s |
 
-- **Scorer cut-offs.** At 0.75 / 0.45 (now 0.85 / 0.60) clean accuracy rises to 84% (q8) and 79% (q4), a wrong sentence earns a star only 1 to 2% of the time, and a mispronounced word ("sampita") stays "unclear". At 0.70 / 0.40 the same word becomes "correct" on `base q8`, so do not go looser. For Emyol and #23.
+- **Scorer cut-offs.** An earlier note here recommended 0.75 / 0.45. That was wrong: at 0.75 the scorer's join and split check also loosened, so a skipped short word ("ay") was marked correct. Tested with the real scorer, the right choice is **0.80 / 0.50** with a separate `spacing` setting at 0.85 (PR #79, ADR-0011): clean reads 83% for both base q8 and base fp16, skipped words still missed, a wrong sentence earns a star 1% of the time.
 - **Laptop precision.** q4 on WebGPU read worse than q8 (72% against 77%). fp16 on WebGPU is better than both (79%) and the fastest (1.0 s), at about the same download as q4 (139 MB against 136 MB). It needs the `shader-f16` GPU feature. PR #75 uses it for the laptop tier.
 - **Skipped words** were marked "missed" in every setup. A repeated word and a hesitation are not penalised, by design.
 - **A more accurate model lets the scorer separate good from bad reads better.** With the Filipino model, flawed reads score about 20 points below clean ones. With the base models the gap is only 10 to 12 points.
