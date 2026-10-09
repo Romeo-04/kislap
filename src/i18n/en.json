@@ -23,5 +23,8 @@
   "progress.title": "My firefly jar",
   "miccheck.say": "Say: \"Kumusta, Ningning!\"",
   "nav.back": "Back",
-  "mic.denied": "Ningning needs the microphone to listen."
+  "mic.denied": "Ningning needs the microphone to listen.",
+  "offline.download": "Download for offline",
+  "offline.failed": "The download did not finish. Try again.",
+  "offline.connectOnce": "Connect to the internet once to get Ningning ready."
 }

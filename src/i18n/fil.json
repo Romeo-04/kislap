@@ -23,5 +23,8 @@
   "progress.title": "Ang aking garapon",
   "miccheck.say": "Sabihin: \"Kumusta, Ningning!\"",
   "nav.back": "Bumalik",
-  "mic.denied": "Kailangan ni Ningning ang mikropono para makinig."
+  "mic.denied": "Kailangan ni Ningning ang mikropono para makinig.",
+  "offline.download": "I-download para magamit offline",
+  "offline.failed": "Hindi natapos ang pag-download. Subukan ulit.",
+  "offline.connectOnce": "Kumonekta sa internet nang isang beses para maihanda si Ningning."
 }
