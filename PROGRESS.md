@@ -7,7 +7,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 - **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
 - **Deployed URL:** https://kislap.vercel.app (device check: https://kislap.vercel.app/#/mictest)
-- **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
+- **Speech model in use:** bootstrap `onnx-community/whisper-base` q8, in a Web Worker (#14; model check page: `/#/asrtest`); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
 - **Flutter spike:** closed, not run (#48). Web app stays (ADR-0002).
 - **Visual design:** Claude Design handoff in `docs/design/claude-design-handoff.md` (brief: `docs/design-handoff.md`).
 
@@ -56,7 +56,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #14 | ASR worker with bootstrap Whisper-base | CP1 | ⏳ |
+| #14 | ASR worker with bootstrap Whisper-base | CP1 | 🔨 PR open |
 | #15 | Device benchmark: laptop + Poco X6 Pro | CP1 | ⏳ |
 | #16 | Model tiers (Filipino small on laptop, base on phone) | CP2 | ⏳ |
 | #17 | Stretch: export whisper-small-fsc q4f16 (stop 22:00) | CP2 | ⏳ |
@@ -81,7 +81,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | Device | Tier / model / dtype | Backend | Download MB | Load s | 4 s sentence s | Notes |
 |---|---|---|---|---|---|---|
-| Laptop (Chrome) | | | | | | |
+| Laptop (Chrome) | small / whisper-base / q8 | wasm | | | 3.3 (4.9 s clip) | First run 6.3 s. Heard "si Mini ay sa mga liit na pusa" for "Si Mimi ay isang maliit na pusa." |
 | Poco X6 Pro (Chrome) | | | | | | |
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
@@ -95,6 +95,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 - **2026-10-09 19:30** — #11: sticker art mapped to stories by level (`src/content/stickers.ts`), soft Web Audio sounds (`src/game/sound.ts`), sound/night setting under `kislap.settings.v1`, D11 draft `docs/assets.md`.
 - **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
+- **2026-10-09 18:45** — #14: real Whisper worker and client in `src/asr/` (load with byte progress, transcribe with transferred audio, `isModelCached`, `warmUp`). Model check page at `/#/asrtest`. `transcribe()` loads the model itself (from the cache after the first download). Fake mode is dev only: add `?fake` to the URL. Worker contract gains `warmed`, `iscached`, and `cached` messages. A worker crash rejects every waiting request and the next call starts a fresh worker. ONNX Runtime files now come from our own site, not jsDelivr, and are cached at runtime for offline use. Tested on a laptop in Chrome with a real recording.
 - **2026-10-09 17:53** — #19 / PR #53: applied the three grammar corrections from review (Dumapo, Sabay silang umuwi, Dahan-dahan) and added quotation marks to Ben's dialogue. Story IDs, levels, and sentence counts are unchanged. Awaiting teammate approval.
 - **2026-10-09 17:37** — #19: replaced the scaffold stories with three original stories in Ningning's world. Eight sentences each, four to ten words per sentence, bilingual titles, and stable story IDs. Content checks, the existing test, build, and lint pass. Awaiting teammate review.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
