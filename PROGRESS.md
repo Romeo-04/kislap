@@ -50,7 +50,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #13 | Word Pop (Should) | Freeze | 🔨 PR open: paper bubbles from the Practice words, say one to pop it (similarity ≥ 0.6), pops anyway after 2 tries, tap for syllables, Listen with an on-device voice |
 | #45 | Mic-check screen (Should) | Freeze | 🔨 PR open: Mic check + Settings in the paper look, phone and desktop |
 | #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
-| D4 #28, D11 #35 | Deliverables | — | ⏳ D11 draft in `docs/assets.md` |
+| D4 #28, D11 #35 | Deliverables | — | 🔨 D4: backup cut in `docs/demo/` and the recorder in PR; the final cut needs a teammate's clips (`--voice`). D11: `docs/assets.md` refreshed; each teammate still confirms on #35 |
 
 ### Model engineer (@acmrsu) — epic #43
 
@@ -127,6 +127,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 - Q1–Q7 settled (see `docs/validation.md` grill log).
 
 ## Log
+- **2026-10-10** — D4 (#28): `scripts/demo/record.mjs` records the demo storyboard from a production build: the real Works offline badge, the browser set offline, story 1 read to the end, word help, the Privacy meter, stars and sticker, Word Pop, the jar and a why-local card, with captions in the picture. The backup cut (`docs/demo/kislap-demo-backup.mp4`, 91 s) simulates the speech input and says so on screen; the recorder counted 0 requests leaving the device. `--voice <folder>` plays a teammate's golden clips into the real on-device model (tested end to end with synthetic stand-in clips) for the final cut. How to run: `docs/demo-video.md`.
 - **2026-10-10** — #13: Word Pop (`#/wordpop`) is a paper screen that listens. Practice words float as paper bubbles; the child taps the mic and says the word. The same mic, silence gate and Whisper worker as Reading check it, and a heard word at similarity 0.6 or more (`SCORING.wordPop`) pops the bubble with a sound. The second miss pops it anyway with a kind line (validation I25). Silence, an empty transcription, a mic error or a model error never count as a try. Skip appears when the mic cannot start, when no model is cached (the mic hides, so nothing downloads from here), or after two model failures in a row. Tapping a bubble shows its syllables (`syllabify`), and Listen reads the current word with an on-device voice when one exists (`src/ui/speak.ts`). Rules are a pure reducer in `src/game/wordPop.ts`. `?fake` makes the stub hear the current word (dev only).
 - **2026-10-10 06:30** — D8 (#32, PR #81): README, `docs/submission.md` and `docs/assets.md` now say what ships after PR #75: whisper-base q8 on WebAssembly on every device. The fp16 WebGPU tier is listed only as a test option (`?tier=large`), not shipped by default.
 - **2026-10-10 06:20** — #16 / PR #75, lead's safety pass after the freeze: the default tier is whisper-base **q8 on WebAssembly on every device**, the setup that passed the offline check. The fp16 WebGPU tier stays in the code but runs only with `?tier=large` (`GPU_BY_DEFAULT = false` in `src/asr/tier.ts`), because it has not run the full reading loop or the offline check on a real GPU. So a laptop that already cached q8 keeps Offline ready and downloads nothing new. The 64-token cap stays. A failed fallback no longer leaves a stale load behind.
