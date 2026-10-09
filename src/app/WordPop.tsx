@@ -17,8 +17,9 @@ import { Ningning } from '../ui/Ningning'
 import { MicButton } from '../ui/MicButton'
 import { PaperScene } from '../ui/PaperScene'
 import { Button } from '../ui/Button'
-import { BackIcon, CheckIcon, RetryIcon } from '../ui/icons'
+import { BackIcon, CheckIcon, RetryIcon, SpeakerIcon } from '../ui/icons'
 import { goUp } from '../ui/goBack'
+import { localVoice, onVoicesChanged, sayWord } from '../ui/speak'
 import { haptic } from '../ui/haptics'
 import './screens.css'
 import './core.css'
@@ -39,6 +40,9 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
   const [open, setOpen] = useState<number>()
   const [level, setLevel] = useState(0)
   const [mood, setMood, beat] = useMascotMood('idle')
+  // voices load late on some browsers; Listen shows once an on-device Filipino voice exists
+  const [canListen, setCanListen] = useState(() => !!localVoice())
+  useEffect(() => onVoicesChanged(() => setCanListen(!!localVoice())), [])
   const finishRef = useRef<() => void>(() => {})
   const finishing = useRef(false) // auto-stop and a tap can both fire before React re-renders
   const hasWords = state.bubbles.length > 0
@@ -145,6 +149,8 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
       beat={beat}
       level={level}
       open={open}
+      canListen={canListen}
+      onListen={sayWord}
       onPick={onPick}
       onMic={onMic}
       onSkip={() => dispatch({ type: 'skip' })}
@@ -160,6 +166,9 @@ interface ViewProps {
   level: number
   /** the bubble whose syllables show */
   open?: number
+  /** an on-device voice can read the word aloud (ui/speak) */
+  canListen: boolean
+  onListen: (word: string) => void
   onPick: (index: number) => void
   onMic: () => void
   onSkip: () => void
@@ -172,7 +181,7 @@ const splits = (word: string) => syllabify(word).length > 1
 const LAST_COPY = { said: 'wordpop.said', helped: 'wordpop.helped', missed: 'wordpop.missed' } as const
 
 /** What the child sees; WordPop above owns the mic, the model and the round. */
-export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onSkip, onAgain }: ViewProps) {
+export function WordPopView({ state, mood, beat, level, open, canListen, onListen, onPick, onMic, onSkip, onAgain }: ViewProps) {
   const { t } = useI18n()
   const total = state.bubbles.length
   const popped = state.bubbles.filter((b) => b.popped).length
@@ -228,7 +237,16 @@ export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onS
           })}
         </ul>
       )}
-      {canSplit && <p className="wp-tip">{t('wordpop.tap')}</p>}
+      {!done && total > 0 && (canSplit || canListen) && (
+        <div className="wp-help">
+          {canSplit && <p className="wp-tip">{t('wordpop.tap')}</p>}
+          {canListen && (
+            <Button variant="secondary" icon={<SpeakerIcon />} onClick={() => onListen(state.bubbles[state.current].word)}>
+              {t('reading.listen')}
+            </Button>
+          )}
+        </div>
+      )}
 
       <div className="rd-controls">
         {total === 0 ? (

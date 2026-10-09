@@ -18,7 +18,7 @@ const said = (text: string): WordPopEvent[] => [{ type: 'mic-started' }, { type:
 const view = (state: WordPopState, over: Partial<React.ComponentProps<typeof WordPopView>> = {}) =>
   html(
     <I18nProvider>
-      <WordPopView state={state} mood="idle" beat={0} level={0} open={undefined} onPick={noop} onMic={noop} onSkip={noop} onAgain={noop} {...over} />
+      <WordPopView state={state} mood="idle" beat={0} level={0} open={undefined} canListen={false} onListen={noop} onPick={noop} onMic={noop} onSkip={noop} onAgain={noop} {...over} />
     </I18nProvider>,
   )
 const count = (s: string, sub: string) => s.split(sub).length - 1
@@ -68,6 +68,12 @@ describe('Word Pop screen', () => {
 
   it('keeps the stop control when the model goes missing mid-recording', () => {
     expect(view(run(['bata'], { type: 'mic-started' }, { type: 'model-unavailable' }))).toContain('k-mic')
+  })
+
+  it('offers Listen for the current word only when the device has a local voice', () => {
+    expect(view(run(['bata']), { canListen: true })).toContain(fil['reading.listen'])
+    expect(view(run(['bata']))).not.toContain(fil['reading.listen'])
+    expect(view(run(['bata'], ...said('bata')), { canListen: true })).not.toContain(fil['reading.listen'])
   })
 
   it('promises syllables only when a bubble really splits', () => {

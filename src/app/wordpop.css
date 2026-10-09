@@ -5,7 +5,7 @@
 .wp-screen a { text-decoration: none; }
 .wp-title { flex: 1; margin: 0; color: var(--on-sky); font: 800 28px / 1.1 var(--font-display); }
 .wp-count { padding: var(--s-1) var(--s-3); border-radius: var(--r-pill); background: var(--paper); color: var(--ink); font: 700 16px var(--font-display); white-space: nowrap; }
-.wp-stage { height: 180px; }
+.wp-stage { height: 164px; }
 
 .wp-field {
   display: flex;
@@ -26,15 +26,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 112px;
+  min-width: 100px;
   aspect-ratio: 1;
-  padding: var(--s-3);
+  padding: var(--s-2);
   border: var(--edge-w) solid var(--edge);
   border-radius: 50%;
   background: var(--paper);
   color: var(--ink);
   box-shadow: 0 4px 0 var(--underside), 0 10px 18px rgba(27, 58, 82, .16);
-  font: 400 30px / 1.1 var(--font-read);
+  font: 400 27px / 1.1 var(--font-read);
   transform: rotate(var(--tilt));
   transition: transform var(--t-fast) var(--ease-pop), box-shadow var(--t-fast);
   touch-action: manipulation;
@@ -68,7 +68,9 @@ button.wp-bubble:active { transform: rotate(var(--tilt)) scale(.96); }
   transform: none;
 }
 
-.wp-tip { margin: var(--s-4) var(--s-5) 0; text-align: center; color: var(--on-sky); font: 700 16px / 1.3 var(--font-display); }
+.wp-help { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--s-2) var(--s-4); margin: var(--s-4) var(--s-5) 0; }
+.wp-tip { margin: 0; text-align: center; color: var(--on-sky); font: 700 16px / 1.3 var(--font-display); }
+.wp-help .k-btn { min-height: 48px; padding: 0 var(--s-5); font-size: 20px; }
 .wp-empty p { margin: 0; font: 400 20px / 1.5 var(--font-read); text-wrap: pretty; }
 .wp-screen .rd-controls > .k-btn { width: 100%; }
 
@@ -98,7 +100,7 @@ button.wp-bubble:active { transform: rotate(var(--tilt)) scale(.96); }
   .wp-stage .ningning { width: 280px; height: 280px; }
   .wp-stage .rd-bubble { max-width: 340px; font-size: 22px; }
   .wp-field, .wp-empty { grid-area: field; align-self: center; margin: 0; padding: var(--s-6) 0; }
-  .wp-tip { grid-area: tip; margin: 0; }
+  .wp-help { grid-area: tip; margin: 0; }
   .wp-screen .rd-controls { grid-area: controls; margin: 0; padding: var(--s-6) 0 0; }
   button.wp-bubble { min-width: 132px; font-size: 34px; }
 }
