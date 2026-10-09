@@ -72,7 +72,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
 | #22 | i18n copy fil + en | CP2 | ⏳ |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
-| #24 | Device QA, offline + network checks | Freeze | ⏳ |
+| #24 | Device QA, offline + network checks | Freeze | In progress: docs/qa.md prepared; #68 filed; device checks pending |
 | #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
 | D14 #38 | Deliverable | — | ⏳ |
 
@@ -89,6 +89,8 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 - Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
+
+- **2026-10-09** — @emyol prepared the #24 device evidence matrix and #37 claim-review notes in docs/qa.md. Reproduced malformed saved-progress failures on PR #52 and filed #68. Physical-device and final release checks remain pending.
 
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
