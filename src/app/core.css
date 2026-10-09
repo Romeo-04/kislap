@@ -1,0 +1,229 @@
+/* Core screens (#10), Claude Design part 2 (paper puppet): Home, Story map, Reading, Result.
+   Every word sits on paper or on the sky in ink, one yellow button per screen, a dashed cut means
+   "not now". Phone first (390 wide), desktop at >=900px at the end. */
+
+.hm-screen a, .sm-screen a, .rd-screen a, .rs-screen a, .rd-missing a { text-decoration: none; }
+.k-bush { display: block; overflow: visible; filter: drop-shadow(0 5px 6px rgba(27, 58, 82, .25)); }
+@keyframes core-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* paper slips and bubbles share one look */
+.hm-welcome, .rs-card, .rd-bubble {
+  margin: 0;
+  border: var(--edge-w) solid var(--edge);
+  background: var(--paper);
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+/* ---------- Home ---------- */
+.hm-screen { display: flex; flex-direction: column; align-items: center; gap: var(--s-4); padding: var(--s-7) var(--s-5) 28px; }
+.hm-top { align-self: stretch; display: flex; justify-content: space-between; align-items: center; }
+.hm-title { display: flex; flex-direction: column; align-items: center; gap: var(--s-3); }
+.hm-welcome { padding: 8px 18px; border-width: 3px; border-radius: var(--r-md); font: 700 18px / 1.3 var(--font-display); text-align: center; }
+.hm-friend { position: relative; display: flex; justify-content: center; width: 100%; }
+.hm-friend .ningning { position: relative; z-index: 1; }
+.hm-bush { position: absolute; z-index: 2; }
+.hm-bush--left { left: -42px; bottom: 140px; width: 130px; }
+.hm-bush--right { right: -42px; bottom: 132px; width: 110px; }
+/* the stick runs down behind Play, like a puppet held from below the stage */
+.hm-actions { position: relative; z-index: 3; align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: -150px; }
+.hm-play { align-self: stretch; height: 88px; overflow: hidden; gap: var(--s-4); font-size: 36px; }
+.hm-play > :not(.hm-play__shine) { position: relative; }
+.hm-play__shine { position: absolute; left: 28px; right: 28px; top: 8px; height: 16px; border-radius: var(--r-pill); background: var(--glow-soft); }
+.hm-bottom { position: relative; z-index: 3; align-self: stretch; margin-top: auto; display: flex; gap: var(--s-3); }
+.hm-jar, .hm-pop {
+  height: 64px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: var(--edge-w) solid var(--edge);
+  border-radius: var(--s-5);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--underside), 0 10px 16px rgba(27, 58, 82, .2);
+  font: 700 18px var(--font-display);
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
+}
+.hm-jar { flex: 1; min-width: 0; }
+.hm-pop { flex: none; }
+.hm-jar:hover, .hm-pop:hover { background: var(--cream-hover); }
+.hm-jar:active, .hm-pop:active { transform: translateY(4px); box-shadow: var(--pressed); }
+
+/* ---------- Story map ---------- */
+.sm-screen { display: flex; flex-direction: column; }
+.sm-map { position: relative; flex: 1; padding: var(--s-6) var(--s-5) var(--s-7); }
+.sm-path { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.sm-path--wide { display: none; }
+.sm-stops { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 64px; }
+.sm-stop { position: relative; width: min(262px, 72%); }
+.sm-stop:nth-child(even) { align-self: flex-end; }
+.sm-card {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border: var(--edge-w) solid var(--edge);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 5px 0 var(--underside), 0 11px 16px rgba(27, 58, 82, .16);
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
+}
+.sm-card:hover { background: var(--cream-hover); }
+.sm-card:active { transform: translateY(4px); box-shadow: var(--pressed); }
+.sm-cover { flex: none; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: var(--edge-w) solid var(--edge); border-radius: 18px; background: var(--paper-warm); }
+.sm-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sm-level { font: 700 15px var(--font-display); color: var(--muted); }
+.sm-title { font: 800 20px / 1.1 var(--font-display); }
+.sm-sub { font-size: 14px; color: var(--muted); }
+.sm-text .k-stars { gap: 2px; padding-top: 4px; }
+/* Ningning waits beside the next story, on the open side of the card */
+.sm-friend { position: absolute; top: calc(100% - 4px); pointer-events: none; }
+.sm-stop:nth-child(odd) .sm-friend { right: -84px; }
+.sm-stop:nth-child(even) .sm-friend { left: -84px; }
+
+/* ---------- Reading ---------- */
+.rd-screen { display: flex; flex-direction: column; padding-bottom: var(--s-5); }
+.rd-top { display: flex; align-items: center; gap: 14px; padding: var(--s-7) var(--s-5) 0; }
+.rd-vine { position: relative; flex: 1; list-style: none; margin: 0; padding: 0 4px; display: flex; align-items: center; justify-content: space-between; }
+.rd-vine::before { content: ''; position: absolute; left: 8px; right: 8px; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; background: var(--leaf-shade); }
+.rd-dot { position: relative; width: 16px; height: 16px; border: var(--edge-w) solid var(--edge); border-radius: var(--r-pill); background: var(--paper); box-sizing: content-box; }
+.rd-dot--done { background: var(--glow); }
+.rd-dot--now { width: 24px; height: 24px; background: var(--glow); box-shadow: 0 0 0 5px var(--glow-soft); }
+.rd-count { padding: 2px 10px; border-radius: var(--r-pill); background: var(--paper); color: var(--muted); font: 700 16px var(--font-display); }
+.rd-stage { flex: none; height: 214px; display: flex; align-items: center; gap: var(--s-2); padding: 0 var(--s-5); }
+.rd-stage .ningning { flex: none; }
+.rd-bubble {
+  padding: 12px 16px;
+  border-radius: var(--s-5);
+  box-shadow: 0 4px 0 var(--underside), 0 9px 16px rgba(27, 58, 82, .16);
+  font: 700 19px / 1.25 var(--font-display);
+  animation: core-pop var(--t-base) var(--ease-pop) both;
+}
+.rd-card { margin: 0 var(--s-5); padding: 26px 22px 20px; border: var(--edge-w) solid var(--edge); border-radius: 32px; background: var(--paper); color: var(--ink); box-shadow: var(--lift); }
+.rd-sentence { margin: 0; font: 400 var(--text-sentence) / 1.5 var(--font-read); text-wrap: pretty; }
+.rd-controls { margin-top: auto; padding: var(--s-6) var(--s-5) 0; display: flex; justify-content: center; }
+/* room for the halos while recording, so they never cover the label */
+.rd-mic { display: flex; flex-direction: column; align-items: center; gap: var(--s-6); }
+.rd-status { margin: 0; padding: 4px 14px; border-radius: var(--r-pill); background: var(--paper); color: var(--ink); font: 700 18px var(--font-display); }
+.rd-skip { min-height: 56px; font-size: 22px; }
+.rd-after { display: flex; gap: var(--s-3); width: 100%; animation: rd-rise var(--t-base) var(--ease-pop) both; }
+.rd-after .k-btn { min-height: 64px; padding: 0 var(--s-4); }
+.rd-after .k-btn--secondary { flex: 1; font-size: 22px; }
+.rd-after .k-btn--primary { flex: 1.3; }
+@keyframes rd-rise { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+/* privacy meter: a small paper slip that opens for the grown-up who asks */
+.rd-privacy { display: flex; justify-content: center; padding: var(--s-4) var(--s-5) 0; }
+.rd-privacy .privacy-meter { max-width: 100%; padding: 4px 12px; border-radius: var(--r-md); background: var(--paper); color: var(--muted); font: 400 13px / 1.4 var(--font-read); }
+.rd-privacy .privacy-meter.leak { color: var(--cap-shade); }
+.rd-privacy .privacy-meter summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.rd-privacy .privacy-meter p, .rd-privacy .privacy-meter ul { margin: 6px 0 2px; }
+.rd-missing { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s-5); padding: var(--s-5); }
+
+/* ---------- Result ---------- */
+.rs-screen { display: flex; flex-direction: column; padding: var(--s-8) var(--s-5) 40px; }
+.rs-head { display: flex; flex-direction: column; align-items: center; gap: var(--s-4); text-align: center; }
+.rs-title { font: 800 40px / 1.05 var(--font-display); color: var(--on-sky); text-wrap: balance; }
+.rs-stage { position: relative; height: 290px; margin-top: var(--s-2); }
+.rs-sticker { position: absolute; display: block; transform: rotate(var(--tilt)); filter: drop-shadow(0 6px 8px rgba(27, 58, 82, .2)); }
+.rs-sticker--main { --tilt: -6deg; left: 4px; top: 30px; width: 136px; height: 136px; }
+.rs-sticker--bonus { --tilt: 8deg; left: 126px; top: 120px; width: 88px; height: 88px; }
+.rs-friend { position: absolute; right: -8px; top: -20px; }
+.rs-card { position: relative; z-index: 1; align-self: flex-start; max-width: 260px; display: flex; flex-direction: column; gap: 4px; padding: 12px 18px; border-radius: var(--r-lg); box-shadow: var(--lift); font: 700 18px / 1.3 var(--font-display); }
+.rs-card p { margin: 0; }
+.rs-actions { position: relative; z-index: 1; margin-top: auto; padding-top: var(--s-5); display: flex; flex-direction: column; gap: var(--s-3); }
+.rs-actions .k-btn { width: 100%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* confetti 900ms, the stars 300ms apart, then the sticker drops in and the bonus after it */
+  .rs-sticker { animation: rs-drop 400ms var(--ease-pop) 1.9s both; }
+  .rs-sticker--bonus { animation-delay: 2.2s; }
+  .rs-friend { animation: rs-rise 600ms var(--ease-pop) 300ms both; }
+}
+@keyframes rs-drop { from { transform: translateY(-60px) scale(.6); opacity: 0; } to { transform: rotate(var(--tilt)); opacity: 1; } }
+@keyframes rs-rise { from { transform: translateY(140px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .rd-bubble, .rd-after { animation: none; }
+}
+
+/* ---------- desktop (>=900px) ---------- */
+@media (min-width: 900px) {
+  /* Home: the tag, Play and the slips on the left; Ningning between the bushes on the right */
+  .hm-screen {
+    display: grid;
+    grid-template-columns: minmax(0, 460px) minmax(0, 480px);
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas: "top top" "title friend" "actions friend" ". friend" "bottom friend";
+    justify-content: center;
+    align-items: start;
+    column-gap: var(--s-8);
+    row-gap: var(--s-5);
+    padding: var(--s-6) var(--s-7);
+  }
+  .hm-top { grid-area: top; }
+  .hm-title { grid-area: title; margin-top: var(--s-4); }
+  .hm-title .wordmark { width: 400px; height: 325px; }
+  .hm-friend { grid-area: friend; align-self: center; }
+  .hm-friend .ningning { width: 280px; height: 490px; }
+  .hm-bush--left { left: 0; bottom: 120px; width: 190px; }
+  .hm-bush--right { right: 0; bottom: 110px; width: 160px; }
+  .hm-actions { grid-area: actions; margin: 0; }
+  .hm-bottom { grid-area: bottom; margin: 0; }
+
+  /* Story map: the path runs left to right, easy on the left and hard on the right */
+  .sm-map { display: flex; align-items: center; padding: var(--s-6) var(--s-7) var(--s-8); }
+  .sm-path--tall { display: none; }
+  .sm-path--wide { display: block; }
+  .sm-stops { flex: 1; flex-direction: row-reverse; justify-content: center; align-items: flex-start; gap: var(--s-7); max-width: 1100px; margin: 0 auto; }
+  .sm-stop, .sm-stop:nth-child(even) { width: 300px; align-self: auto; }
+  .sm-stop:nth-child(2) { margin-top: 220px; }
+  .sm-stop:nth-child(3) { margin-top: 70px; }
+  .sm-stop:nth-child(n) .sm-friend { left: 50%; right: auto; top: calc(100% + 8px); transform: translateX(-50%); }
+  .sm-friend .ningning { width: 150px; height: 150px; }
+  .sm-cover { width: 84px; height: 84px; }
+  .sm-cover img { width: 66px; height: 66px; }
+  .sm-title { font-size: 22px; }
+
+  /* Reading: the vine and Ningning on the left, the sentence big on the right (part 2 laptop frame) */
+  .rd-screen {
+    display: grid;
+    grid-template-columns: 460px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas: "top card" "stage card" "stage controls" "privacy controls";
+    column-gap: var(--s-7);
+    padding: 0 var(--s-7) var(--s-6);
+  }
+  .rd-top { grid-area: top; padding: var(--s-6) 0 0; }
+  .rd-dot { width: 18px; height: 18px; }
+  .rd-dot--now { width: 26px; height: 26px; }
+  .rd-stage { grid-area: stage; height: auto; flex-direction: column; align-items: flex-start; gap: var(--s-4); padding: 8vh 0 0; }
+  .rd-stage .ningning { width: 320px; height: 320px; }
+  .rd-stage .rd-bubble { max-width: 380px; font-size: 22px; }
+  .rd-card { grid-area: card; align-self: end; margin: 16vh 0 0; padding: 48px; border-radius: 40px; }
+  .rd-controls { grid-area: controls; justify-content: flex-end; align-items: flex-start; margin: 0; padding: 72px 0 0; }
+  .rd-mic { flex-direction: row-reverse; }
+  .rd-after { width: auto; }
+  .rd-after .k-btn, .rd-after .k-btn--secondary, .rd-after .k-btn--primary { flex: none; min-width: 220px; }
+  .rd-privacy { grid-area: privacy; justify-content: flex-start; padding: var(--s-5) 0 0; }
+
+  /* Result: the stickers and Ningning on the left, the words and buttons on the right */
+  .rs-screen {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) minmax(0, 440px);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas: "stage head" "stage card" "stage actions";
+    justify-content: center;
+    column-gap: var(--s-8);
+    padding: var(--s-8) var(--s-7);
+  }
+  .rs-head { grid-area: head; align-items: flex-start; text-align: left; }
+  .rs-title { font-size: 56px; }
+  .rs-stage { grid-area: stage; height: 560px; margin: 0; }
+  .rs-sticker--main { left: 20px; top: 80px; width: 200px; height: 200px; }
+  .rs-sticker--bonus { left: 190px; top: 240px; width: 130px; height: 130px; }
+  .rs-friend { right: 0; top: 40px; }
+  .rs-friend .ningning { width: 220px; height: 495px; }
+  .rs-card { grid-area: card; margin-top: var(--s-6); max-width: none; }
+  .rs-actions { grid-area: actions; align-self: start; margin: 0; padding-top: var(--s-6); }
+}

@@ -1,6 +1,9 @@
-// Reading screen: the Must loop (issue #3). Visual design: issue #10 (designer).
+// Reading screen: the Must loop (issue #3). Paper puppet look (Claude Design part 2): issue #10.
 // mic (#2) → silence gate (ADR-0006) → Whisper in the worker (#14) → scorer (#20) → words light up → Ningning.
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import type { MascotMood } from '../game/mascot'
+import type { ReadingState } from '../game/readingMachine'
+import type { Story } from '../content/stories'
 import { useI18n } from '../i18n'
 import { getStory } from '../content/stories'
 import { createRecorder, MicError } from '../asr/audio'
@@ -17,8 +20,14 @@ import { Ningning } from '../ui/Ningning'
 import { WordChip } from '../ui/WordChip'
 import { MicButton } from '../ui/MicButton'
 import { PrivacyMeter } from '../ui/PrivacyMeter'
+import { PaperScene } from '../ui/PaperScene'
+import { Button } from '../ui/Button'
+import { BackIcon, RetryIcon } from '../ui/icons'
+import { syllabify } from '../content/syllables'
 import { go } from './router'
 import { haptic } from '../ui/haptics'
+import './screens.css'
+import './core.css'
 
 const REVEAL_MS = 120
 
@@ -31,7 +40,6 @@ const moodCopy = {
 } as const
 
 export function Reading({ storyId }: { storyId: string }) {
-  const { t } = useI18n()
   const story = getStory(storyId)
   const recorder = useMemo(() => createRecorder(), [])
   const session = useMemo(() => createSession(storyId, story?.sentences.length ?? 0), [storyId, story])
@@ -136,14 +144,7 @@ export function Reading({ storyId }: { storyId: string }) {
     }
   }
 
-  if (!story || !sentence) {
-    return (
-      <section className="stack center">
-        <p>{t('reading.notFound')}</p>
-        <a className="big" href="#/map">{t('result.more')}</a>
-      </section>
-    )
-  }
+  if (!story || !sentence) return <NotFound />
 
   const onNext = () => {
     if (state.phase !== 'reviewed') skipped.current = true // skipping only exists when the model cannot run
@@ -164,39 +165,133 @@ export function Reading({ storyId }: { storyId: string }) {
     }
   }
 
+  return (
+    <ReadingView
+      key={index} // a new sentence starts with every syllable bubble closed
+      story={story}
+      index={index}
+      state={state}
+      words={words}
+      mood={mood}
+      beat={beat}
+      glow={glow}
+      level={level}
+      onMic={onMic}
+      onNext={onNext}
+    />
+  )
+}
+
+export function NotFound() {
+  const { t } = useI18n()
+  return (
+    <section className="rd-missing paper-stage">
+      <PaperScene hills="mid" />
+      <p className="rd-bubble">{t('reading.notFound')}</p>
+      <a className="k-btn k-btn--primary" href="#/map">{t('result.more')}</a>
+    </section>
+  )
+}
+
+interface ViewProps {
+  story: Story
+  index: number
+  state: ReadingState
+  words: WordResult[]
+  mood: MascotMood
+  beat: number
+  glow?: number
+  level: number
+  onMic: () => void
+  onNext: () => void
+}
+
+/** What the child sees; Reading above owns the mic, the model and the session. */
+export function ReadingView({ story, index, state, words, mood, beat, glow, level, onMic, onNext }: ViewProps) {
+  const { t } = useI18n()
+  const [open, setOpen] = useState<number>()
+  const sentence = story.sentences[index]
+  const total = story.sentences.length
   const micState = state.phase === 'listening' ? 'recording' : state.phase === 'thinking' ? 'thinking' : 'idle'
   const busy = state.phase === 'thinking' || state.phase === 'revealing'
+  const marked = words.length > 0 && (state.phase === 'revealing' || state.phase === 'reviewed')
+  const say = state.notice ?? (state.phase === 'reviewed' && mood === 'idle' ? 'reading.reviewed' : moodCopy[mood])
 
   return (
-    <section className="stack center">
-      <p className="muted">{index + 1} / {story.sentences.length}</p>
-      <Ningning key={beat} mood={mood} glow={glow} size={140} label={t(moodCopy[mood])} />
-      <p aria-live="polite">{t(moodCopy[mood])}</p>
-      <p className="sentence" lang="fil">
-        {words.length && (state.phase === 'revealing' || state.phase === 'reviewed')
-          ? words.map((w, i) => <WordChip key={i} word={w.word} status={i < state.shown || state.phase === 'reviewed' ? w.status : 'pending'} popping={i === state.shown - 1} />)
-          : sentence.text}
-      </p>
-      <MicButton
-        state={micState}
-        level={state.phase === 'listening' ? level : 0}
-        label={t(state.phase === 'listening' ? 'reading.stop' : 'reading.tapMic')}
-        onPress={busy ? undefined : onMic}
-      />
-      {state.notice && <p role="status">{t(state.notice)}</p>}
-      {state.phase === 'reviewed' && (
-        <div className="row">
-          <button onClick={onMic}>{t('reading.retry')}</button>
-          <button className="big" onClick={onNext}>{t('reading.next')}</button>
+    <section className="rd-screen paper-stage">
+      <PaperScene hills="low" />
+      <header className="rd-top">
+        <a className="k-icon-btn" href="#/map" aria-label={t('nav.back')}>
+          <BackIcon />
+        </a>
+        <ol className="rd-vine" aria-label={`${index + 1}/${total}`}>
+          {story.sentences.map((_, i) => (
+            <li
+              key={i}
+              className={i < index ? 'rd-dot rd-dot--done' : i === index ? 'rd-dot rd-dot--now' : 'rd-dot'}
+              aria-current={i === index ? 'step' : undefined}
+            />
+          ))}
+        </ol>
+        <span className="rd-count">{index + 1}/{total}</span>
+      </header>
+      <div className="rd-stage">
+        <Ningning key={beat} mood={mood} glow={glow} size={180} label={t(moodCopy[mood])} />
+        {/* the live region stays mounted so screen readers hear each new line; only the bubble re-pops */}
+        <div className="rd-say" aria-live="polite" role={state.notice ? 'status' : undefined}>
+          <p className="rd-bubble" key={say}>
+            {t(say)}
+          </p>
         </div>
-      )}
-      {state.canSkip && state.phase === 'ready' && (
-        <div className="row">
-          <a href="#/">{t('nav.back')}</a>
-          <button onClick={onNext}>{t('reading.skip')}</button>
-        </div>
-      )}
-      <PrivacyMeter />
+      </div>
+      <div className="rd-card">
+        <p className="rd-sentence" lang="fil">
+          {marked
+            ? words.map((w, i) => {
+                const reviewed = state.phase === 'reviewed'
+                return (
+                  <WordChip
+                    key={i}
+                    word={w.word}
+                    status={i < state.shown || reviewed ? w.status : 'pending'}
+                    popping={i === state.shown - 1}
+                    syllables={syllabify(w.word)}
+                    open={reviewed && open === i}
+                    onTap={reviewed ? () => setOpen(open === i ? undefined : i) : undefined}
+                  />
+                )
+              })
+            : sentence.text}
+        </p>
+      </div>
+      <div className="rd-controls">
+        {state.phase === 'reviewed' ? (
+          <div className="rd-after">
+            <Button variant="secondary" icon={<RetryIcon />} onClick={onMic}>
+              {t('reading.retry')}
+            </Button>
+            <Button onClick={onNext}>{t('reading.next')}</Button>
+          </div>
+        ) : (
+          <div className="rd-mic">
+            <MicButton
+              state={micState}
+              level={state.phase === 'listening' ? level : 0}
+              label={t(state.phase === 'listening' ? 'reading.stop' : 'reading.tapMic')}
+              onPress={busy ? undefined : onMic}
+            />
+            <p className="rd-status">{t(state.phase === 'listening' ? 'reading.stop' : 'reading.tapMic')}</p>
+            {state.canSkip && state.phase === 'ready' && (
+              <Button variant="secondary" className="rd-skip" onClick={onNext}>
+                {t('reading.skip')}
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="rd-privacy">
+        <PrivacyMeter />
+      </div>
     </section>
   )
 }

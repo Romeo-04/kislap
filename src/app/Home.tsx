@@ -1,36 +1,55 @@
-import { STORIES } from '../content/stories'
+// Home (Claude Design part 2, #10): the wordmark tag, Ningning on a stick between paper bushes,
+// one yellow Play, the readiness slip, the jar. Desktop: the tag and buttons left, Ningning right.
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { loadProgress, localDate, saveProgress, touchStreak } from '../game/progress'
-import { AdventureMap } from '../ui/AdventureMap'
 import { Ningning } from '../ui/Ningning'
-import { GameIcon } from '../ui/GameIcon'
-import { PlayIcon } from '../ui/icons'
-
-/** One finishing sticker and one gold sticker per story (ADR-0010). */
-const STICKER_TOTAL = STORIES.length * 2
+import { Wordmark } from '../ui/Wordmark'
+import { PaperScene } from '../ui/PaperScene'
+import { LangToggle } from '../ui/LangToggle'
+import { OfflineBadge } from '../ui/OfflineBadge'
+import { Bush } from '../ui/Bush'
+import { GearIcon, JarIcon, PlayIcon } from '../ui/icons'
+import './screens.css'
+import './core.css'
 
 export function Home() {
   const { t } = useI18n()
   const [streak] = useState(() => touchStreak(loadProgress(), localDate()))
   useEffect(() => saveProgress({ ...loadProgress(), streak: streak.progress.streak }), [streak])
-  const progress = loadProgress()
-  return <>
-    <div className="home-layout">
-      <section className="welcome">
-        <div className="welcome-friend"><Ningning mood="cheering" size={136} /><span className="speech-bubble">{t('home.bubble')}</span></div>
-        <h1>{t('home.headline1')}<br />{t('home.headline2')} <span>{t('home.headlineSpark')}</span></h1>
-        <p className="welcome-description">{t('home.description')}</p>
-        {streak.welcomeBack && <p role="status">{t('home.welcomeBack')}</p>}
-        <a href="#/map" className="candy-button"><PlayIcon />{t('home.play')}<GameIcon name="arrow" /></a>
-        <p className="welcome-note">{t('home.note')}</p>
-      </section>
-      <AdventureMap />
-    </div>
-    <section className="activity-strip" aria-label={t('home.activities')}>
-      <div className="daily-progress"><span className="activity-icon activity-icon--peach"><GameIcon name="flame" size={28} /></span><div><h2>{t(streak.progress.streak.days === 1 ? 'home.daysOne' : 'home.daysMany').replace('{n}', String(streak.progress.streak.days))}</h2><p>{t('home.streakNote')}</p></div></div>
-      <a className="activity-link" href="#/progress"><span className="activity-icon activity-icon--pink"><GameIcon name="star" size={28} /></span><div><h2>{t('progress.title')}</h2><p>{progress.stickers.length} / {STICKER_TOTAL} {t('home.stickersCollected')}</p></div><GameIcon name="arrow" /></a>
-      <a className="activity-link" href="#/wordpop"><span className="activity-icon activity-icon--blue"><GameIcon name="bubble" size={28} /></span><div><h2>{t('wordpop.title')}</h2><p>{t('home.wordpopNote')}</p></div><GameIcon name="arrow" /></a>
+  return (
+    <section className="hm-screen paper-stage">
+      <PaperScene hills="high" />
+      <div className="hm-top">
+        <LangToggle />
+        <a className="k-icon-btn k-icon-btn--settings" href="#/settings" aria-label={t('settings.title')}>
+          <GearIcon />
+        </a>
+      </div>
+      <div className="hm-title">
+        <Wordmark width={320} />
+        {streak.welcomeBack && <p className="hm-welcome" role="status">{t('home.welcomeBack')}</p>}
+      </div>
+      <div className="hm-friend">
+        <Bush className="hm-bush hm-bush--left" />
+        <Ningning mood="idle" glow={0.7} stick={150} size={210} label={t('mascot.idle')} />
+        <Bush className="hm-bush hm-bush--right" flip />
+      </div>
+      <div className="hm-actions">
+        <a className="k-btn k-btn--primary hm-play" href="#/map">
+          <span className="hm-play__shine" aria-hidden="true" />
+          <PlayIcon />
+          <span>{t('home.play')}</span>
+        </a>
+        <OfflineBadge />
+      </div>
+      <nav className="hm-bottom" aria-label={t('home.activities')}>
+        <a className="hm-jar" href="#/progress">
+          <JarIcon />
+          <span>{t('progress.title')}</span>
+        </a>
+        <a className="hm-pop" href="#/wordpop">{t('wordpop.title')}</a>
+      </nav>
     </section>
-  </>
+  )
 }

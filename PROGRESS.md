@@ -44,7 +44,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 |---|---|---|---|
 | #8 | Design tokens and UI kit | CP1 | 🔨 PR open: part 2 paper puppet tokens, kit, `PaperScene`, `Wordmark` (`docs/design/paper-puppet.md`) |
 | #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open: part 2 paper puppet (wings on brass pins, stick, thinner edge) |
-| #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: candy adventure design + mobile-native shell |
+| #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: Home, Story map, Reading (five states) and Result in the paper look, phone and desktop |
 | #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
@@ -92,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10** — #10: Home, Story map, Reading and Result move to the paper puppet look, each with a desktop layout at 900px and wider. Reading and Result split into a view (`ReadingView`, `ResultView`) and the lead's logic, unchanged. The map covers use the sticker art, Ningning waits by the next story, and Result keeps confetti and the sticker at 0 stars, as in the design. The readiness badge is a paper slip. `AdventureMap` is gone.
 - **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
 - **2026-10-10 01:25** — #9: Ningning is the part 2 paper puppet in `src/ui/Ningning.tsx`: four wings turn on brass pins per mood, an optional puppet stick sways, the die-cut edge is half the handoff's. New app icon; the v1 mood SVGs are gone.
 - **2026-10-10 01:10** — #8: Claude Design part 2 "paper puppet theatre" replaces the candy-adventure look, issue by issue. This PR: paper tokens, the kit redrawn as cut paper, `src/ui/PaperScene.tsx` (sky, hills, Gabi night) and `src/ui/Wordmark.tsx`. `adventure.css` stays until each screen moves; a paper scope in `tokens.css` keeps paper pieces on paper values meanwhile. Next: #9 Ningning, #11 stickers, then the screens (#10, #45, #12, #13), each with a desktop layout.
