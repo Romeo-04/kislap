@@ -89,3 +89,16 @@ describe('Confetti', () => {
     expect(count(html(<Confetti />), 'class="k-confetti__bit ')).toBe(34)
   })
 })
+
+describe('paper look (Claude Design part 2)', () => {
+  it('draws earned stars with a cream edge and a darker right half, never a dark outline', () => {
+    const out = html(<StarRow stars={1} />)
+    expect(out).toContain('stroke="var(--edge)"')
+    expect(out).toContain('k-star__shade')
+    expect(out).not.toContain('stroke="var(--ink)"')
+  })
+
+  it('draws empty stars as cream with a dashed cut line, not grey', () => {
+    expect(html(<StarRow stars={0} />)).toContain('stroke-dasharray="3 3"')
+  })
+})
