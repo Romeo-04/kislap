@@ -60,6 +60,19 @@ describe('Word Pop screen', () => {
     expect(view(run(['bata'], { type: 'model-unavailable' }))).toContain(fil['reading.skip'])
   })
 
+  it('hides the mic when there is no model, so nothing starts a download', () => {
+    const out = view(run(['bata'], { type: 'model-unavailable' }))
+    expect(out).not.toContain('k-mic')
+    expect(out).toContain(fil['reading.skip'])
+  })
+
+  it('promises syllables only when a bubble really splits', () => {
+    expect(view(run(['bata', 'pusa']))).toContain(fil['wordpop.tap'])
+    const out = view(run(['pusa', 'aso']), { open: 0 })
+    expect(out).not.toContain(fil['wordpop.tap'])
+    expect(out).not.toContain('aria-expanded')
+  })
+
   it('celebrates when every bubble has popped, with no mic', () => {
     const out = view(run(['bata'], ...said('bata')), { mood: 'celebrating' })
     expect(out).toContain(fil['wordpop.doneTitle'])

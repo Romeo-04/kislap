@@ -7,7 +7,7 @@ import { loadProgress } from '../game/progress'
 import { createRecorder, MicError } from '../asr/audio'
 import { isMostlySilence } from '../asr/meter'
 import { isModelCached, loadModel, setFakeHeard, transcribe } from '../asr/transcribe'
-import { initialWordPop, isDone, wordPopReducer, type WordPopState } from '../game/wordPop'
+import { initialWordPop, isDone, tapBubble, wordPopReducer, type WordPopState } from '../game/wordPop'
 import { moodFor } from '../game/mascot'
 import { loadSettings } from '../game/settings'
 import { playSound } from '../game/sound'
@@ -24,7 +24,7 @@ import './screens.css'
 import './core.css'
 import './wordpop.css'
 
-/** Dev/demo only: `?fake=1` makes the stub model "hear" the word in the current bubble. Never the default. */
+/** Dev only, like `transcribe.ts`: `?fake` makes the stub model "hear" the word in the current bubble. Never the default. */
 const FAKE = typeof location !== 'undefined' && new URLSearchParams(location.search).has('fake')
 
 /** "Pop them again" starts a fresh round from the same Practice words. */
@@ -98,15 +98,13 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
         setMood(moodFor('silence'))
         return dispatch({ type: 'silence' })
       }
+      // the model went missing during this try: calling it now would download it
+      if (state.noModel) return dispatch({ type: 'failed' })
       if (FAKE) setFakeHeard(state.bubbles[state.current].word)
       const { text } = await transcribe(pcm)
       if (!mounted.current) return // the child left while Ningning was thinking
-      // noise can pass the silence gate and come back empty: a model miss, not the child's
-      if (!text.trim()) {
-        setMood(moodFor('silence'))
-        return dispatch({ type: 'failed' })
-      }
-      dispatch({ type: 'heard', text })
+      if (!text.trim()) setMood(moodFor('silence'))
+      dispatch({ type: 'heard', text }) // a blank clip never counts as a try (the reducer decides)
     } catch (err) {
       console.error('[wordpop] transcription failed', err)
       setMood(moodFor('silence'))
@@ -121,7 +119,7 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
   })
 
   const onMic = async () => {
-    if (state.phase === 'thinking') return
+    if (state.phase === 'thinking' || state.noModel) return
     haptic(12)
     if (state.phase === 'listening') return finish()
     try {
@@ -134,12 +132,10 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
     }
   }
 
-  // a tap on the current bubble opens or closes its syllables; a tap on another one moves to it, open
   const onPick = (index: number) => {
-    if (index === state.current) return setOpen(open === index ? undefined : index)
-    if (state.phase !== 'ready') return
-    dispatch({ type: 'pick', index })
-    setOpen(index)
+    const tap = tapBubble(state, open, index)
+    if (tap.pick !== undefined) dispatch({ type: 'pick', index: tap.pick })
+    setOpen(tap.open)
   }
 
   return (
@@ -170,11 +166,8 @@ interface ViewProps {
   onAgain: () => void
 }
 
-// one piece means there is nothing to split, so the bubble shows no second copy of the word
-function Syllables({ word }: { word: string }) {
-  const parts = syllabify(word)
-  return parts.length > 1 ? <span className="wp-syllables" role="status">{parts.join(' · ')}</span> : null
-}
+// one piece means there is nothing to split: no second copy of the word, and no promise of one
+const splits = (word: string) => syllabify(word).length > 1
 
 const LAST_COPY = { said: 'wordpop.said', helped: 'wordpop.helped', missed: 'wordpop.missed' } as const
 
@@ -188,6 +181,7 @@ export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onS
     total === 0 ? 'wordpop.emptyTitle'
     : done ? 'wordpop.doneTitle'
     : state.notice ?? (state.last ? LAST_COPY[state.last] : state.phase === 'thinking' ? 'reading.thinking' : 'wordpop.hint')
+  const canSplit = state.bubbles.some((b) => !b.popped && splits(b.word))
   const micState = state.phase === 'listening' ? 'recording' : state.phase === 'thinking' ? 'thinking' : 'idle'
 
   return (
@@ -224,9 +218,9 @@ export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onS
                     {b.word}
                   </span>
                 ) : (
-                  <button type="button" className={cls} aria-pressed={current} aria-expanded={open === i} onClick={() => onPick(i)}>
+                  <button type="button" className={cls} aria-pressed={current} aria-expanded={splits(b.word) ? open === i : undefined} onClick={() => onPick(i)}>
                     <span className="wp-word">{b.word}</span>
-                    {open === i && <Syllables word={b.word} />}
+                    {open === i && splits(b.word) && <span className="wp-syllables" role="status">{syllabify(b.word).join(' · ')}</span>}
                   </button>
                 )}
               </li>
@@ -234,7 +228,7 @@ export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onS
           })}
         </ul>
       )}
-      {total > 0 && !done && <p className="wp-tip">{t('wordpop.tap')}</p>}
+      {canSplit && <p className="wp-tip">{t('wordpop.tap')}</p>}
 
       <div className="rd-controls">
         {total === 0 ? (
@@ -243,6 +237,10 @@ export function WordPopView({ state, mood, beat, level, open, onPick, onMic, onS
           <div className="rd-after">
             <Button variant="secondary" icon={<RetryIcon />} onClick={onAgain}>{t('wordpop.again')}</Button>
             <a className="k-btn k-btn--primary" href="#/map">{t('result.more')}</a>
+          </div>
+        ) : state.noModel ? (
+          <div className="rd-mic">
+            <Button variant="secondary" className="rd-skip" onClick={onSkip}>{t('reading.skip')}</Button>
           </div>
         ) : (
           <div className="rd-mic">

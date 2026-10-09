@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { initialWordPop, isDone, matchesWord, wordPopReducer, type WordPopEvent, type WordPopState } from './wordPop'
+import { initialWordPop, isDone, matchesWord, tapBubble, wordPopReducer, type WordPopEvent, type WordPopState } from './wordPop'
 
 describe('matchesWord', () => {
   it('accepts the word with Whisper punctuation and case', () => {
@@ -115,5 +115,80 @@ describe('word pop never costs the child', () => {
   it('clears the notice when the mic starts again', () => {
     const s = wordPopReducer(wordPopReducer(thinking, { type: 'silence' }), { type: 'mic-started' })
     expect(s.notice).toBeUndefined()
+  })
+})
+
+describe('word pop review fixes', () => {
+  const thinking = (words = ['bata']) => ([{ type: 'mic-started' }, { type: 'stopped' }] as WordPopEvent[]).reduce(wordPopReducer, initialWordPop(words))
+
+  it('pops at similarity exactly 0.6 and not below it', () => {
+    expect(matchesWord('tubig', 'tabog')).toBe(true) // 3/5
+    expect(matchesWord('tubig', 'tabos')).toBe(false) // 2/5
+  })
+
+  it('matches a word Whisper split in two', () => {
+    expect(matchesWord('paaralan', 'paa ralan')).toBe(true)
+  })
+
+  it('does not count a blank transcription as a try', () => {
+    const s = wordPopReducer(thinking(), { type: 'heard', text: '  ' })
+    expect(s).toMatchObject({ phase: 'ready', notice: 'reading.modelRetry' })
+    expect(s.bubbles[0].tries).toBe(0)
+  })
+
+  it('offers Skip after the model fails twice in a row', () => {
+    let s = wordPopReducer(thinking(), { type: 'failed' })
+    expect(s.canSkip).toBeFalsy()
+    s = ([{ type: 'mic-started' }, { type: 'stopped' }, { type: 'failed' }] as WordPopEvent[]).reduce(wordPopReducer, s)
+    expect(s.canSkip).toBe(true)
+  })
+
+  it('offers Skip when the mic cannot start', () => {
+    expect(wordPopReducer(initialWordPop(['bata']), { type: 'mic-failed', denied: true }).canSkip).toBe(true)
+  })
+
+  it('marks the model missing so the screen does not try to download it', () => {
+    expect(wordPopReducer(initialWordPop(['bata']), { type: 'model-unavailable' }).noModel).toBe(true)
+    expect(wordPopReducer(thinking(), { type: 'model-unavailable' }).noModel).toBe(true)
+  })
+
+  it('does nothing on an empty round', () => {
+    const empty = initialWordPop([])
+    for (const e of [{ type: 'mic-started' }, { type: 'skip' }, { type: 'pick', index: 0 }] as WordPopEvent[]) {
+      expect(wordPopReducer({ ...empty, canSkip: true }, e)).toEqual({ ...empty, canSkip: true })
+    }
+  })
+
+  it('floats each word once even if the save repeats one', () => {
+    expect(initialWordPop(['bata', 'pusa', 'bata']).bubbles.map((b) => b.word)).toEqual(['bata', 'pusa'])
+  })
+
+  it('keeps the model notice after a Skip', () => {
+    const s = wordPopReducer(wordPopReducer(initialWordPop(['bata', 'pusa']), { type: 'model-unavailable' }), { type: 'skip' })
+    expect(s.notice).toBe('reading.modelUnavailable')
+  })
+
+  it('ignores a second stop and a heard clip outside thinking', () => {
+    const s = thinking()
+    expect(wordPopReducer(s, { type: 'stopped' })).toBe(s)
+    const ready = initialWordPop(['bata'])
+    expect(wordPopReducer(ready, { type: 'heard', text: 'bata' })).toBe(ready)
+  })
+})
+
+describe('tapBubble', () => {
+  it('opens and closes the syllables of the current bubble', () => {
+    const s = initialWordPop(['bata', 'pusa'])
+    expect(tapBubble(s, undefined, 0)).toEqual({ open: 0 })
+    expect(tapBubble(s, 0, 0)).toEqual({ open: undefined })
+  })
+
+  it('moves to another bubble with its syllables open', () => {
+    expect(tapBubble(initialWordPop(['bata', 'pusa']), undefined, 1)).toEqual({ open: 1, pick: 1 })
+  })
+
+  it('does not move while listening', () => {
+    const listening = wordPopReducer(initialWordPop(['bata', 'pusa']), { type: 'mic-started' })
+    expect(tapBubble(listening, undefined, 1)).toEqual({ open: undefined })
   })
 })
