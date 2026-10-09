@@ -29,8 +29,13 @@ export function loadProgress(): Progress {
   }
 }
 
+/** Never throws: a full or blocked storage must not stop the child from reaching the next screen. */
 export function saveProgress(p: Progress): void {
-  globalThis.localStorage?.setItem(PROGRESS_KEY, JSON.stringify(p))
+  try {
+    globalThis.localStorage?.setItem(PROGRESS_KEY, JSON.stringify(p))
+  } catch (err) {
+    console.error('[progress] could not save', err)
+  }
 }
 
 export const MAX_PRACTICE_WORDS = 20

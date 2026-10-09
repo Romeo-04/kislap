@@ -43,6 +43,20 @@ describe('load and save', () => {
   })
 })
 
+describe('saveProgress', () => {
+  it('does not throw when storage is full or blocked', () => {
+    const original = globalThis.localStorage.setItem
+    globalThis.localStorage.setItem = () => {
+      throw new DOMException('quota', 'QuotaExceededError')
+    }
+    try {
+      expect(() => saveProgress(defaultProgress())).not.toThrow()
+    } finally {
+      globalThis.localStorage.setItem = original
+    }
+  })
+})
+
 describe('recordStory', () => {
   it('gives a sticker for finishing even with 0 stars (ADR-0010)', () => {
     const { progress, newSticker } = recordStory(defaultProgress(), 'story-1', 0)
