@@ -95,7 +95,7 @@ export function MicCheckView({ state, fill, onRetry, onDone }: { state: MicCheck
     return (
       <section className="mc-screen paper-stage">
         <PaperScene hills="low" />
-        <TopBar title={t('miccheck.title')} />
+        <TopBar title={t('miccheck.title')} up="#/settings" />
         <div className="mc-denied">
           <Ningning mood="encouraging" glow={0.45} size={120} />
           <p className="mc-denied-text">{t(phase === 'denied' ? 'mic.denied' : 'mic.unavailable')}</p>
@@ -113,7 +113,7 @@ export function MicCheckView({ state, fill, onRetry, onDone }: { state: MicCheck
   return (
     <section className="mc-screen paper-stage">
       <PaperScene hills="low" />
-      <TopBar title={t('miccheck.title')} />
+      <TopBar title={t('miccheck.title')} up="#/settings" />
       <div className={heard || noisy ? 'mc-stage mc-stage--talk' : 'mc-stage'}>
         <Ningning mood={heard ? 'cheering' : noisy ? 'encouraging' : 'listening'} glow={heard ? 0.95 : noisy ? 0.5 : 0.6} size={heard || noisy ? 190 : 200} />
         {heard && <p className="mc-bubble mc-bubble--big">{t('miccheck.heard')}</p>}
