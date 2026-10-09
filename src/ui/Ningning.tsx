@@ -1,5 +1,6 @@
 // Ningning the firefly (issue #9): a paper puppet (Claude Design part 2, Ningning.dc.html).
-// Four paper wings turn on brass split pins; moods change the eyes, mouth, antennae and wing angles.
+// Four paper wings turn on brass split pins; moods change the face, antennae, head tilt and wing angles,
+// and add thought bubbles (thinking) or sparkles (celebrating).
 // The glow stays live so it can follow the child's accuracy. `stick` holds Ningning up on a dowel.
 import { useId } from 'react'
 import { defaultGlow, type MascotMood } from '../game/mascot'
@@ -7,17 +8,18 @@ import './ningning.css'
 
 interface Props {
   mood: MascotMood
-  /** 0.3..1; omitted = the mood's default glow */
+  /** 0..1, clamped to 0.3..1 (NaN counts as 0.3); omitted = the mood's default glow */
   glow?: number
+  /** width in px; the height grows with `stick` */
   size?: number
   label?: string
-  /** length of the puppet stick below the body, in SVG units (0 = no stick) */
+  /** extra frame height in SVG units; the stick runs from y=150 to the new bottom edge (0 or less = no stick) */
   stick?: number
 }
 
 interface Pose {
-  up: number // upper wing angle, negative = up
-  lo: number // lower wing angle
+  up: number // upper wing angle in degrees, positive raises the tip
+  lo: number // lower wing angle in degrees, positive raises the tip
   eyes: 'open' | 'happy'
   look?: [number, number]
   mouth: 'v' | 'o' | 'wave' | 'smile' | 'open'
@@ -28,11 +30,11 @@ interface Pose {
 
 const POSES: Record<MascotMood, Pose> = {
   idle: { up: 0, lo: 0, eyes: 'open', look: [0, 2], mouth: 'v' },
-  listening: { up: -8, lo: -4, eyes: 'open', look: [1, -4], mouth: 'o', ant: 'up' },
-  thinking: { up: 4, lo: 2, eyes: 'open', look: [-4, -4], mouth: 'wave', brow: 'think' },
-  cheering: { up: -24, lo: -10, eyes: 'happy', mouth: 'open', ant: 'up' },
-  encouraging: { up: -4, lo: 0, eyes: 'open', look: [1, 3], mouth: 'smile', brow: 'soft', tilt: -6 },
-  celebrating: { up: -34, lo: 20, eyes: 'happy', mouth: 'open', ant: 'up' },
+  listening: { up: 8, lo: 4, eyes: 'open', look: [1, -4], mouth: 'o', ant: 'up' },
+  thinking: { up: -4, lo: -2, eyes: 'open', look: [-4, -4], mouth: 'wave', brow: 'think' },
+  cheering: { up: 24, lo: 10, eyes: 'happy', mouth: 'open', ant: 'up' },
+  encouraging: { up: 4, lo: 0, eyes: 'open', look: [1, 3], mouth: 'smile', brow: 'soft', tilt: -6 },
+  celebrating: { up: 34, lo: -20, eyes: 'happy', mouth: 'open', ant: 'up' },
 }
 
 const WING_UP = 'M0 0 C -6 -18 -40 -34 -56 -24 C -68 -16 -60 0 -42 2 C -26 4 -10 3 0 0 Z'
@@ -83,9 +85,11 @@ function Mouth({ kind }: { kind: Pose['mouth'] }) {
   }
 }
 
-export function Ningning({ mood, glow, size = 180, label = 'Ningning', stick = 0 }: Props) {
+export function Ningning({ mood, glow, size = 180, label = 'Ningning', stick: rawStick = 0 }: Props) {
   const p = POSES[mood]
-  const g = Math.max(0.3, Math.min(1, glow ?? defaultGlow(mood)))
+  const stick = Math.max(0, rawStick || 0)
+  const wanted = glow ?? defaultGlow(mood)
+  const g = Number.isFinite(wanted) ? Math.max(0.3, Math.min(1, wanted)) : 0.3
   const [lx, ly] = p.look ?? [0, 0]
   // unique filter id: several Ningnings can share a page
   const cut = `nn-cut-${useId().replace(/:/g, '')}`
@@ -124,7 +128,7 @@ export function Ningning({ mood, glow, size = 180, label = 'Ningning', stick = 0
         </filter>
       </defs>
       <g data-part="figure">
-        <g data-part="glow" style={{ mixBlendMode: 'screen' }}>
+        <g data-part="glow">
           <circle cx="100" cy="160" r="64" fill="#FFE79A" opacity={+(g * 0.45).toFixed(2)} />
           <circle cx="100" cy="160" r="40" fill="#FFD95A" opacity={+(g * 0.7).toFixed(2)} />
         </g>

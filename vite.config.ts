@@ -22,7 +22,8 @@ export default defineConfig({
         orientation: 'portrait',
         background_color: '#fff9f4',
         theme_color: '#fff9f4',
-        icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }] /* rounded art with wings near the edge: not safe for maskable crops */,
+        // rounded art with wings near the edge: not safe for maskable crops
+        icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3,ogg,webm,m4a,json}'],

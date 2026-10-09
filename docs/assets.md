@@ -62,7 +62,9 @@ Added in PR #60 (#8).
 ## Art
 
 All art is original, made for Kislap during the hackathon with Claude Design (see D12). None of it
-copies an existing mascot, brand or character. The SVGs carry a C2PA provenance manifest.
+copies an existing mascot, brand or character. The sticker SVGs carry a C2PA provenance manifest.
+Ningning (drawn in code) and the app icon were redrawn from the Claude Design part 2 handoff and
+carry none.
 
 | File | What it is | Licence |
 |---|---|---|
