@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createRecorder, MicError, SAMPLE_RATE, SPEECH_LEVEL } from '../asr/audio'
 import { isMostlySilence, rms } from '../asr/meter'
+import { useI18n } from '../i18n'
 
 interface GpuInfo {
   available: boolean
@@ -39,6 +40,7 @@ function play(pcm: Float32Array) {
 }
 
 export function MicTest() {
+  const { t } = useI18n()
   const recorder = useMemo(() => createRecorder(), [])
   const [gpu, setGpu] = useState<GpuInfo | null>(null)
   const [recording, setRecording] = useState(false)
@@ -82,21 +84,21 @@ export function MicTest() {
 
   return (
     <section className="stack">
-      <h1>Device check</h1>
+      <h1>{t('device.title')}</h1>
       <ul>
-        <li>Secure context (HTTPS): {String(window.isSecureContext)}</li>
-        <li>getUserMedia: {String(!!navigator.mediaDevices?.getUserMedia)}</li>
+        <li>{t('device.secure')}: {t(window.isSecureContext ? 'device.yes' : 'device.no')}</li>
+        <li>{t('device.micAvailable')}: {t(typeof navigator.mediaDevices?.getUserMedia === 'function' ? 'device.yes' : 'device.no')}</li>
         <li>
-          WebGPU: {gpu ? String(gpu.available) : '…'}
-          {gpu?.available && ` · shader-f16: ${gpu.f16} · ${gpu.vendor || 'unknown GPU'}`}
+          WebGPU: {t(gpu ? (gpu.available ? 'device.yes' : 'device.no') : 'device.checking')}
+          {gpu?.available && ` · shader-f16: ${t(gpu.f16 ? 'device.yes' : 'device.no')} · ${gpu.vendor || t('device.unknownGpu')}`}
         </li>
-        <li>Cores: {navigator.hardwareConcurrency} · UA: {navigator.userAgent}</li>
+        <li>{t('device.cores')}: {navigator.hardwareConcurrency} · {t('device.browser')}: {navigator.userAgent}</li>
       </ul>
       <button className="big" onClick={toggle}>{recording ? '⏹ Stop' : '🎤 Record'}</button>
       <meter min={0} max={0.2} low={SPEECH_LEVEL} value={recording ? level : 0} style={{ width: '100%', height: 24 }} />
       <p>{status}</p>
       {clip && <button onClick={() => play(clip)}>▶ Play the 16 kHz clip</button>}
-      <a href="#/">Back</a>
+      <a href="#/">{t('nav.back')}</a>
     </section>
   )
 }

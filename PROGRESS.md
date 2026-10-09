@@ -8,7 +8,8 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 - **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
 - **Deployed URL:** https://kislap.vercel.app (device check: https://kislap.vercel.app/#/mictest)
 - **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
-- **Flutter spike:** @Seedlign, decide by 17:00 (#48, `docs/spikes/flutter-whisper-trial.md`)
+- **Flutter spike:** closed, not run (#48). Web app stays (ADR-0002).
+- **Visual design:** Claude Design handoff in `docs/design/claude-design-handoff.md` (brief: `docs/design-handoff.md`).
 
 ## Checkpoints
 
@@ -41,15 +42,15 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #8 | Design tokens and UI kit | CP1 | ⏳ |
-| #9 | Ningning SVG, 6 moods, glow | CP1 | ⏳ |
+| #8 | Design tokens and UI kit | CP1 | 🔨 PR open (Claude Design tokens, Baloo 2 + Andika, kit in `src/ui/`) |
+| #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | ⏳ |
-| #11 | Sounds and Sticker art | CP2 | ⏳ |
+| #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | ⏳ |
-| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ⏳ |
-| D4 #28, D11 #35 | Deliverables | — | ⏳ |
+| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
+| D4 #28, D11 #35 | Deliverables | — | ⏳ D11 draft in `docs/assets.md` |
 
 ### Model engineer (@acmrsu) — epic #43
 
@@ -67,10 +68,10 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #19 | Three original stories | CP1 | ⏳ |
+| #19 | Three original stories | CP1 | 🔨 Implemented and verified; awaiting PR review |
 | #20 | Forgiving scorer + ≥ 10 tests | CP1 | ⏳ |
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
-| #22 | i18n copy fil + en | CP2 | ⏳ |
+| #22 | i18n copy fil + en | CP2 | 🔨 Copy and scaffold wiring verified; open for suggestions and integrated UI review |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
 | #24 | Device QA, offline + network checks | Freeze | ⏳ |
 | #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
@@ -86,10 +87,16 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
 - Q1–Q7 settled (see `docs/validation.md` grill log).
-- Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
 
+- **2026-10-09 21:27** — #19 / PR #53: revised the stories for a clearer reading progression. The easy story uses short, familiar words and a complete cat-and-firefly plot; the medium story has a garden problem and resolution; the hard story uses longer clauses and Taglish. Each has eight sentences of four to ten words. Content checks, the existing test, typecheck, and build pass. Awaiting teammate review.
+- **2026-10-09 21:18** — #22: expanded both language dictionaries with incoming UI/offline keys and four cheering/encouraging variants each. Localized scaffold screen labels, mascot states, and accessible controls. Eight tests and build pass; lint has only the existing i18n Fast Refresh warning. Independent diff review found no blockers. The user approved the wording while asking to keep the issue open for suggestions. Final integrated UI and confirmed native-speaker review remain in `docs/i18n-review.md`.
+- **2026-10-09 19:30** — #11: sticker art mapped to stories by level (`src/content/stickers.ts`), soft Web Audio sounds (`src/game/sound.ts`), sound/night setting under `kislap.settings.v1`, D11 draft `docs/assets.md`.
+- **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
+- **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
+- **2026-10-09 17:53** — #19 / PR #53: applied the three grammar corrections from review (Dumapo, Sabay silang umuwi, Dahan-dahan) and added quotation marks to Ben's dialogue. Story IDs, levels, and sentence counts are unchanged. Awaiting teammate approval.
+- **2026-10-09 17:37** — #19: replaced the scaffold stories with three original stories in Ningning's world. Eight sentences each, four to ten words per sentence, bilingual titles, and stable story IDs. Content checks, the existing test, build, and lint pass. Awaiting teammate review.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
 - **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
