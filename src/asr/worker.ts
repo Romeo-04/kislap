@@ -21,6 +21,8 @@ env.backends.onnx.wasm!.wasmPaths = {
   wasm: new URL('../../node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.wasm', import.meta.url).href,
 }
 
+const MAX_NEW_TOKENS = 64
+
 let asr: AutomaticSpeechRecognitionPipeline | undefined
 // Requests run one at a time: a second inference would fight the first for the same session.
 let queue: Promise<void> = Promise.resolve()
@@ -43,7 +45,9 @@ async function load(msg: Extract<ToWorker, { type: 'load' }>): Promise<void> {
 async function run(audio: Float32Array): Promise<{ text: string; ms: number }> {
   if (!asr) throw new Error('Model is not loaded')
   const t0 = performance.now()
-  const out = await asr(audio, { language: 'tagalog', task: 'transcribe' })
+  // The cap stops a runaway repeat ("duh-duh-duh...") that took 23 s in testing. A story sentence is
+  // at most 10 words, about 40 tokens, so 64 never cuts a real answer short.
+  const out = await asr(audio, { language: 'tagalog', task: 'transcribe', max_new_tokens: MAX_NEW_TOKENS })
   const text = (Array.isArray(out) ? out[0]?.text : out.text) ?? ''
   return { text: text.trim(), ms: Math.round(performance.now() - t0) }
 }
@@ -69,7 +73,9 @@ ctx.onmessage = (e) => {
       }
     } catch (err) {
       const id = msg.type === 'transcribe' ? msg.id : undefined
-      ctx.postMessage({ type: 'error', id, message: err instanceof Error ? err.message : String(err) })
+      // Keep the error name (TypeError, RuntimeError...) so a log says more than the bare message.
+      const message = err instanceof Error ? (err.name !== 'Error' ? `${err.name}: ${err.message}` : err.message) : String(err)
+      ctx.postMessage({ type: 'error', id, message })
     }
   })
 }

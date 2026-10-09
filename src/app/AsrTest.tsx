@@ -1,7 +1,7 @@
 // Model debug page (/#/asrtest): load the model, record, transcribe, show text + ms. Used for #14, #15.
 // Add ?tier=large or ?tier=small to force a tier.
 import { useRef, useState } from 'react'
-import { isModelCached, loadModel, transcribe, warmUp } from '../asr/transcribe'
+import { forgetSavedTier, getActiveTier, getSavedTier, isModelCached, loadModel, transcribe, warmUp } from '../asr/transcribe'
 import { RATE, toPcm } from '../asr/devkit'
 import { rms, SILENCE_RMS } from '../asr/meter'
 import type { TierInfo } from '../asr/tier'
@@ -13,6 +13,7 @@ export function AsrTest() {
   const [text, setText] = useState('')
   const [ms, setMs] = useState<number>()
   const [clip, setClip] = useState('')
+  const [, refresh] = useState(0) // re-read the saved tier after the button below
   const chunks = useRef<Blob[]>([])
 
   const load = async () => {
@@ -64,6 +65,15 @@ export function AsrTest() {
       <h1>Model check</h1>
       <p>
         Tier: {tier ? `${tier.tier} · ${tier.modelId} · ${tier.device}` : '—'} · cached: {String(cached ?? '?')}
+      </p>
+      <p>
+        Saved tier: {getSavedTier() ?? 'none'} · active now: {getActiveTier()?.tier ?? 'not loaded'}
+        {getSavedTier() && (
+          <>
+            {' '}
+            <button onClick={() => { forgetSavedTier(); refresh((n) => n + 1) }}>Forget saved tier</button>
+          </>
+        )}
       </p>
       <button className="big" onClick={load}>Load model</button>
       <button className="big" onClick={record} disabled={!tier}>🎤 Record 5 s</button>
