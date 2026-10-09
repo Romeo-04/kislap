@@ -57,7 +57,7 @@ Filipino"). No therapy or diagnosis claims.
 | Problem | Do this |
 |---|---|
 | Model not ready ("I-download…" shows) | Switch to the other device. If both, play the fallback video and keep talking. |
-| The room is too loud and words come out orange | Reader holds the mic closer / uses the headset. Say: "It is forgiving on purpose: a noisy room never costs the child a star." |
+| The room is too loud and words come out orange | Reader holds the mic closer / uses the headset. Say: "The scoring is forgiving on purpose, and finishing a story always earns a sticker." |
 | Mic permission prompt | Tap Allow. Rehearse this once so it is not a surprise. |
 | Browser crash or freeze | Reopen the installed app from the home screen. It loads offline. |
 | Projector or screen share fails | Hand the phone to the nearest judge and let them read. |
@@ -68,7 +68,7 @@ Filipino"). No therapy or diagnosis claims.
 | Question | Answer (keep it true) |
 |---|---|
 | Which model? | Whisper, open weights. On the laptop a Filipino fine-tune (`whisper-small-pld-fil`), on phones Whisper-base. It runs in the browser through Transformers.js with WebGPU. |
-| How accurate is it on children? | We have not measured it on children, and we know of no public Filipino child-speech dataset. That is why the scoring is forgiving and a model error never costs a star. |
+| How accurate is it on children? | We have not measured it on children, and we know of no public Filipino child-speech dataset. That is why the scoring is forgiving and a model error never leaves the child with nothing: finishing a story always earns a sticker. |
 | Why not just use a cloud API? | The child's voice would leave the device, and it would not work offline. Kislap runs with zero requests while reading. |
 | How big is the download? | About 77 MB on phones and about 590 MB for the Filipino model on laptops, once. After that, nothing. |
 | How is this different from Google Read Along? | Read Along is excellent and also on-device. Kislap is Filipino and Taglish first, opens from a link with no install, and uses open, swappable models. |
