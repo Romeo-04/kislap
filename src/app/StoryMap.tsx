@@ -1,5 +1,6 @@
 // Story map (Claude Design part 2, #10): a sandy paper path over the hills, story cards on it,
-// easiest at the bottom. Ningning waits by the first story without stars. Nothing is locked.
+// easiest at the bottom. Ningning waits by the first story not yet finished (the first story once
+// all are done). Nothing is locked.
 // Desktop: the path runs left to right, easiest on the left.
 import { useI18n } from '../i18n'
 import { STORIES } from '../content/stories'

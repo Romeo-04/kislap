@@ -37,7 +37,8 @@ export function Result({ storyId }: { storyId: string }) {
   return <ResultView storyId={storyId} stars={result.stars} newSticker={outcome.newSticker} />
 }
 
-/** 0 stars is still a win: confetti, the sticker and a celebrating Ningning stay; only the yellow button swaps. */
+/** 0 stars is still a win: confetti, the sticker and a celebrating Ningning stay. Only the button order,
+ * a softer glow (0.75, as in the design) and the try-again line change. */
 export function ResultView({ storyId, stars, newSticker }: { storyId: string; stars: Stars; newSticker?: string }) {
   const { t } = useI18n()
   const sticker = stickerArt(`sticker-${storyId}`, STORIES)
@@ -57,7 +58,7 @@ export function ResultView({ storyId, stars, newSticker }: { storyId: string; st
         {sticker && <img className="rs-sticker rs-sticker--main" src={sticker.src} alt={sticker.name} width={136} height={136} />}
         {bonus && <img className="rs-sticker rs-sticker--bonus" src={bonus.src} alt={bonus.name} width={88} height={88} />}
         <span className="rs-friend">
-          <Ningning mood="celebrating" glow={stars === 0 ? 0.45 : undefined} size={160} stick={250} label={t('result.title')} />
+          <Ningning mood="celebrating" glow={stars === 0 ? 0.75 : undefined} size={160} stick={250} label={t('result.title')} />
         </span>
       </div>
       {(newSticker || stars === 0) && (

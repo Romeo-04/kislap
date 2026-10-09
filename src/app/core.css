@@ -78,7 +78,7 @@
 .sm-title { font: 800 20px / 1.1 var(--font-display); }
 .sm-sub { font-size: 14px; color: var(--muted); }
 .sm-text .k-stars { gap: 2px; padding-top: 4px; }
-/* Ningning waits beside the next story, on the open side of the card */
+/* Ningning waits under the next story, pushed toward the open side of the card (centred on desktop) */
 .sm-friend { position: absolute; top: calc(100% - 4px); pointer-events: none; }
 .sm-stop:nth-child(odd) .sm-friend { right: -84px; }
 .sm-stop:nth-child(even) .sm-friend { left: -84px; }
@@ -104,7 +104,7 @@
 .rd-card { margin: 0 var(--s-5); padding: 26px 22px 20px; border: var(--edge-w) solid var(--edge); border-radius: 32px; background: var(--paper); color: var(--ink); box-shadow: var(--lift); }
 .rd-sentence { margin: 0; font: 400 var(--text-sentence) / 1.5 var(--font-read); text-wrap: pretty; }
 .rd-controls { margin-top: auto; padding: var(--s-6) var(--s-5) 0; display: flex; justify-content: center; }
-/* room for the halos while recording, so they never cover the label */
+/* room for the halos at rest and at a normal voice; a very loud voice can still reach the label */
 .rd-mic { display: flex; flex-direction: column; align-items: center; gap: var(--s-6); }
 .rd-status { margin: 0; padding: 4px 14px; border-radius: var(--r-pill); background: var(--paper); color: var(--ink); font: 700 18px var(--font-display); }
 .rd-skip { min-height: 56px; font-size: 22px; }

@@ -167,7 +167,6 @@ export function Reading({ storyId }: { storyId: string }) {
 
   return (
     <ReadingView
-      key={index} // a new sentence starts with every syllable bubble closed
       story={story}
       index={index}
       state={state}
@@ -209,7 +208,24 @@ interface ViewProps {
 /** What the child sees; Reading above owns the mic, the model and the session. */
 export function ReadingView({ story, index, state, words, mood, beat, glow, level, onMic, onNext }: ViewProps) {
   const { t } = useI18n()
-  const [open, setOpen] = useState<number>()
+  // a syllable bubble belongs to one scoring: new words (a retry, the next sentence) close it
+  const [open, setOpen] = useState<{ words: WordResult[]; i: number }>()
+  const isOpen = (i: number) => open?.words === words && open.i === i
+  // the mic and the Retry/Next pair swap places; when the button under focus goes away, focus
+  // lands on Next after scoring and on the mic otherwise, so keyboard and switch users keep their place
+  const controls = useRef<HTMLDivElement>(null)
+  const last = useRef({ phase: state.phase, index })
+  useEffect(() => {
+    // only a swap moves focus: opening the screen (and StrictMode's second run) leaves it, so a screen reader starts at the top
+    if (last.current.phase === state.phase && last.current.index === index) return
+    last.current = { phase: state.phase, index }
+    const box = controls.current
+    const active = document.activeElement
+    if (!box || (active && active !== document.body && !box.contains(active))) return
+    const buttons = box.querySelectorAll('button')
+    const target = state.phase === 'reviewed' ? buttons[buttons.length - 1] : buttons[0]
+    if (target && target !== active) target.focus()
+  }, [state.phase, index])
   const sentence = story.sentences[index]
   const total = story.sentences.length
   const micState = state.phase === 'listening' ? 'recording' : state.phase === 'thinking' ? 'thinking' : 'idle'
@@ -237,7 +253,7 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
       </header>
       <div className="rd-stage">
         <Ningning key={beat} mood={mood} glow={glow} size={180} label={t(moodCopy[mood])} />
-        {/* the live region stays mounted so screen readers hear each new line; only the bubble re-pops */}
+        {/* the live region stays mounted for the whole story, so screen readers hear each new line; only the bubble re-pops */}
         <div className="rd-say" aria-live="polite" role={state.notice ? 'status' : undefined}>
           <p className="rd-bubble" key={say}>
             {t(say)}
@@ -256,15 +272,15 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
                     status={i < state.shown || reviewed ? w.status : 'pending'}
                     popping={i === state.shown - 1}
                     syllables={syllabify(w.word)}
-                    open={reviewed && open === i}
-                    onTap={reviewed ? () => setOpen(open === i ? undefined : i) : undefined}
+                    open={reviewed && isOpen(i)}
+                    onTap={reviewed ? () => setOpen(isOpen(i) ? undefined : { words, i }) : undefined}
                   />
                 )
               })
             : sentence.text}
         </p>
       </div>
-      <div className="rd-controls">
+      <div className="rd-controls" ref={controls}>
         {state.phase === 'reviewed' ? (
           <div className="rd-after">
             <Button variant="secondary" icon={<RetryIcon />} onClick={onMic}>

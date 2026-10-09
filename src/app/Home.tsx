@@ -1,5 +1,5 @@
 // Home (Claude Design part 2, #10): the wordmark tag, Ningning on a stick between paper bushes,
-// one yellow Play, the readiness slip, the jar. Desktop: the tag and buttons left, Ningning right.
+// one yellow Play, the readiness slip, the jar and Word Pop. Desktop: the tag and buttons left, Ningning right.
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { loadProgress, localDate, saveProgress, touchStreak } from '../game/progress'

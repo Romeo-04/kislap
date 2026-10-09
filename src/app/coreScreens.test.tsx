@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup as html } from 'react-dom/server'
 import { I18nProvider } from '../i18n'
 import { Home } from './Home'
@@ -53,6 +53,11 @@ describe('Home', () => {
   })
 })
 
+const nextIs = (id: string) => new RegExp(`sm-stop sm-stop--next"><a class="sm-card" href="#/reading/${id}"`)
+const stubStars = (stars: Record<string, number>) =>
+  vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ version: 1, stars }), setItem: () => {} })
+afterEach(() => vi.unstubAllGlobals())
+
 describe('StoryMap', () => {
   it('shows every story as a paper card, hardest at the top', () => {
     const out = wrap(<StoryMap />)
@@ -64,7 +69,14 @@ describe('StoryMap', () => {
     const out = wrap(<StoryMap />)
     expect(out).toContain('src="/stickers/sticker-sampaguita.svg"')
     expect(count(out, 'class="ningning"')).toBe(1)
-    expect(out).toMatch(/sm-stop--next[\s\S]*#\/reading\/story-1/)
+    expect(out).toMatch(nextIs('story-1'))
+  })
+
+  it('moves Ningning to the first story without stars, and back to the first once all have stars', () => {
+    stubStars({ 'story-1': 2 })
+    expect(wrap(<StoryMap />)).toMatch(nextIs('story-2'))
+    stubStars({ 'story-1': 2, 'story-2': 1, 'story-3': 3 })
+    expect(wrap(<StoryMap />)).toMatch(nextIs('story-1'))
   })
 })
 
@@ -100,9 +112,22 @@ describe('Reading', () => {
     expect(out).toContain(fil['reading.next'])
   })
 
+  it('revealing: words light up one at a time, no syllable taps yet', () => {
+    const words = story.sentences[1].text.split(' ').map((word) => ({ word, status: 'correct' as const, similarity: 1 }))
+    const out = view({ state: { phase: 'revealing', shown: 1, total: words.length, scored: true }, words, mood: 'thinking' })
+    expect(count(out, 'k-word--correct')).toBe(1)
+    expect(count(out, 'k-word--pending')).toBe(words.length - 1)
+    expect(count(out, 'k-word--pop')).toBe(1)
+    expect(out).not.toContain('k-word--tappable')
+  })
+
+  it('reviewed and settled: Ningning says to look at the words', () => {
+    expect(view({ state: { phase: 'reviewed', shown: 0, total: 0, scored: true }, mood: 'idle' })).toContain(fil['reading.reviewed'])
+  })
+
   it('silence: a kind notice in the bubble, the mic back, nothing marked', () => {
     const out = view({ state: { ...initialReading, notice: 'reading.silence' }, mood: 'encouraging' })
-    expect(out).toContain(fil['reading.silence'])
+    expect(out).toContain(`role="status"><p class="rd-bubble">${fil['reading.silence']}`)
     expect(out).toContain('k-mic--idle')
     expect(out).not.toContain('k-word--')
   })
@@ -110,6 +135,8 @@ describe('Reading', () => {
   it('offers skip only when the model cannot run', () => {
     expect(view()).not.toContain(fil['reading.skip'])
     expect(view({ state: { ...initialReading, canSkip: true, notice: 'reading.modelUnavailable' } })).toContain(fil['reading.skip'])
+    for (const phase of ['listening', 'thinking'] as const)
+      expect(view({ state: { ...initialReading, phase, canSkip: true } })).not.toContain(fil['reading.skip'])
   })
 
   it('keeps the privacy meter', () => {
@@ -134,5 +161,24 @@ describe('Result', () => {
     expect(out).toContain(fil['result.lowStars'])
     expect(out).toContain('k-confetti')
     expect(out).toMatch(/k-btn--primary[^"]*" href="#\/reading\/story-1"/)
+  })
+
+  it('one or two stars: more stories stays yellow, no bonus, no try-again line', () => {
+    for (const stars of [1, 2] as const) {
+      const out = wrap(<ResultView storyId="story-1" stars={stars} />)
+      expect(out).toMatch(/k-btn--primary[^"]*" href="#\/map"/)
+      expect(out).not.toContain(fil['result.lowStars'])
+      expect(out).not.toContain('sticker-kubo')
+    }
+  })
+
+  it('names the new sticker, and shows no card on a replay with nothing new', () => {
+    const first = wrap(<ResultView storyId="story-1" stars={2} newSticker="sticker-story-1" />)
+    expect(first).toContain('data-sticker="sticker-story-1"')
+    expect(first).toContain(fil['result.sticker'])
+    expect(first).not.toContain(fil['result.bonus'])
+    const replay = wrap(<ResultView storyId="story-1" stars={2} />)
+    expect(replay).not.toContain('rs-card')
+    expect(replay).not.toContain('data-sticker')
   })
 })

@@ -8,7 +8,7 @@ import { GameIcon } from './GameIcon'
 import { OfflineBadge } from './OfflineBadge'
 
 /** Screens already drawn in the paper puppet look (Claude Design part 2): they bring their own
- * paper scene and top bar, so the older candy header, tab bar and footer stay off. */
+ * paper scene and header, so the older candy header, tab bar and footer stay off. */
 export const PAPER_ROUTES = new Set(['home', 'map', 'reading', 'result', 'settings', 'miccheck'])
 
 export function GameShell({ children, route }: { children: ReactNode; route: string }) {
