@@ -37,7 +37,9 @@ works where the signal is weak and keeps a child's voice private.
   the firefly jar.
 - **Practice words.** Missed and unclear words are saved on the device; the Word Pop screen lists
   them to practise aloud.
-- **Syllable help.** Tap a word after reading to see its syllables (pantig), such as "ba · ta".
+- **Word help.** Tap a word after reading to see its syllables (pantig), such as "ba · ta". For
+  a word that was not clear, Ningning says what it heard, and **Listen** reads the word slowly with
+  a voice installed on the device (shown only when the phone has a Filipino-like voice).
 - **Mic check.** Say "Kumusta, Ningning!" to test the microphone and the room before reading.
 - **Daily streak.** It counts days played and never resets to zero.
 - **Privacy meter.** An on-screen counter of the requests the reading screen makes while the child
