@@ -9,5 +9,6 @@ export type ToWorker =
 export type FromWorker =
   | { type: 'progress'; loaded: number; total: number; file: string }
   | { type: 'ready'; tier: TierInfo }
+  | { type: 'warmed' }
   | { type: 'result'; id: number; text: string; ms: number }
   | { type: 'error'; id?: number; message: string }

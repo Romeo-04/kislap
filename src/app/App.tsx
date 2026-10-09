@@ -8,6 +8,7 @@ import { WordPop } from './WordPop'
 import { Progress } from './Progress'
 import { MicCheck } from './MicCheck'
 import { MicTest } from './MicTest'
+import { AsrTest } from './AsrTest'
 
 export function App() {
   const route = useRoute()
@@ -22,6 +23,7 @@ export function App() {
         {route.name === 'progress' && <Progress />}
         {route.name === 'miccheck' && <MicCheck />}
         {route.name === 'mictest' && <MicTest />}
+        {route.name === 'asrtest' && <AsrTest />}
       </main>
     </I18nProvider>
   )

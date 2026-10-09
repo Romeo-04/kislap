@@ -7,7 +7,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 - **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
 - **Deployed URL:** https://kislap.vercel.app (device check: https://kislap.vercel.app/#/mictest)
-- **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
+- **Speech model in use:** bootstrap `onnx-community/whisper-base` q8, in a Web Worker (#14; model check page: `/#/asrtest`); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
 - **Flutter spike:** @Seedlign, decide by 17:00 (#48, `docs/spikes/flutter-whisper-trial.md`)
 
 ## Checkpoints
@@ -55,7 +55,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #14 | ASR worker with bootstrap Whisper-base | CP1 | ⏳ |
+| #14 | ASR worker with bootstrap Whisper-base | CP1 | 🔨 PR open |
 | #15 | Device benchmark: laptop + Poco X6 Pro | CP1 | ⏳ |
 | #16 | Model tiers (Filipino small on laptop, base on phone) | CP2 | ⏳ |
 | #17 | Stretch: export whisper-small-fsc q4f16 (stop 22:00) | CP2 | ⏳ |
@@ -80,7 +80,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | Device | Tier / model / dtype | Backend | Download MB | Load s | 4 s sentence s | Notes |
 |---|---|---|---|---|---|---|
-| Laptop (Chrome) | | | | | | |
+| Laptop (Chrome) | small / whisper-base / q8 | wasm | | | 3.3 (4.9 s clip) | First run 6.3 s. Heard "si Mini ay sa mga liit na pusa" for "Si Mimi ay isang maliit na pusa." |
 | Poco X6 Pro (Chrome) | | | | | | |
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
@@ -90,6 +90,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-09 18:45** — #14: real Whisper worker and client in `src/asr/` (load with byte progress, transcribe with transferred audio, `isModelCached`, `warmUp`). Model check page at `/#/asrtest`. Fake mode stays on until `loadModel()` runs, so the Reading screen is unchanged. Worker contract gains a `warmed` message. Tested on a laptop in Chrome with a real recording.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
 - **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
