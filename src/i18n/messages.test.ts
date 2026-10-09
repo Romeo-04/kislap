@@ -14,6 +14,8 @@ import { Result } from '../app/Result'
 import { WordPop } from '../app/WordPop'
 import { MicTest } from '../app/MicTest'
 import { defaultProgress } from '../game/progress'
+import { createSession, finishSession } from '../game/session'
+import { getStory } from '../content/stories'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -58,7 +60,14 @@ describe('bilingual copy', () => {
 
   it.each(['fil', 'en'] as const)('renders all scaffold screens using the saved %s language', (lang) => {
     vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang }) })
-    vi.stubGlobal('sessionStorage', { getItem: () => '0.7' })
+    // The Result screen shows only a finished Reading session (a direct link records nothing).
+    const sentences = getStory('story-1')!.sentences.length
+    const session = createSession('story-1', sentences)
+    for (let i = 0; i < sentences; i++) {
+      const words = (['correct', 'correct', 'correct', 'missed'] as const).map((status) => ({ word: 'a', status, similarity: 1 }))
+      session.addAttempt({ sentenceIndex: i, heard: '', accuracy: 0.75, words }) // 2 stars: the plain sticker line
+    }
+    finishSession(session)
     vi.stubGlobal('window', { isSecureContext: true })
     vi.stubGlobal('navigator', { mediaDevices: {}, hardwareConcurrency: 4, userAgent: 'test browser' })
     const dictionary = lang === 'fil' ? fil : en

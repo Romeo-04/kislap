@@ -6,6 +6,10 @@ describe('parseName', () => {
     expect(parseName('story-1-1__marcus.m4a')).toEqual({ clip: 'story-1-1', reader: 'marcus' })
   })
 
+  it('accepts a single underscore before the reader', () => {
+    expect(parseName('story-1-5-skip_marcus.m4a')).toEqual({ clip: 'story-1-5-skip', reader: 'marcus' })
+  })
+
   it('uses "unknown" when the name has no reader', () => {
     expect(parseName('story-2-3.m4a')).toEqual({ clip: 'story-2-3', reader: 'unknown' })
   })

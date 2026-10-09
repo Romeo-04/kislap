@@ -43,7 +43,7 @@ export const SETUPS: Setup[] = [
   { label: 'tiny q8 (WASM)', tier: { ...TIERS.small, modelId: 'onnx-community/whisper-tiny', approxMB: 40, device: 'wasm' }, dtype: 'q8' },
   {
     label: 'small Filipino enc fp32 + dec q4 (WebGPU)',
-    tier: TIERS.large,
+    tier: { tier: 'large', modelId: 'internetoftim/whisper-small-pld-fil-ONNX', device: 'webgpu', approxMB: 586 },
     dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
     fails: 'downloads 586 MB, then fails: "Missing the following inputs: cache_position"',
   },
@@ -112,9 +112,10 @@ export function openSession(setup: Setup, onProgress?: (s: string) => void): Pro
   })
 }
 
-/** "s1-01-clean__marcus.webm" -> { clip: "s1-01-clean", reader: "marcus" } */
+/** "story-1-5-skip__marcus.m4a" or "story-1-5-skip_marcus.m4a" -> { clip: "story-1-5-skip", reader: "marcus" } */
 export function parseName(name: string): { clip: string; reader: string } {
   const base = name.replace(/\.[^.]+$/, '')
-  const [clip, reader = 'unknown'] = base.split('__')
-  return { clip, reader }
+  // Clip ids use hyphens only, so the first underscore (one or two) ends the id.
+  const [clip, ...rest] = base.split(/_+/)
+  return { clip, reader: rest.join('_') || 'unknown' }
 }

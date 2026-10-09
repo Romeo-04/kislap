@@ -73,10 +73,11 @@ export function Golden() {
   }
 
   const textOf = (id: string) => CLIPS.find((c) => c.id === id)?.text ?? '(unknown clip)'
+  const noteOf = (id: string) => CLIPS.find((c) => c.id === id)?.variant ?? ''
   const table = [
-    '| Clip | Reader | Setup | Expected | Heard | ms |',
-    '|---|---|---|---|---|---|',
-    ...rows.map((r) => `| ${r.clip} | ${r.reader} | ${r.setup} | ${textOf(r.clip)} | ${r.heard} | ${r.ms} |`),
+    '| Clip | Note | Reader | Setup | Expected | Heard | ms |',
+    '|---|---|---|---|---|---|---|',
+    ...rows.map((r) => `| ${r.clip} | ${noteOf(r.clip)} | ${r.reader} | ${r.setup} | ${textOf(r.clip)} | ${r.heard} | ${r.ms} |`),
   ].join('\n')
 
   return (

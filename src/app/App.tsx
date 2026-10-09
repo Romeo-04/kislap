@@ -11,16 +11,17 @@ import { MicTest } from './MicTest'
 import { AsrTest } from './AsrTest'
 import { Bench } from './Bench'
 import { Golden } from './Golden'
+import { GameShell } from '../ui/GameShell'
 
 export function App() {
   const route = useRoute()
   return (
     <I18nProvider>
-      <main className="screen">
+      <GameShell route={route.name}>
         {route.name === 'home' && <Home />}
         {route.name === 'map' && <StoryMap />}
-        {route.name === 'reading' && <Reading storyId={route.storyId} />}
-        {route.name === 'result' && <Result storyId={route.storyId} />}
+        {route.name === 'reading' && <Reading key={route.storyId} storyId={route.storyId} />}
+        {route.name === 'result' && <Result key={route.storyId} storyId={route.storyId} />}
         {route.name === 'wordpop' && <WordPop />}
         {route.name === 'progress' && <Progress />}
         {route.name === 'miccheck' && <MicCheck />}
@@ -28,7 +29,7 @@ export function App() {
         {route.name === 'asrtest' && <AsrTest />}
         {route.name === 'bench' && <Bench />}
         {route.name === 'golden' && <Golden />}
-      </main>
+      </GameShell>
     </I18nProvider>
   )
 }
