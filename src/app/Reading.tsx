@@ -24,6 +24,7 @@ import { PaperScene } from '../ui/PaperScene'
 import { Button } from '../ui/Button'
 import { BackIcon, RetryIcon } from '../ui/icons'
 import { syllabify } from '../content/syllables'
+import { localVoice, onVoicesChanged, sayWord } from '../ui/speak'
 import { go } from './router'
 import { goUp } from '../ui/goBack'
 import { haptic } from '../ui/haptics'
@@ -212,6 +213,9 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
   // a syllable bubble belongs to one scoring: new words (a retry, the next sentence) close it
   const [open, setOpen] = useState<{ words: WordResult[]; i: number }>()
   const isOpen = (i: number) => open?.words === words && open.i === i
+  // "Pakinggan" shows only when the device has a local Filipino-like voice (voices load late)
+  const [canListen, setCanListen] = useState(() => !!localVoice())
+  useEffect(() => onVoicesChanged(() => setCanListen(!!localVoice())), [])
   // the mic and the Retry/Next pair swap places; when the button under focus goes away, focus
   // lands on Next after scoring and on the mic otherwise, so keyboard and switch users keep their place
   const controls = useRef<HTMLDivElement>(null)
@@ -272,7 +276,6 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
                     word={w.word}
                     status={i < state.shown || reviewed ? w.status : 'pending'}
                     popping={i === state.shown - 1}
-                    syllables={syllabify(w.word)}
                     open={reviewed && isOpen(i)}
                     onTap={reviewed ? () => setOpen(isOpen(i) ? undefined : { words, i }) : undefined}
                   />
@@ -281,6 +284,9 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
             : sentence.text}
         </p>
       </div>
+      {state.phase === 'reviewed' && open?.words === words && words[open.i] && (
+        <WordHelp word={words[open.i]} canListen={canListen} />
+      )}
       <div className="rd-controls" ref={controls}>
         {state.phase === 'reviewed' ? (
           <div className="rd-after">
@@ -310,5 +316,27 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
         <PrivacyMeter />
       </div>
     </section>
+  )
+}
+
+/** Under the card for the tapped word: how to say it (syllables, an on-device voice) and, for a
+ * word that was not clear, what Ningning heard. Never "wrong": a mishearing may be the model's. */
+function WordHelp({ word, canListen }: { word: WordResult; canListen: boolean }) {
+  const { t } = useI18n()
+  const parts = syllabify(word.word)
+  return (
+    <div className="rd-help" role="status">
+      <p className="rd-help__say" lang="fil">{parts.join(' · ')}</p>
+      {word.status !== 'correct' && (
+        <p className="rd-help__heard">
+          {word.heard ? t('reading.heard').replace('{heard}', word.heard) : t('reading.notHeard')}
+        </p>
+      )}
+      {canListen && (
+        <Button variant="secondary" onClick={() => sayWord(word.word)}>
+          {t('reading.listen')}
+        </Button>
+      )}
+    </div>
   )
 }
