@@ -1,33 +1,43 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { chooseTier, DTYPE, hasWebGPU, isMobile, TIERS } from './tier'
+import { chooseTier, DTYPE, GPU_BY_DEFAULT, hasWebGPU, isMobile, TIERS } from './tier'
 
 const desktopGpu = { gpu: true, mobile: false }
 
 describe('chooseTier', () => {
-  it('uses the GPU tier on a desktop with WebGPU', () => {
-    expect(chooseTier(desktopGpu)).toBe(TIERS.large)
-  })
-
-  it('uses the WASM tier without WebGPU', () => {
+  it('uses the WASM tier by default, even on a desktop with WebGPU', () => {
+    expect(GPU_BY_DEFAULT).toBe(false)
+    expect(chooseTier(desktopGpu)).toBe(TIERS.small)
     expect(chooseTier({ gpu: false, mobile: false })).toBe(TIERS.small)
   })
 
-  it('uses the WASM tier on a phone even when WebGPU exists', () => {
-    expect(chooseTier({ gpu: true, mobile: true })).toBe(TIERS.small)
-  })
-
-  it('lets ?tier= override everything', () => {
-    expect(chooseTier({ ...desktopGpu, forced: 'small', saved: 'large' })).toBe(TIERS.small)
+  it('uses the GPU tier only with ?tier=large', () => {
+    expect(chooseTier({ ...desktopGpu, forced: 'large' })).toBe(TIERS.large)
     expect(chooseTier({ gpu: false, mobile: true, forced: 'large' })).toBe(TIERS.large)
   })
 
+  it('lets ?tier= override the saved tier', () => {
+    expect(chooseTier({ ...desktopGpu, forced: 'small', saved: 'large' })).toBe(TIERS.small)
+    expect(chooseTier({ ...desktopGpu, forced: 'large', saved: 'small' })).toBe(TIERS.large)
+  })
+
   it('ignores a ?tier= value that is not a tier', () => {
-    expect(chooseTier({ ...desktopGpu, forced: 'huge' })).toBe(TIERS.large)
-    expect(chooseTier({ ...desktopGpu, forced: null })).toBe(TIERS.large)
+    expect(chooseTier({ ...desktopGpu, forced: 'huge' })).toBe(TIERS.small)
+    expect(chooseTier({ ...desktopGpu, forced: null })).toBe(TIERS.small)
   })
 
   it('prefers the saved tier over the probe', () => {
-    expect(chooseTier({ ...desktopGpu, saved: 'small' })).toBe(TIERS.small)
+    expect(chooseTier({ ...desktopGpu, saved: 'small', gpuByDefault: true })).toBe(TIERS.small)
+  })
+
+  describe('when the GPU tier is turned on by default', () => {
+    const on = { gpuByDefault: true }
+    it('uses the GPU tier on a desktop with WebGPU', () => {
+      expect(chooseTier({ ...desktopGpu, ...on })).toBe(TIERS.large)
+    })
+    it('uses the WASM tier without WebGPU or on a phone', () => {
+      expect(chooseTier({ gpu: false, mobile: false, ...on })).toBe(TIERS.small)
+      expect(chooseTier({ gpu: true, mobile: true, ...on })).toBe(TIERS.small)
+    })
   })
 })
 

@@ -65,13 +65,12 @@ export function createSilenceDetector(o: { threshold: number; silenceMs: number;
 // ---------- src/asr/tier.ts (Model) ----------
 export type ModelTier = llargel | lsmalll;
 export interface TierInfo { tier: ModelTier; modelId: string; device: lwebgpul | lwasml; approxMB: number }
-export function pickTier(saved?: ModelTier): Promise<TierInfo>;   // URL ?tier= override > saved tier > WebGPU probe (a phone always gets lsmalll)
-// llargel = whisper-base q4 on WebGPU (~136 MB). lsmalll = whisper-base q8 on WASM (~73 MB). If llargel fails to load,
+export function pickTier(saved?: ModelTier): Promise<TierInfo>;   // URL ?tier= override > saved tier > lsmalll (GPU_BY_DEFAULT is off)
+// lsmalll = whisper-base q8 on WASM (~73 MB), the default on every device. llargel = whisper-base fp16 on WebGPU (~139 MB),
+// only with ?tier=large until it passes the reading loop and the offline check on a real GPU. If llargel fails to load,
 // the client starts a fresh worker with lsmalll and saves tier: lsmalll in progress. The same happens if the GPU tier
 // fails on its first run, a warm-up, or later after a device loss (the request is retried once). A network error is
 // never blamed on the GPU and never saved. forgetSavedTier() undoes a saved fallback. Decided from PROGRESS.md.
-
-// ---------- src/asr/transcribe.ts (Model) — main-thread API to the worker ----------
 export interface TranscribeResult {
   text: string;
   ms: number;                                    // inference time, for the debug panel

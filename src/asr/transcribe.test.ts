@@ -193,8 +193,24 @@ describe('tier choice and fallback', () => {
 
   const loadMsg = (w: FakeWorker) => w.sent.find((s) => s.msg.type === 'load')!.msg as Extract<ToWorker, { type: 'load' }>
 
-  it('asks for the GPU tier on a desktop with WebGPU', async () => {
+  it('asks for the WebAssembly tier by default, even on a desktop with WebGPU', async () => {
     vi.stubGlobal('navigator', desktop)
+    void client.loadModel()
+    await tick()
+    expect(loadMsg(FakeWorker.all[0]).tier).toEqual(TIERS.small)
+  })
+
+  it('reports the default WebAssembly tier in the cache check, so a device that cached q8 stays Offline ready', async () => {
+    vi.stubGlobal('navigator', desktop)
+    void client.isModelCached()
+    await tick()
+    const ask = FakeWorker.all[0].sent[0].msg as Extract<ToWorker, { type: 'iscached' }>
+    expect(ask.tier).toEqual(TIERS.small)
+  })
+
+  it('asks for the GPU tier only with ?tier=large', async () => {
+    vi.stubGlobal('navigator', desktop)
+    vi.stubGlobal('location', { search: '?tier=large' })
     void client.loadModel()
     await tick()
     expect(loadMsg(FakeWorker.all[0]).tier).toEqual(TIERS.large)
@@ -209,6 +225,7 @@ describe('tier choice and fallback', () => {
 
   it('falls back to WebAssembly in a fresh worker when the GPU model fails, and remembers it', async () => {
     vi.stubGlobal('navigator', desktop)
+    vi.stubGlobal('location', { search: '?tier=large' })
     const p = client.loadModel()
     await tick()
     FakeWorker.all[0].reply({ type: 'error', message: 'GPU device lost' })
@@ -245,6 +262,7 @@ describe('GPU tier failures after loading', () => {
   beforeEach(() => {
     store = {}
     vi.stubGlobal('navigator', desktop)
+    vi.stubGlobal('location', { search: '?tier=large' }) // the GPU tier is opt-in
     vi.stubGlobal('localStorage', {
       getItem: (k: string) => store[k] ?? null,
       setItem: (k: string, v: string) => void (store[k] = v),
@@ -396,6 +414,22 @@ describe('GPU tier failures after loading', () => {
     expect(seen.at(-1)).toEqual({ file: 'onnx/encoder_model_fp16.onnx', loaded: 0, total: 0 })
     FakeWorker.all[1].reply({ type: 'ready', tier: TIERS.small })
     await p
+  })
+
+  it('loads again after a failed fallback, instead of reusing the load that pointed at the GPU', async () => {
+    const w0 = await loadedOnGpu()
+    const first = client.transcribe(new Float32Array(4))
+    await tick()
+    w0.reply({ type: 'error', id: 1, message: 'GPU device lost' })
+    await tick()
+    FakeWorker.all[1].reply({ type: 'error', message: 'out of memory' }) // the WebAssembly load fails too
+    await expect(first).rejects.toThrow('out of memory')
+    const w1 = FakeWorker.all[1]
+    const before = w1.sent.length
+    void client.transcribe(new Float32Array(4)).catch(() => {})
+    await tick()
+    // A real load first, not a transcribe on a worker with no model.
+    expect(sentTypes(w1).slice(before)).toEqual(['load'])
   })
 
   it('lets a person undo the saved fallback', () => {

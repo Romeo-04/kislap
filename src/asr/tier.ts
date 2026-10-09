@@ -1,9 +1,12 @@
 // Model tiers (issue #16). Both tiers run Whisper base:
-//   large = WebGPU, fp16 (about 139 MB). Laptops with a GPU that supports half precision.
-//           Golden clips: 79% mean accuracy, 1.0 s median per sentence.
-//   small = WebAssembly, q8 (about 73 MB). Phones and anything without WebGPU or shader-f16.
-//           Golden clips: 77%, 3.0 s median. 10.5 s on the Realme GT 7T.
-// q4 on WebGPU was dropped: 72% accuracy, worse than q8. fp16 beat q8 and q4 on both accuracy and speed.
+//   small = WebAssembly, q8 (about 73 MB). THE DEFAULT ON EVERY DEVICE. This is the setup the team
+//           tested end to end, offline, on the laptop and the phone. Golden clips: 77%, 3.0 s median
+//           on a laptop, 10.5 s on the Realme GT 7T.
+//   large = WebGPU, fp16 (about 139 MB). Only with ?tier=large in the URL. It was benchmarked on one
+//           reader's golden clips only (79%, 1.0 s median); it has not run through the full reading
+//           loop or the offline check on a real GPU. Defaulting to it would also make a laptop that
+//           already cached q8 download 139 MB again and lose Offline ready. See GPU_BY_DEFAULT.
+// q4 on WebGPU was dropped: 72% accuracy, worse than q8, with garbled text in the first benchmark.
 // The names stay 'large' and 'small' because on-device progress already stores them (ADR-0008).
 // Why not the Filipino small models: too slow (6 to 26 s on a laptop) and too large. See PROGRESS.md.
 import type { DataType } from '@huggingface/transformers'
@@ -63,16 +66,33 @@ export function isMobile(): boolean {
   const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
   return byAgent || touchMac || coarse
 }
-/** The order of the rules, kept pure so it can be tested: ?tier= override, then the saved tier, then the probe. */
-export function chooseTier(input: { forced?: string | null; saved?: ModelTier; gpu: boolean; mobile: boolean }): TierInfo {
+/**
+ * Off until the GPU tier passes the full reading loop and the offline check on the demo laptop.
+ * While it is off, no device picks the GPU tier by itself: only ?tier=large does.
+ */
+export const GPU_BY_DEFAULT = false
+
+/**
+ * The order of the rules, kept pure so it can be tested: ?tier= override, then the saved tier, then
+ * the probe (only when gpuByDefault is on), else the WebAssembly tier.
+ */
+export function chooseTier(input: {
+  forced?: string | null
+  saved?: ModelTier
+  gpu: boolean
+  mobile: boolean
+  gpuByDefault?: boolean
+}): TierInfo {
   if (input.forced === 'large' || input.forced === 'small') return TIERS[input.forced]
   if (input.saved) return TIERS[input.saved]
-  return input.gpu && !input.mobile ? TIERS.large : TIERS.small
+  const gpuByDefault = input.gpuByDefault ?? GPU_BY_DEFAULT
+  return gpuByDefault && input.gpu && !input.mobile ? TIERS.large : TIERS.small
 }
 
 /** `saved` is the tier remembered in on-device progress (it is set when the GPU tier failed). */
 export async function pickTier(saved?: ModelTier): Promise<TierInfo> {
   const forced = new URLSearchParams(location.search).get('tier')
-  const gpu = forced || saved ? false : await hasWebGPU() // skip the probe when a rule already decided
+  // Skip the probe when a rule already decided, or when its answer would not be used.
+  const gpu = forced || saved || !GPU_BY_DEFAULT ? false : await hasWebGPU()
   return chooseTier({ forced, saved, gpu, mobile: isMobile() })
 }

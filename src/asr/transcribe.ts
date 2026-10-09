@@ -2,8 +2,8 @@
 // transcribe() loads the model itself, from the Cache API after the first download, so a page
 // reload never turns every word into "missed". Fake mode exists only with ?fake in the URL.
 //
-// The GPU tier can fail on a given machine at any time: at load, on the first run, or mid-session
-// after a device loss. Any of those switches to the WebAssembly tier once (see fallBackToSmall).
+// The GPU tier (only with ?tier=large, see tier.ts) can fail on a given machine at any time: at load,
+// on the first run, or mid-session after a device loss. Any of those switches to the WebAssembly tier once (see fallBackToSmall).
 import { loadProgress, saveProgress } from '../game/progress'
 import type { FromWorker, ToWorker } from './messages'
 import { pickTier, TIERS, type ModelTier, type TierInfo } from './tier'
@@ -215,6 +215,9 @@ function fallBackToSmall(reason: unknown): Promise<TierInfo> {
     seenFiles.forEach((file) => onProgress?.({ loaded: 0, total: 0, file }))
     seenFiles.clear()
     dropWorker(new Error('Replacing the worker after a failed GPU tier'))
+    // The old load resolved with the GPU tier, which is gone now. Forget it, so if this fallback fails
+    // the next call loads again instead of reusing a load that points at no model.
+    loading = undefined
     const small = await loadTier(TIERS.small)
     rememberTier('small')
     return small
