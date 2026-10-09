@@ -13,6 +13,9 @@ import { chromium } from 'playwright'
 const args = process.argv.slice(2)
 const arg = (name) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined)
 const VOICE_DIR = arg('--voice')
+if (args.includes('--voice') && (!VOICE_DIR || VOICE_DIR.startsWith('--') || !existsSync(VOICE_DIR))) {
+  throw new Error('--voice needs a folder of clips: --voice <folder>')
+}
 const OUT = resolve(arg('--out') ?? 'docs/demo')
 const PORT = 4173
 const URL = `http://localhost:${PORT}/`
@@ -145,7 +148,11 @@ function stop(proc) {
 
 async function serve() {
   const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { shell: true })
+  let exited = false
+  server.on('exit', () => (exited = true))
   for (let i = 0; i < 60; i++) {
+    // a server already on the port would answer for an old build; --strictPort makes ours exit then
+    if (exited) throw new Error(`vite preview exited: is something else on port ${PORT}?`)
     try {
       if ((await fetch(URL)).ok) return server
     } catch {
@@ -168,7 +175,9 @@ async function prepare() {
     await page.getByRole('button', { name: /download for offline|i-download/i }).click()
     await page.locator('[data-status="ready"]').waitFor({ timeout: 10 * 60_000 })
   }
-  log('model cached, offline ready')
+  // every run starts like a new child: no stars, stickers or practice words from an earlier run
+  await page.evaluate(() => ['kislap.progress.v1', 'kislap.today.v1', 'kislap.welcomeBack'].forEach((k) => localStorage.removeItem(k)))
+  log('model cached, offline ready, save cleared')
   await ctx.close()
 }
 
@@ -181,7 +190,8 @@ async function record(clips) {
   const mark = (name) => (marks[name] = (Date.now() - t0) / 1000)
   const offDevice = []
   let counting = false
-  page.on('request', (r) => {
+  // the context also sees what the service worker and workers fetch, not only the page
+  ctx.on('request', (r) => {
     const u = r.url()
     if (counting && !u.startsWith(URL) && !u.startsWith('data:') && !u.startsWith('blob:')) offDevice.push(u)
   })
@@ -237,7 +247,12 @@ async function record(clips) {
     if (await page.locator('.k-mic[aria-pressed="true"]').count()) await mic.click() // auto-stop may already have fired
     await page.getByRole('button', { name: /^(next|susunod)$/i }).waitFor({ timeout: 60_000 })
     if (i === 0) {
-      await caption(page, 'Whisper runs in the browser. Each word is marked: green line, wavy line, or dashed ring.')
+      await caption(
+        page,
+        clips
+          ? 'Whisper ran in the browser. Each word is marked: green line, wavy line, or dashed ring.'
+          : 'Each word is marked: green line, wavy line, or dashed ring. Live, Whisper does this in the browser.',
+      )
       await sleep(3500)
       const chip = page.locator('button.k-word--missed, button.k-word--unclear').first()
       if (await chip.count()) {
@@ -245,8 +260,10 @@ async function record(clips) {
         await caption(page, 'Tap a word for its syllables and what Ningning heard. It never says wrong.', 'top')
         await sleep(4000)
       }
-      await page.locator('.privacy-meter summary').click().catch(() => {})
-      await caption(page, `The privacy meter: 0 requests. The recorder counted ${offDevice.length} requests leaving the device.`, 'top')
+      await page.locator('.privacy-meter summary').click()
+      const meter = await page.locator('.privacy-meter').getAttribute('data-requests')
+      if (meter !== '0') throw new Error(`the privacy meter reads ${meter}, not 0: the demo cannot claim 0 requests`)
+      await caption(page, `The privacy meter: ${meter} requests. The recorder counted ${offDevice.length} requests leaving the device.`, 'top')
       await sleep(5000)
     } else await sleep(1200)
     await page.getByRole('button', { name: /^(next|susunod)$/i }).click()
@@ -254,7 +271,6 @@ async function record(clips) {
 
   // 5. result
   await page.waitForURL(/#\/result/, { timeout: 30_000 })
-  counting = false
   await caption(page, 'Stars for the reading, and a sticker for every finished story.')
   await sleep(8000)
 
@@ -262,12 +278,14 @@ async function record(clips) {
   await page.goto(`${URL}${q}#/wordpop`)
   await tag(page, `${realOrSim}\nInternet: OFF`)
   await caption(page, 'Missed words come back in Word Pop.')
-  await page.locator('button.wp-bubble').first().waitFor()
   await sleep(2500)
-  await page.locator('button.wp-bubble').first().click()
-  await caption(page, 'Tap a bubble to see its syllables.')
-  await sleep(2500)
-  if (!clips) {
+  const bubbles = await page.locator('button.wp-bubble').count() // a perfect read leaves none
+  if (bubbles) {
+    await page.locator('button.wp-bubble').first().click()
+    await caption(page, 'Tap a bubble to see its syllables.')
+    await sleep(2500)
+  }
+  if (bubbles && !clips) {
     await caption(page, 'Say the word to pop the bubble.')
     for (let n = 0; n < 2 && (await page.locator('button.wp-bubble').count()); n++) {
       await mic.click()
@@ -286,10 +304,12 @@ async function record(clips) {
   // 8. why local
   await card(page, `<div class="slip"><p>Why local? A child's voice is sensitive data. Kislap keeps it on the device, and it keeps working where the signal is weak.</p></div><p>kislap.vercel.app · open source on GitHub</p>`, 8000)
 
+  counting = false
   const video = page.video()
   await ctx.close()
   const raw = await video.path()
-  log('requests that tried to leave the device during reading:', offDevice.length, offDevice)
+  log('requests that tried to leave the device, from internet off to the end:', offDevice.length, offDevice)
+  if (offDevice.length) throw new Error('requests left the device: the video cannot claim 0')
   return { raw, marks, offDevice: offDevice.length }
 }
 

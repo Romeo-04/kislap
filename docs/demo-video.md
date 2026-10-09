@@ -19,13 +19,20 @@ parent consent.
 
 ## What is real in both cuts
 
+In the backup cut no speech model runs during reading: `?fake` returns the stub text. Its
+captions say what Whisper does live, never that it ran.
+
 - The production build, served by `vite preview`.
 - The "Works offline" badge: the first run downloads the speech model (about 77 MB) into the
   browser profile in `scripts/demo/.profile`, before the recording starts.
 - Internet off: the browser is set offline before the story starts, and stays offline.
-- The request count in the corner tag comes from the recorder's own log of every request the page
-  makes. It must read 0, and the run prints the list (empty) at the end. `docs/demo/last-run.json`
-  keeps the count of the last run.
+- The request count in the corner tag comes from the recorder's own log of every request the
+  browser context makes (the page, its workers and the service worker), from the moment the
+  internet goes off to the end card. A run with any request fails instead of writing a video.
+  `docs/demo/last-run.json` keeps the count of the last run. The browser is offline in that window,
+  so a request could not reach the network anyway; the count shows the app does not even try.
+- The Privacy meter value shown is read from the meter itself; a run where it is not 0 fails.
+- Each run starts from an empty save (no stars, stickers or practice words), so the sticker is new.
 - Word marks, word help, stars, sticker, Word Pop and the firefly jar are the real screens.
 
 ## Storyboard (about 90 s)
@@ -34,7 +41,7 @@ parent consent.
 2. What Kislap is, in one sentence.
 3. Home with the real "Works offline" badge.
 4. Internet off.
-5. Story map, then story 1 read sentence by sentence. Sentences 3 to 7 play faster (4x, or 8x
+5. Story map, then story 1 read sentence by sentence. Sentences 3 to the second last play faster (4x, or 8x
    with `--voice`), with a caption that says so.
 6. Word help on a missed word: syllables and what Ningning heard.
 7. Privacy meter open: 0 requests, and the recorder's count.
