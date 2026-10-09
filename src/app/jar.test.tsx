@@ -15,7 +15,7 @@ const mem = () => {
 }
 const today = localDate()
 // these tests read the Filipino copy, so Filipino is saved as the UI language (English is the default)
-const save = (p: object) => localStorage.setItem(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'fil', ...p }))
+const save = (p: object) => localStorage.setItem(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'fil', langChosen: true, ...p }))
 
 beforeEach(() => {
   vi.stubGlobal('localStorage', mem())
