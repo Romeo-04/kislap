@@ -108,5 +108,5 @@ tier (phone or no WebGPU).
 _Avoid_: AI, API, engine (in UI copy)
 
 **Privacy meter**:
-The on-screen counter that shows bytes sent off the device during a Reading session. It must
-read 0.
+The on-screen counter of network requests that leave the device during a Reading session. It
+must read 0. (It counts requests, not bytes: the browser does not report bytes sent.)

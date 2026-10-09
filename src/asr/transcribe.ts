@@ -21,8 +21,14 @@ export function setFakeHeard(text: string): void {
   fakeHeard = text
 }
 
+const FAKE_CACHED_KEY = 'kislap.fakeModelCached'
+
 export async function loadModel(onProgress?: (p: LoadProgress) => void): Promise<TierInfo> {
-  onProgress?.({ loaded: 1, total: 1, file: 'fake' })
+  for (let i = 1; i <= 4; i++) {
+    await new Promise((r) => setTimeout(r, 150))
+    onProgress?.({ loaded: i, total: 4, file: 'fake' })
+  }
+  localStorage.setItem(FAKE_CACHED_KEY, '1')
   return pickTier()
 }
 
@@ -31,8 +37,9 @@ export async function transcribe(_audio: Float32Array): Promise<TranscribeResult
   return { text: fakeHeard, ms: 600 }
 }
 
+// Real version (#14) checks the Transformers.js Cache API for every model file.
 export async function isModelCached(): Promise<boolean> {
-  return false
+  return localStorage.getItem(FAKE_CACHED_KEY) === '1'
 }
 
 export async function warmUp(): Promise<void> {}
