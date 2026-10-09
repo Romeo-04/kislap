@@ -45,13 +45,15 @@ describe('bilingual copy', () => {
     }
   })
 
-  it('renders a missing-story message in the default Filipino language', () => {
+  it('renders a missing-story message in the saved Filipino language', () => {
+    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang: 'fil' }) })
     const html = renderToStaticMarkup(createElement(I18nProvider, { children: createElement(Reading, { storyId: 'missing' }) }))
     expect(html).toContain('Hindi makita ang kuwento.')
     expect(html).not.toContain('Story not found')
   })
 
   it('renders progress labels in Filipino instead of the scaffold English labels', () => {
+    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ ...defaultProgress(), lang: 'fil' }) })
     const html = renderToStaticMarkup(createElement(I18nProvider, { children: createElement(Progress) }))
     expect(html).toContain('Mga sticker')
     expect(html).toContain('araw ng pagbasa')

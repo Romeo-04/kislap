@@ -23,6 +23,12 @@ globalThis.localStorage = {
 
 beforeEach(() => store.clear())
 
+describe('default language', () => {
+  it('is English, so a child can follow the screens while reading Filipino stories', () => {
+    expect(defaultProgress().lang).toBe('en')
+  })
+})
+
 describe('load and save', () => {
   it('returns defaults when nothing is saved', () => {
     expect(loadProgress()).toEqual(defaultProgress())

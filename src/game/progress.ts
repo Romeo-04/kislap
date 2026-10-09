@@ -15,7 +15,7 @@ export interface Progress {
 }
 
 export function defaultProgress(): Progress {
-  return { version: 1, lang: 'fil', stars: {}, stickers: [], practiceWords: [], streak: { days: 0, lastPlayed: '' } }
+  return { version: 1, lang: 'en', stars: {}, stickers: [], practiceWords: [], streak: { days: 0, lastPlayed: '' } }
 }
 
 export function loadProgress(): Progress {

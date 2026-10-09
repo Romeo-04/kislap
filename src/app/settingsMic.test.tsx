@@ -5,6 +5,9 @@ import { Settings } from './Settings'
 import { MicCheck, MicCheckView } from './MicCheck'
 import { initialMicCheck } from '../game/micCheck'
 import fil from '../i18n/fil.json'
+import { savedFilipino } from '../test/lang'
+
+savedFilipino()
 
 const wrap = (el: React.ReactElement) => html(<I18nProvider>{el}</I18nProvider>)
 const count = (s: string, sub: string) => s.split(sub).length - 1
