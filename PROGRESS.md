@@ -35,7 +35,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #4 | On-device progress | CP2 | 🔨 PR open (17 tests, verified in Chrome) |
 | #5 | Offline ready | Freeze | 🔨 PR open (offline story verified in Chrome; re-check with real model after #14) |
 | #6 | Privacy meter (Should) | Freeze | 🔨 PR open (verified in Chrome) |
-| #7 | Demo Day kit | Demo | ⏳ |
+| #7 | Demo Day kit | Demo | 🔨 PR open (rehearsal + night-before checks left) |
 | D1 #25, D2 #26, D3 #27, D5 #29, D9 #33, D10 #34, D12 #36, D13 #37, D15 #39 | Deliverables | — | ⏳ |
 
 ### Designer (@Seedlign) — epic #42
