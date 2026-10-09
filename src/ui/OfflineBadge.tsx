@@ -1,5 +1,6 @@
 // Offline readiness on the Home screen (issue #5). Styling: designer (#8).
 import { useI18n } from '../i18n'
+import { GameIcon } from './GameIcon'
 import { useReadiness } from '../pwa/useReadiness'
 
 export function OfflineBadge() {
@@ -10,7 +11,7 @@ export function OfflineBadge() {
     case 'checking':
       return null
     case 'ready':
-      return <p className="offline-badge ready" data-status="ready">✅ {t('home.offlineReady')}</p>
+      return <p className="offline-badge ready" data-status="ready"><GameIcon name="check" size={18} /> {t('home.offlineReady')}</p>
     case 'downloading':
       return (
         <div className="offline-badge" data-status="downloading">
@@ -23,10 +24,10 @@ export function OfflineBadge() {
       return (
         <div className="offline-badge" data-status="needs-download">
           {state.error && <p role="alert">{t('offline.failed')}</p>}
-          <button onClick={download}>⬇️ {t('offline.download')}</button>
+          <button onClick={download}><GameIcon name="download" size={18} /> {t('offline.download')}</button>
         </div>
       )
     case 'blocked':
-      return <p className="offline-badge" data-status="blocked" role="status">📶 {t('offline.connectOnce')}</p>
+      return <p className="offline-badge" data-status="blocked" role="status"><GameIcon name="alert" size={18} /> {t('offline.connectOnce')}</p>
   }
 }

@@ -1,6 +1,7 @@
 // On-screen Privacy meter (issue #6). Styling: designer (#8). Shows requests that left the device this session.
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
+import { GameIcon } from './GameIcon'
 import { startPrivacyMeter, type PrivacySummary } from '../privacy/meter'
 
 export function PrivacyMeter() {
@@ -20,7 +21,7 @@ export function PrivacyMeter() {
   return (
     <details className={`privacy-meter ${clean ? 'clean' : 'leak'}`} data-requests={summary.requests}>
       <summary>
-        {clean ? '🔒' : '⚠️'} {t(clean ? 'privacy.clean' : 'privacy.leak').replace('{n}', String(summary.requests))}
+        <GameIcon name={clean ? 'shield' : 'alert'} size={16} /> {t(clean ? 'privacy.clean' : 'privacy.leak').replace('{n}', String(summary.requests))}
       </summary>
       <p>{t('privacy.explain')}</p>
       {summary.urls.length > 0 && (

@@ -149,6 +149,8 @@ Pill controls, circular story markers, and softly rounded panels form the shared
 - **Practice words:** 24px bold pill buttons with sky fill; selected words use peach fill and orange border. Preserve `aria-pressed`.
 - **Quiet panel:** a restrained surface for the sentence and microphone. Reading text uses the frontmatter reading role, with 32px vertical padding.
 
+- **Mobile native shell (≤768px):** a sticky, blurred top bar; a fixed bottom tab bar (Home, Stories, Stickers) with 60px targets, a pink-soft active pill, and safe-area padding above the gesture bar; task screens (reading, result, checks) hide the tabs and show a 44px back arrow. Settings open as a bottom sheet with a scrim and a grab handle. The quiet surface becomes a full-bleed sheet, and on reading the mic sits in thumb reach at the bottom. Touch devices get press states instead of hover lifts; the status bar follows the day/gabi background; the mic and a new sticker give a light vibration when Sound is on.
+
 Keyboard focus uses a 3px candy outline with 5px offset. Disabled buttons use .55 opacity and the not-allowed cursor. The sidecar contains five compact, framework-independent component examples.
 
 ## Do's and Don'ts

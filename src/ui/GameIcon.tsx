@@ -1,4 +1,4 @@
-type IconName = 'book' | 'map' | 'star' | 'sparkle' | 'arrow' | 'flame' | 'shield' | 'bubble' | 'close' | 'moon' | 'check'
+type IconName = 'book' | 'map' | 'star' | 'sparkle' | 'arrow' | 'flame' | 'shield' | 'bubble' | 'close' | 'moon' | 'check' | 'home' | 'back' | 'download' | 'alert'
 const paths: Record<IconName, string> = {
   book: 'M12 5C8 2 4 3 2 4v15c3-1 7-1 10 2 3-3 7-3 10-2V4c-2-1-6-2-10 1Zm0 0v16',
   map: 'm9 3-7 3v15l7-3 6 3 7-3V3l-7 3-6-3Zm0 0v15m6-12v15',
@@ -11,6 +11,10 @@ const paths: Record<IconName, string> = {
   close: 'm6 6 12 12M6 18 18 6',
   moon: 'M20 15A9 9 0 0 1 9 4 9 9 0 1 0 20 15Z',
   check: 'm5 12 4 4L19 6',
+  home: 'M3 11 12 3l9 8M5 9.5V21h5v-6h4v6h5V9.5',
+  back: 'M20 12H5m6-7-7 7 7 7',
+  download: 'M12 3v12m-5-5 5 5 5-5M4 21h16',
+  alert: 'M12 3 2 20h20L12 3Zm0 6v5m0 3h.01',
 }
 export function GameIcon({ name, size = 24 }: { name: IconName; size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]} /></svg>
