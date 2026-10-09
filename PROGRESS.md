@@ -83,7 +83,18 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | Laptop (Chrome) | small / whisper-base / q8 | wasm | ~77 | 32.2 | 2.8 | Bench page `/#/bench`. First inference 3.4 s. Load includes download. |
 | Laptop (Chrome) | small / whisper-base / q4 | webgpu | | 53.3 | 1.3 | First inference 4.4 s. 2x faster than WASM, but the text was worse: "Simimi ay nasak inanin ng nangong lamesak ah." |
 | Laptop (Chrome) | large / whisper-small-pld-fil-ONNX / enc fp32 + dec q4 | webgpu | ~586 | 219.7 | – | **Fails at inference:** `Missing the following inputs: cache_position`. Transformers.js 4.3.1 never sends `cache_position`; the model's merged decoder asks for it. Blocks Q1 option A until fixed. |
-| Poco X6 Pro (Chrome) | | | | | | |
+| Laptop (Chrome) | own export of whisper-small-fsc, int8 (`--arm64` recipe) | wasm | ~460 | 2.8 | 11.0 | Works: no `cache_position` input. Heard "si Mimi ay nasa ilalim ng lamesa". Too slow for the 2 s target. |
+| Laptop (Chrome) | same, int8 | webgpu | ~460 | 4.3 | 26.2 | Slower than WASM: int8 ops are not GPU friendly. |
+| Laptop (Chrome) | same export, unquantized fp32 | webgpu | ~1070 | 11.6 | 5.9 | Heard "Simimi ay nasa ilalim ng lamesa." Still above 2 s, and far too big to ship. |
+| Phone, not a Poco (Chrome) | small / whisper-base / q8 | wasm | ~77 | 3.3 | 10.5 | Above the 4 s target. First inference 8.3 s. Heard "Simimi ay nasa ilalim ng lamesa." |
+| Phone, not a Poco (Chrome) | small / whisper-base / q4 | webgpu | | 4.5 | 97.5 | Unusable. Never use WebGPU on this phone. |
+| Phone, not a Poco (Chrome) | large / whisper-small-pld-fil-ONNX | webgpu | ~586 | – | – | Download failed: network error. |
+| Phone, not a Poco (Chrome) | small / whisper-tiny / q8 | wasm | ~39 | 20.5 | 4.0 | Meets the 4 s target. Text is rougher: "Simimi, ay na sa ilalim na laversa." |
+| Poco X6 Pro (Chrome) | | | | | | Still open: the lead runs `/#/bench` on it. |
+
+All rows used the same sentence, "si Mimi ay nasa ilalim ng lamesa", but each run used a new recording, so the transcripts compare only roughly. The golden recordings (#18) are the fair test.
+
+**What the numbers suggest (for #16, the lead decides):** laptop = `whisper-base` q4 on WebGPU (1.3 s). Phone = `whisper-tiny` q8 on WASM (4.0 s). Phone WebGPU: never. The Filipino small models are accurate but too slow and too large for the targets.
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 

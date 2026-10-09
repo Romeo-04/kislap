@@ -21,16 +21,29 @@ export interface Setup {
   label: string
   tier: TierInfo
   dtype: string | Record<string, string>
+  local?: boolean // load from public/models/<modelId>/ instead of Hugging Face
 }
 
+// The local int8 export of whisper-small-fsc. Its files carry no dtype suffix, so dtype is 'fp32'.
+const FSC_INT8 = { tier: 'large', modelId: 'whisper-small-fsc-int8', approxMB: 300 } as const
+
+// The unquantized fp32 export (about 1.1 GB, far too big to ship): a speed test for WebGPU.
+const FSC_FP32 = { tier: 'large', modelId: 'whisper-small-fsc-fp32', approxMB: 1070 } as const
+
+// Keep the first entry a hosted model: the golden page checks the first setup by default.
 export const SETUPS: Setup[] = [
   { label: 'base q8 (WASM)', tier: { ...TIERS.small, device: 'wasm' }, dtype: 'q8' },
   { label: 'base q4 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: 'q4' },
+  // Phone candidate: about 39 MB in total, so it fits the 150 MB phone target.
+  { label: 'tiny q8 (WASM)', tier: { ...TIERS.small, modelId: 'onnx-community/whisper-tiny', approxMB: 40, device: 'wasm' }, dtype: 'q8' },
   {
     label: 'small Filipino enc fp32 + dec q4 (WebGPU)',
     tier: TIERS.large,
     dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
   },
+  { label: 'small-fsc int8 (local, WASM)', tier: { ...FSC_INT8, device: 'wasm' }, dtype: 'fp32', local: true },
+  { label: 'small-fsc int8 (local, WebGPU)', tier: { ...FSC_INT8, device: 'webgpu' }, dtype: 'fp32', local: true },
+  { label: 'small-fsc fp32 (local, WebGPU)', tier: { ...FSC_FP32, device: 'webgpu' }, dtype: 'fp32', local: true },
 ]
 
 export interface Session {
@@ -74,6 +87,6 @@ export function openSession(setup: Setup, onProgress?: (s: string) => void): Pro
         } else fail(err)
       }
     }
-    worker.postMessage({ type: 'load', tier: setup.tier, dtype: setup.dtype } satisfies ToWorker)
+    worker.postMessage({ type: 'load', tier: setup.tier, dtype: setup.dtype, local: setup.local } satisfies ToWorker)
   })
 }

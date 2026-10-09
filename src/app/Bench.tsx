@@ -78,7 +78,7 @@ function runSetup(setup: Setup, pcm: Float32Array, onProgress: (s: string) => vo
         done()
       }
     }
-    post({ type: 'load', tier: setup.tier, dtype: setup.dtype })
+    post({ type: 'load', tier: setup.tier, dtype: setup.dtype, local: setup.local })
   })
 }
 
@@ -88,6 +88,8 @@ export function Bench() {
   const [status, setStatus] = useState('Step 1: record a 4 s sentence.')
   const [rows, setRows] = useState<Row[]>([])
   const [busy, setBusy] = useState(false)
+  // Local setups read gitignored files that exist only on a dev machine, so they start unchecked.
+  const [picked, setPicked] = useState<boolean[]>(SETUPS.map((s) => !s.local))
   const chunks = useRef<Blob[]>([])
 
   useEffect(() => {
@@ -118,7 +120,8 @@ export function Bench() {
     if (!pcm) return
     setBusy(true)
     setRows([])
-    for (const setup of SETUPS) {
+    for (const [i, setup] of SETUPS.entries()) {
+      if (!picked[i]) continue
       if (setup.tier.device === 'webgpu' && !gpu?.available) {
         setRows((r) => [...r, { label: setup.label, error: 'no WebGPU on this device' }])
         continue
@@ -154,6 +157,18 @@ export function Bench() {
         <li>JS heap now: {mem ? `${(mem.usedJSHeapSize / 1e6).toFixed(0)} MB` : 'not available'} (main thread only)</li>
         <li>UA: {navigator.userAgent}</li>
       </ul>
+      {SETUPS.map((s, i) => (
+        <label key={s.label} style={{ display: 'block' }}>
+          <input
+            type="checkbox"
+            checked={picked[i]}
+            disabled={busy}
+            onChange={() => setPicked((p) => p.map((v, j) => (j === i ? !v : v)))}
+          />{' '}
+          {s.label}
+          {s.local && ' (needs the local model folder)'}
+        </label>
+      ))}
       <button className="big" onClick={record} disabled={busy}>🎤 Record 4 s</button>
       <button className="big" onClick={run} disabled={!pcm || busy}>Run benchmark</button>
       <p>{status}</p>

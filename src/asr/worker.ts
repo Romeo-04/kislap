@@ -19,6 +19,7 @@ let queue: Promise<void> = Promise.resolve()
 
 async function load(msg: Extract<ToWorker, { type: 'load' }>): Promise<void> {
   const { tier } = msg
+  env.allowLocalModels = msg.local ?? false
   asr = (await pipeline('automatic-speech-recognition', tier.modelId, {
     device: tier.device,
     dtype: (msg.dtype ?? DTYPE[tier.tier]) as never,
