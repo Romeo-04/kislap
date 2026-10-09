@@ -24,13 +24,20 @@ export interface Setup {
   dtype: DataType | Record<string, DataType>
   local?: boolean // load from public/models/<modelId>/ instead of Hugging Face
   fails?: string // known to fail: why. Listed so the result is visible, but off by default.
+  warning?: string // shown next to the setup. Does not stop it from running.
 }
 
 /** Which setups a dev page ticks at first. Local ones need dev-only files; known failures waste a download. */
 export const checkedByDefault = (s: Setup): boolean => !s.local && !s.fails
 
+// The Filipino models below come from whisper-small-fsc, which was trained on the Filipino Speech Corpus.
+// That data is for research and non-commercial use only (docs/validation.md I8), and a model trained on it
+// carries those terms. It may not be allowed in the AppBuildersPH App Builders Challenge, so check the rules
+// before shipping it. If it ships, D8 and D11 must say so.
+const RESEARCH_DATA = 'trained on research-use data (Filipino Speech Corpus): may not be viable for the App Builders Challenge'
+
 // The local int8 export of whisper-small-fsc. Its files carry no dtype suffix, so dtype is 'fp32'.
-const FSC_INT8 = { tier: 'large', modelId: 'whisper-small-fsc-int8', approxMB: 300 } as const
+const FSC_INT8 = { tier: 'large', modelId: 'whisper-small-fsc-int8', approxMB: 278 } as const // encoder 88 + decoder 186 + tokenizer 4
 
 // The unquantized fp32 export (about 1.1 GB, far too big to ship): a speed test for WebGPU.
 const FSC_FP32 = { tier: 'large', modelId: 'whisper-small-fsc-fp32', approxMB: 1070 } as const
@@ -47,9 +54,9 @@ export const SETUPS: Setup[] = [
     dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
     fails: 'downloads 586 MB, then fails: "Missing the following inputs: cache_position"',
   },
-  { label: 'small-fsc int8 (local, WASM)', tier: { ...FSC_INT8, device: 'wasm' }, dtype: 'fp32', local: true },
-  { label: 'small-fsc int8 (local, WebGPU)', tier: { ...FSC_INT8, device: 'webgpu' }, dtype: 'fp32', local: true },
-  { label: 'small-fsc fp32 (local, WebGPU)', tier: { ...FSC_FP32, device: 'webgpu' }, dtype: 'fp32', local: true },
+  { label: 'small-fsc int8 (local, WASM)', tier: { ...FSC_INT8, device: 'wasm' }, dtype: 'fp32', local: true, warning: RESEARCH_DATA },
+  { label: 'small-fsc int8 (local, WebGPU)', tier: { ...FSC_INT8, device: 'webgpu' }, dtype: 'fp32', local: true, warning: RESEARCH_DATA },
+  { label: 'small-fsc fp32 (local, WebGPU)', tier: { ...FSC_FP32, device: 'webgpu' }, dtype: 'fp32', local: true, warning: RESEARCH_DATA },
 ]
 
 export interface Session {

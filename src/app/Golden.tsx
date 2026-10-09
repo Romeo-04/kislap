@@ -103,6 +103,7 @@ export function Golden() {
             onChange={() => setPicked((p) => p.map((v, j) => (j === i ? !v : v)))}
           />{' '}
           {s.label}
+          {s.warning && <em> ({s.warning})</em>}
         </label>
       ))}
       <button className="big" onClick={run} disabled={busy || files.length === 0 || !picked.some(Boolean)}>

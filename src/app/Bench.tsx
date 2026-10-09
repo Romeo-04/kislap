@@ -157,6 +157,7 @@ export function Bench() {
           {s.label}
           {s.local && ' (needs the local model folder)'}
           {s.fails && ` (known to fail: ${s.fails})`}
+          {s.warning && <em> ({s.warning})</em>}
         </label>
       ))}
       <button className="big" onClick={record} disabled={busy}>🎤 Record 4 s</button>
