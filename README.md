@@ -62,10 +62,12 @@ child reads.
 
 | Device | Speech model |
 |---|---|
-| Every device (laptop and phone) | `onnx-community/whisper-base`, on WebAssembly, `language: tagalog` |
+| Laptop with WebGPU and the `shader-f16` feature | `onnx-community/whisper-base`, **fp16**, on WebGPU (about 139 MB) |
+| Phone, or any device without them | `onnx-community/whisper-base`, **q8**, on WebAssembly (about 73 MB) |
 
-A Filipino fine-tune for laptops (`internetoftim/whisper-small-pld-fil-ONNX`) was tested but is not
-used: it does not run in the current Transformers.js version.
+Both use `language: tagalog`. A phone always gets the WebAssembly model: WebGPU took 97 s per sentence on the phone we tested. If the GPU model fails on a laptop, the app switches to the WebAssembly model on its own.
+
+Filipino fine-tunes were tested but are not used. `internetoftim/whisper-small-pld-fil-ONNX` does not run in the current Transformers.js version. Our own int8 export of `sapinsapin/whisper-small-fsc` (a public backup repo, `acmrsu/kislap-whisper-small`) runs, but it takes 11 s or more per sentence on a laptop and is about 278 MB. It was trained on research-use data (Filipino Speech Corpus), so it may not be viable for the App Builders Challenge, and it is not shipped.
 
 ## Tech stack
 
@@ -133,12 +135,15 @@ cloud AI.
 
 | Model | Used on | Licence and data |
 |---|---|---|
-| Whisper base (OpenAI), ONNX export `onnx-community/whisper-base` | Every device | Apache-2.0 (`openai/whisper-base` card); the ONNX export card states no licence |
+| Whisper base (OpenAI), ONNX export `onnx-community/whisper-base`, fp16 (~139 MB) | Laptops with WebGPU and `shader-f16` | Apache-2.0 (`openai/whisper-base` card); the ONNX export card states no licence |
+| Whisper base (OpenAI), same export, q8 (~73 MB) | Phones, and devices without WebGPU | Same |
 
-Tested but not shipped: `internetoftim/whisper-small-pld-fil-ONNX`, a Filipino fine-tune (model
-cards MIT and Apache-2.0; its UP-DSP PLD training data is for research and non-commercial use).
+Tested but not shipped:
 
-The model is downloaded from Hugging Face at run time. They are not part of this repository.
+- `internetoftim/whisper-small-pld-fil-ONNX`, a Filipino fine-tune (model cards MIT and Apache-2.0; its UP-DSP PLD training data is for research and non-commercial use).
+- Our own int8 export of `sapinsapin/whisper-small-fsc` (about 278 MB; trained on the Filipino Speech Corpus, which is for research and non-commercial use; it may not be viable for the App Builders Challenge).
+
+The models are downloaded from Hugging Face at run time. They are not part of this repository.
 
 ### Services
 

@@ -39,14 +39,16 @@ application code.
 
 | Item | Licence / terms | Notes |
 |---|---|---|
-| `onnx-community/whisper-base` | No licence on the ONNX card; converted from `openai/whisper-base` (Apache-2.0) | Phone and bootstrap tier |
-| `internetoftim/whisper-small-pld-fil-ONNX` | Model card: MIT | Laptop tier. Trained on PLD data: research and non-commercial use only |
-| Filipino Speech Corpus (FSC) | Research use | Behind `sapinsapin/whisper-small-fsc` (stretch #17 only) |
-| PLD | Research and non-commercial use | Behind the laptop-tier model |
+| `onnx-community/whisper-base` | No licence on the ONNX card; converted from `openai/whisper-base` (Apache-2.0) | Both tiers: fp16 on WebGPU laptops, q8 on WebAssembly everywhere else |
+| `internetoftim/whisper-small-pld-fil-ONNX` | Model card: MIT | Tested, not shipped. Trained on PLD data: research and non-commercial use only |
+| Own int8 export `acmrsu/kislap-whisper-small` (of `sapinsapin/whisper-small-fsc`) | Base card: Apache-2.0. Our repo grants no rights beyond that | Tested, not shipped. Trained on FSC data. May not be viable for the App Builders Challenge |
+| Filipino Speech Corpus (FSC) | Research use | Behind `sapinsapin/whisper-small-fsc` (tested, not shipped) |
+| PLD | Research and non-commercial use | Behind `internetoftim/whisper-small-pld-fil-ONNX` (tested, not shipped) |
 | FLEURS `fil_ph` | CC-BY-4.0 | Only if LoRA ships |
 
-Kislap is free and non-commercial, so the research-use terms are acceptable when disclosed
-(`docs/validation.md` I8). The model engineer confirms this table in D8 (#32).
+Neither Filipino model ships, so no research-use data reaches users. If one ships later, D8 and D11 must
+say so, and the App Builders Challenge rules must be checked first (`docs/validation.md` I8). The model engineer
+confirms this table in D8 (#32).
 
 ## Fonts
 

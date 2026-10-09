@@ -92,10 +92,12 @@ final offline check on the laptop and the Poco X6 Pro]**
 
 | Model | Use | Format | Download | Licence and data |
 |---|---|---|---|---|
-| Whisper (OpenAI), base | Every device | `onnx-community/whisper-base`, dtype **[confirm]** | ~77 MB (q8) **[confirm]** | Apache-2.0 (`openai/whisper-base`); the ONNX export card states no licence |
+| Whisper (OpenAI), base | Laptops with WebGPU and `shader-f16` | `onnx-community/whisper-base`, **fp16** (the whole model) | ~139 MB (encoder 39 + decoder 100) | Apache-2.0 (`openai/whisper-base`); the ONNX export card states no licence |
+| Whisper (OpenAI), base | Phones, and devices without WebGPU | same repo, **q8** (the whole model) | ~73 MB (encoder 22 + decoder 51) | same |
 | `internetoftim/whisper-small-pld-fil-ONNX` (export of `sapinsapin/whisper-small-pld-fil`) | **Tested, not shipped** (does not run in Transformers.js 4.3.1) | — | — | Cards: MIT (export), Apache-2.0 (fine-tune). **Training data (UP-DSP PLD) is research and non-commercial use.** |
+| Own int8 export of `sapinsapin/whisper-small-fsc` (public repo `acmrsu/kislap-whisper-small`) | **Tested, not shipped** (11 s or more per sentence on a laptop) | encoder + merged decoder, int8 | ~278 MB | Base card: Apache-2.0. **Training data (Filipino Speech Corpus) is for research and non-commercial use. It may not be viable for the App Builders Challenge.** Our repo grants no rights beyond the base model's terms. |
 
-No LoRA adapter shipped **[confirm]**. No model was trained by the team **[confirm]**.
+Sizes are the model files (encoder + decoder) listed on Hugging Face, without the small tokenizer and config files. The dtype per tier is set in `src/asr/tier.ts`. No LoRA adapter shipped. No model was trained by the team: the int8 export is a format conversion of an existing model, made for tests and not shipped.
 
 ## D9 Technologies and frameworks
 
