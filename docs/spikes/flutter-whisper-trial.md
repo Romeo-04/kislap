@@ -1,6 +1,6 @@
 # Spike: Can Flutter run Whisper on the Poco X6 Pro tonight?
 
-**Owner:** _(name)_ · **Timebox:** 45 minutes of hands-on work. **Decide by 17:00 (Asia/Manila), Oct 9.**
+**Owner:** @Seedlign (designer) · **Timebox:** 45 minutes of hands-on work. **Decide by 17:00 (Asia/Manila), Oct 9.**
 **Main plan does not wait for this.** The team keeps building the web app (ADR-0002) in parallel.
 If this spike fails or runs over time, stop and report. That is a useful result.
 

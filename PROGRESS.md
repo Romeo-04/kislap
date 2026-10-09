@@ -8,7 +8,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 - **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
 - **Deployed URL:** _not yet (#1)_
 - **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
-- **Flutter spike:** running, decide by 17:00 (#48, `docs/spikes/flutter-whisper-trial.md`)
+- **Flutter spike:** @Seedlign, decide by 17:00 (#48, `docs/spikes/flutter-whisper-trial.md`)
 
 ## Checkpoints
 
@@ -48,6 +48,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | ⏳ |
+| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ⏳ |
 | D4 #28, D11 #35 | Deliverables | — | ⏳ |
 
 ### Model engineer (@acmrsu) — epic #43
