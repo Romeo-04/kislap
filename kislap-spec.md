@@ -205,9 +205,9 @@ export function starsFor(accuracy: number): 0 | 1 | 2 | 3;
 1. **Normalize** both texts: lowercase, remove punctuation, collapse spaces. Keep Filipino letters. Keep common Taglish spelling variants close by using the similarity step below.
 2. **Align** the expected words to the heard words with a word-level edit-distance alignment. Use character similarity as the substitution cost.
 3. **Classify each expected word:**
-   - similarity at least 0.85: `correct`
-   - similarity from 0.60 to 0.85: `unclear`
-   - below 0.60, or not heard: `missed`
+   - similarity at least 0.80: `correct` (was 0.85; see ADR-0011)
+   - similarity from 0.50 to 0.80: `unclear` (was 0.60 to 0.85)
+   - below 0.50, or not heard: `missed` (was below 0.60)
 4. **Accuracy** = (correct + 0.5 × unclear) / total expected words.
 5. **Stars** (keep the numbers in one config file so the team can tune them after testing):
 
