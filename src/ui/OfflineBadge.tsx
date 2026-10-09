@@ -1,7 +1,9 @@
-// Offline readiness on the Home screen (issue #5). Styling: designer (#8).
+// Offline readiness on the Home screen (issue #5), drawn as the part 2 paper slip (#10).
 import { useI18n } from '../i18n'
-import { GameIcon } from './GameIcon'
 import { useReadiness } from '../pwa/useReadiness'
+import { OfflineStatus } from './OfflineStatus'
+import { Button } from './Button'
+import './kit.css'
 
 export function OfflineBadge() {
   const { t } = useI18n()
@@ -11,23 +13,17 @@ export function OfflineBadge() {
     case 'checking':
       return null
     case 'ready':
-      return <p className="offline-badge ready" data-status="ready"><GameIcon name="check" size={18} /> {t('home.offlineReady')}</p>
+      return <div data-status="ready"><OfflineStatus ready /></div>
     case 'downloading':
-      return (
-        <div className="offline-badge" data-status="downloading">
-          <p>{t('home.preparing')}</p>
-          <progress max={1} value={state.progress} aria-label={t('home.preparing')} />
-          <p className="muted">{Math.round(state.progress * 100)}%</p>
-        </div>
-      )
+      return <div data-status="downloading"><OfflineStatus progress={state.progress} /></div>
     case 'needs-download':
       return (
-        <div className="offline-badge" data-status="needs-download">
-          {state.error && <p role="alert">{t('offline.failed')}</p>}
-          <button onClick={download}><GameIcon name="download" size={18} /> {t('offline.download')}</button>
+        <div className="k-offline-need" data-status="needs-download">
+          {state.error && <p className="k-offline" role="alert">{t('offline.failed')}</p>}
+          <Button variant="secondary" onClick={download}>{t('offline.download')}</Button>
         </div>
       )
     case 'blocked':
-      return <p className="offline-badge" data-status="blocked" role="status"><GameIcon name="alert" size={18} /> {t('offline.connectOnce')}</p>
+      return <p className="k-offline k-offline--note" data-status="blocked" role="status">{t('offline.connectOnce')}</p>
   }
 }

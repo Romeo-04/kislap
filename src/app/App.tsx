@@ -12,6 +12,7 @@ import { AsrTest } from './AsrTest'
 import { Bench } from './Bench'
 import { Golden } from './Golden'
 import { GameShell } from '../ui/GameShell'
+import { Settings } from './Settings'
 
 export function App() {
   const route = useRoute()
@@ -25,6 +26,7 @@ export function App() {
         {route.name === 'wordpop' && <WordPop />}
         {route.name === 'progress' && <Progress />}
         {route.name === 'miccheck' && <MicCheck />}
+        {route.name === 'settings' && <Settings />}
         {route.name === 'mictest' && <MicTest />}
         {route.name === 'asrtest' && <AsrTest />}
         {route.name === 'bench' && <Bench />}

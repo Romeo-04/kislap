@@ -9,6 +9,7 @@ export type Route =
   | { name: 'wordpop' }
   | { name: 'progress' }
   | { name: 'miccheck' }
+  | { name: 'settings' }
   | { name: 'mictest' }
   | { name: 'asrtest' }
   | { name: 'bench' }
@@ -23,6 +24,7 @@ export function parseRoute(hash: string): Route {
     case 'wordpop': return { name: 'wordpop' }
     case 'progress': return { name: 'progress' }
     case 'miccheck': return { name: 'miccheck' }
+    case 'settings': return { name: 'settings' }
     case 'mictest': return { name: 'mictest' }
     case 'asrtest': return { name: 'asrtest' }
     case 'bench': return { name: 'bench' }

@@ -22,3 +22,6 @@ fixtures/*
 .playwright-mcp/
 
 .vercel
+
+# Python bytecode from art/ scripts
+__pycache__/

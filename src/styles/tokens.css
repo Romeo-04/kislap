@@ -1,32 +1,59 @@
-/* Design tokens from the Claude Design handoff (issue #8). Values are final: match, do not tune. */
+/* Design tokens: Claude Design part 2, "paper puppet theatre" (docs/design/paper-puppet.md). Match, do not tune.
+   adventure.css (the older candy look) loads after this and redefines some shared names on :root
+   for the screens that have not moved yet; the paper scope at the end keeps paper pieces on paper values. */
 :root {
-  --bg: #FFFBEF; --surface: #FFFFFF; --fg: #1E2B1F; --line: #1E2B1F; --muted: #56634F;
-  --glow: #FFC62E; --glow-soft: #FFE27A; --glow-hover: #FFD65C; --cream-hover: #FFF3C4; --pale-yellow: #FFF3B8;
-  --leaf: #7CC35A; --cap: #F07F2A;
-  --correct: #2F9E57; --unclear: #E9AE14; --missed: #F07F2A;
-  --ink: #1E2B1F; /* text on yellow and white stays tinta in both themes */
-  --ground: #7CC35A; --ground-deep: #2F9E57;
+  --sky: #84CEF0; --sky-far: #6AAFD3; --cloud: #FFFFFF; --cloud-shade: #D9EEF8;
+  --hill-back: #5FB548; --hill-front: #8ACF4E; --hill-shade: #7BC144; --rim: #FFF3D1;
+  --paper: #FFFDF6; --paper-warm: #FFF8E7; --edge: #FFF3D1; --edge-deep: #F0DDAE; --underside: #E3CFA4;
+  --ink: #3B2412; --muted: #5E4329; --cut-line: #A08566; --cut-dash: #D9C49A;
+  --glow: #FFC93C; --glow-under: #E59A12; --glow-soft: #FFE79A; --glow-hover: #FFD65C; --glow-shade: #F2A922;
+  --cream-hover: #FFF3C4;
+  --leaf: #8ACF4E; --leaf-shade: #6DB43E; --cap: #F58A2B; --cap-shade: #D9701C;
+  --correct: #2E9A4E; --unclear: #E9A800; --missed: #F58A2B;
+  --brass: #D9A441; --brass-hi: #F6D88A; --wood: #C9925A; --wood-shade: #A8743F;
   --font-display: "Baloo 2", "Andika", sans-serif;
   --font-read: "Andika", sans-serif;
   --text-xs: 14px; --text-sm: 18px; --text-md: 24px; --text-lg: 32px; --text-xl: 48px; --text-2xl: 64px; --text-3xl: 80px;
   --text-sentence: 36px;
   --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
-  --r-sm: 12px; --r-md: 20px; --r-lg: 32px; --r-pill: 999px;
-  --stroke: 3px; --toy: 0 6px 0 var(--line); --toy-pressed: 0 2px 0 var(--line);
+  --r-sm: 12px; --r-md: 20px; --r-lg: 28px; --r-pill: 999px; --edge-w: 4px;
+  --stroke: 3px; --line: #E3CFA4; --toy: var(--lift); /* legacy placeholder rules in base.css */
+  --drop: rgba(27, 58, 82, .18);
+  --lift: 0 4px 0 var(--underside), 0 10px 16px var(--drop);
+  --lift-glow: 0 5px 0 var(--glow-under), 0 11px 16px rgba(27, 58, 82, .2), inset 0 6px 0 rgba(255, 240, 190, .55);
+  --pressed: 0 1px 0 var(--underside), 0 4px 8px rgba(27, 58, 82, .2);
+  --pressed-glow: 0 1px 0 var(--glow-under), 0 7px 16px rgba(27, 58, 82, .2);
   --tap-min: 48px; --mic-size: 112px;
   --t-fast: 120ms; --t-base: 240ms; --t-mood: 2000ms; --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+  /* page base: the day sky, text in chocolate ink */
+  --bg: var(--sky); --fg: var(--ink); --surface: var(--paper);
+  --on-sky: #3B2412; /* text that sits straight on the sky (titles); light at night */
 }
 
 @media (min-width: 900px) {
   :root { --text-sentence: 52px; }
 }
 
-/* night mode: cards keep a cream outline, the toy shadow goes darker */
+/* night changes the scene only; cards stay cream paper so contrast is the same day and night */
 [data-theme="gabi"] {
-  --bg: #0F2A21; --surface: #173A2E; --fg: #FFF6DC; --muted: #BFD3BC; --line: #06150F;
-  --card-line: #FFF6DC;
-  --ground: #1F5A3A; --ground-deep: #173A2E;
+  --sky: #1F3B5C; --sky-far: #2B4E70; --hill-back: #2F6B45; --hill-front: #3E7E4E; --hill-shade: #356F45; --rim: #C9C2A0;
+  --drop: rgba(0, 0, 0, .3);
+  --on-sky: #FFF6DC;
 }
+
+/* paper scope: every paper piece reads the paper values of the names adventure.css also defines,
+   so a paper button looks right on an older screen, day and night. Drop this once adventure.css is gone.
+   These repeat the :root values above: change both together (scene.test.tsx checks they match). */
+.k-btn, .k-icon-btn, .k-mic, .k-word, .k-stars, .k-lang, .k-offline, .k-confetti, .wordmark, .ningning,
+.paper-stage {
+  --ink: #3B2412; --fg: #3B2412; --muted: #5E4329; --surface: #FFFDF6;
+  --glow: #FFC93C; --glow-hover: #FFD65C; --cream-hover: #FFF3C4;
+  --r-sm: 12px; --r-md: 20px; --r-lg: 28px;
+}
+/* a paper stage is a whole screen in the paper look: no candy-look class renders inside it, so it
+   takes the full paper scope; text straight on the sky uses --on-sky, which turns light at night */
+.paper-stage, .paper-scene { --sky: #84CEF0; --sky-far: #6AAFD3; }
+[data-theme="gabi"] :is(.paper-stage, .paper-scene) { --sky: #1F3B5C; --sky-far: #2B4E70; }
 
 @media (prefers-reduced-motion: reduce) {
   :root { --t-fast: 0ms; --t-base: 0ms; }
