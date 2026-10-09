@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { clearResult, resultFor } from '../game/session'
 import { countFinishOnce, localDay } from '../game/dailyGoal'
-import { addPracticeWords, loadProgress, recordStory, saveProgress } from '../game/progress'
+import { addMastered, addPracticeWords, addReading, loadProgress, localDate, recordStory, saveProgress } from '../game/progress'
 import { loadSettings } from '../game/settings'
 import { playSound } from '../game/sound'
-import { STORIES } from '../content/stories'
+import { allStories } from '../content/customStories'
 import { stickerArt } from '../content/stickers'
 import type { Stars } from '../scoring/stars'
 import { Ningning } from '../ui/Ningning'
@@ -23,7 +23,21 @@ export function Result({ storyId }: { storyId: string }) {
   const [result] = useState(() => resultFor(storyId))
   // recordStory is idempotent, so a StrictMode double run cannot add a second sticker.
   const [outcome] = useState(() =>
-    result ? recordStory(addPracticeWords(loadProgress(), result.practiceWords), storyId, result.stars) : undefined,
+    result
+      ? recordStory(
+          addMastered(
+            addReading(addPracticeWords(loadProgress(), result.practiceWords), {
+              storyId,
+              date: localDate(),
+              wcpm: result.wcpm,
+              accuracy: Math.round(result.accuracy * 100) / 100,
+            }),
+            result.correctWords,
+          ),
+          storyId,
+          result.stars,
+        )
+      : undefined,
   )
 
   useEffect(() => {
@@ -43,8 +57,8 @@ export function Result({ storyId }: { storyId: string }) {
  * a softer glow (0.75, as in the design) and the try-again line change. */
 export function ResultView({ storyId, stars, newSticker }: { storyId: string; stars: Stars; newSticker?: string }) {
   const { t } = useI18n()
-  const sticker = stickerArt(`sticker-${storyId}`, STORIES)
-  const bonus = stars === 3 ? stickerArt(`sticker-${storyId}-gold`, STORIES) : undefined
+  const sticker = stickerArt(`sticker-${storyId}`, allStories())
+  const bonus = stars === 3 ? stickerArt(`sticker-${storyId}-gold`, allStories()) : undefined
   const more = { href: '#/map', label: t('result.more') }
   const again = { href: `#/reading/${storyId}`, label: t('reading.retry') }
   const [first, second] = stars === 0 ? [again, more] : [more, again]

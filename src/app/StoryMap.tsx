@@ -4,6 +4,7 @@
 // Desktop: the path runs left to right, easiest on the left.
 import { useI18n } from '../i18n'
 import { STORIES } from '../content/stories'
+import { loadCustomStories } from '../content/customStories'
 import { stickerArt } from '../content/stickers'
 import { loadProgress } from '../game/progress'
 import { Ningning } from '../ui/Ningning'
@@ -66,6 +67,16 @@ export function StoryMap() {
             )
           })}
         </ol>
+      </div>
+      <div className="sm-own">
+        {loadCustomStories().map((story) => (
+          <a key={story.id} className="sm-own__story" href={`#/reading/${story.id}`}>
+            <strong lang="fil">{story.title.fil}</strong>
+            <span>{t(`level.${story.level}`)}</span>
+            <StarRow stars={progress.stars[story.id] ?? 0} size={18} />
+          </a>
+        ))}
+        <a className="sm-own__add" href="#/mystory">{t('mystory.add')}</a>
       </div>
     </section>
   )

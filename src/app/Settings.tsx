@@ -74,6 +74,10 @@ export function Settings() {
           <span>{t('miccheck.title')}</span>
           <ChevronIcon />
         </a>
+        <a className="st-mic" href="#/mystory">
+          <span>{t('mystory.add')}</span>
+          <ChevronIcon />
+        </a>
         <div className="st-offline">
           <OfflineBadge />
         </div>

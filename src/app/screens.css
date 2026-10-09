@@ -219,3 +219,29 @@
 
 /* Offline status lives in Settings (Home only shows it while the child must act). */
 .st-offline { display: flex; justify-content: center; margin-top: var(--s-3); }
+
+/* Teachers' own stories (form, list) and the parents-and-teachers panel. */
+.ms-screen { display: flex; flex-direction: column; gap: var(--s-4); padding-bottom: var(--s-7); }
+.ms-card { position: relative; z-index: 2; margin: 0 var(--s-5); padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-3); border: var(--edge-w) solid var(--edge); border-radius: var(--s-5); background: var(--paper); color: var(--ink); }
+.ms-intro, .ms-count { margin: 0; }
+.ms-field { display: flex; flex-direction: column; gap: var(--s-1); font: 700 16px var(--font-display); }
+.ms-field input, .ms-field select, .ms-field textarea { font: 400 18px / 1.5 var(--font-read); padding: var(--s-2) var(--s-3); border: 2px solid var(--edge); border-radius: var(--s-3); background: #fff; color: var(--ink); min-height: 48px; }
+.ms-error { margin: 0; color: #b45309; }
+.ms-h2 { margin: 0; font: 800 22px var(--font-display); }
+.ms-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-3); }
+.ms-item { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s-1) var(--s-3); align-items: center; }
+.ms-item__title { font: 700 18px var(--font-display); }
+.ms-item__meta { grid-column: 1; font-size: 14px; }
+.ms-read, .ms-delete { grid-row: 1 / span 2; min-height: 44px; padding: 0 var(--s-4); display: inline-flex; align-items: center; border-radius: 999px; border: 2px solid var(--edge); background: var(--paper); color: var(--ink); font: 700 16px var(--font-display); text-decoration: none; cursor: pointer; }
+.sm-own { position: relative; z-index: 3; margin: var(--s-4) var(--s-5) var(--s-6); display: flex; flex-direction: column; gap: var(--s-3); }
+.sm-own__story, .sm-own__add { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); min-height: 56px; padding: var(--s-3) var(--s-4); border: var(--edge-w) solid var(--edge); border-radius: var(--s-5); background: var(--paper); color: var(--ink); text-decoration: none; font: 700 18px var(--font-display); }
+.sm-own__add { justify-content: center; }
+.jr-adults { display: flex; flex-direction: column; gap: var(--s-2); text-align: left; }
+.jr-adults p { margin: 0; }
+.jr-adults__title { margin: 0; font: 800 20px var(--font-display); }
+.jr-adults__speed { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); align-items: baseline; }
+.jr-adults__speed strong { font: 800 22px var(--font-display); }
+.jr-adults__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--s-1); font-size: 15px; }
+.jr-adults__list li { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s-3); }
+.jr-adults__note { font-size: 13px; opacity: .8; }
+.jr-adults { margin: 0 var(--s-5) var(--s-6); }
