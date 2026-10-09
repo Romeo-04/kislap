@@ -179,8 +179,8 @@ describe('fake mode', () => {
 })
 
 describe('tier choice and fallback', () => {
-  const desktop = { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', gpu: { requestAdapter: async () => ({}) } }
-  const phone = { userAgent: 'Mozilla/5.0 (Linux; Android 15) Mobile Safari/537.36', gpu: { requestAdapter: async () => ({}) } }
+  const desktop = { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', gpu: { requestAdapter: async () => ({ features: new Set(['shader-f16']) }) } }
+  const phone = { userAgent: 'Mozilla/5.0 (Linux; Android 15) Mobile Safari/537.36', gpu: { requestAdapter: async () => ({ features: new Set(['shader-f16']) }) } }
   let store: Record<string, string>
 
   beforeEach(() => {
@@ -239,7 +239,7 @@ describe('tier choice and fallback', () => {
   })
 })
 describe('GPU tier failures after loading', () => {
-  const desktop = { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', maxTouchPoints: 0, gpu: { requestAdapter: async () => ({}) } }
+  const desktop = { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', maxTouchPoints: 0, gpu: { requestAdapter: async () => ({ features: new Set(['shader-f16']) }) } }
   let store: Record<string, string>
 
   beforeEach(() => {
@@ -390,10 +390,10 @@ describe('GPU tier failures after loading', () => {
     const seen: { file: string; loaded: number; total: number }[] = []
     const p = client.loadModel((x) => seen.push(x))
     await tick()
-    FakeWorker.all[0].reply({ type: 'progress', file: 'onnx/encoder_model_q4.onnx', loaded: 5, total: 10 })
+    FakeWorker.all[0].reply({ type: 'progress', file: 'onnx/encoder_model_fp16.onnx', loaded: 5, total: 10 })
     FakeWorker.all[0].reply({ type: 'error', message: 'GPU device lost' })
     await tick()
-    expect(seen.at(-1)).toEqual({ file: 'onnx/encoder_model_q4.onnx', loaded: 0, total: 0 })
+    expect(seen.at(-1)).toEqual({ file: 'onnx/encoder_model_fp16.onnx', loaded: 0, total: 0 })
     FakeWorker.all[1].reply({ type: 'ready', tier: TIERS.small })
     await p
   })

@@ -1,10 +1,11 @@
-// Model tiers (issue #16). Both tiers run Whisper base, but q4 reads a little worse than q8 (72% against 77%
-// mean accuracy on 24 clean golden clips), so the GPU tier trades some accuracy for speed. See PROGRESS.md:
-//   large = WebGPU, q4 (about 136 MB). Laptops with a GPU. 1.3 s per sentence in our tests.
-//   small = WebAssembly, q8 (about 73 MB). Phones and anything without WebGPU.
+// Model tiers (issue #16). Both tiers run Whisper base:
+//   large = WebGPU, fp16 (about 139 MB). Laptops with a GPU that supports half precision.
+//           Golden clips: 79% mean accuracy, 1.0 s median per sentence.
+//   small = WebAssembly, q8 (about 73 MB). Phones and anything without WebGPU or shader-f16.
+//           Golden clips: 77%, 3.0 s median. 10.5 s on the Realme GT 7T.
+// q4 on WebGPU was dropped: 72% accuracy, worse than q8. fp16 beat q8 and q4 on both accuracy and speed.
 // The names stay 'large' and 'small' because on-device progress already stores them (ADR-0008).
 // Why not the Filipino small models: too slow (6 to 26 s on a laptop) and too large. See PROGRESS.md.
-
 import type { DataType } from '@huggingface/transformers'
 
 export type ModelTier = 'large' | 'small'
@@ -17,19 +18,23 @@ export interface TierInfo {
 }
 
 export const TIERS: Record<ModelTier, TierInfo> = {
-  large: { tier: 'large', modelId: 'onnx-community/whisper-base', device: 'webgpu', approxMB: 136 },
+  large: { tier: 'large', modelId: 'onnx-community/whisper-base', device: 'webgpu', approxMB: 139 },
   small: { tier: 'small', modelId: 'onnx-community/whisper-base', device: 'wasm', approxMB: 73 },
 }
 
 // Precision per tier. Shared by the worker (what it loads) and the cache check (what it looks for).
 export const DTYPE: Record<ModelTier, DataType | Record<string, DataType>> = {
   small: 'q8',
-  large: 'q4',
+  large: 'fp16',
 }
 
-/** requestAdapter can hang on a broken driver, so give it a few seconds and then say no. */
+/**
+ * True when this device can run the GPU tier: WebGPU with the shader-f16 feature, because the tier is fp16.
+ * requestAdapter can hang on a broken driver, so it gets a few seconds and then the answer is no.
+ */
 export async function hasWebGPU(timeoutMs = 3000): Promise<boolean> {
-  const gpu = (navigator as Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }).gpu
+  type Adapter = { features?: { has(name: string): boolean } }
+  const gpu = (navigator as Navigator & { gpu?: { requestAdapter(): Promise<Adapter | null> } }).gpu
   if (!gpu) return false
   let timer: ReturnType<typeof setTimeout> | undefined
   try {
@@ -39,7 +44,7 @@ export async function hasWebGPU(timeoutMs = 3000): Promise<boolean> {
         timer = setTimeout(() => resolve(null), timeoutMs)
       }),
     ])
-    return adapter != null
+    return adapter?.features?.has('shader-f16') === true
   } catch {
     return false
   } finally {

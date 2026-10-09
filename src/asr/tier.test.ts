@@ -33,7 +33,7 @@ describe('chooseTier', () => {
 
 describe('tier definitions', () => {
   it('has one dtype per tier, matching the device', () => {
-    expect(DTYPE.large).toBe('q4')
+    expect(DTYPE.large).toBe('fp16')
     expect(DTYPE.small).toBe('q8')
     expect(TIERS.large.device).toBe('webgpu')
     expect(TIERS.small.device).toBe('wasm')
@@ -59,8 +59,13 @@ describe('hasWebGPU', () => {
     await expect(answer).resolves.toBe(false)
   })
 
+  it('says no when the adapter lacks half precision, because the GPU tier is fp16', async () => {
+    vi.stubGlobal('navigator', { gpu: { requestAdapter: async () => ({ features: new Set<string>() }) } })
+    await expect(hasWebGPU()).resolves.toBe(false)
+  })
+
   it('says yes when an adapter comes back', async () => {
-    vi.stubGlobal('navigator', { gpu: { requestAdapter: async () => ({}) } })
+    vi.stubGlobal('navigator', { gpu: { requestAdapter: async () => ({ features: new Set(['shader-f16']) }) } })
     await expect(hasWebGPU()).resolves.toBe(true)
   })
 
