@@ -5,7 +5,7 @@ import { useI18n } from '../i18n'
 import { getStory } from '../content/stories'
 import { createRecorder, MicError } from '../asr/audio'
 import { isMostlySilence } from '../asr/meter'
-import { loadModel, setFakeHeard, transcribe } from '../asr/transcribe'
+import { isModelCached, loadModel, setFakeHeard, transcribe } from '../asr/transcribe'
 import { scoreReading, type WordResult } from '../scoring/score'
 import { createSession, finishSession } from '../game/session'
 import { initialReading, readingReducer } from '../game/readingMachine'
@@ -41,12 +41,28 @@ export function Reading({ storyId }: { storyId: string }) {
   const [level, setLevel] = useState(0)
   const [mood, setMood, beat] = useMascotMood('idle')
   const finishRef = useRef<() => void>(() => {})
+  const skipped = useRef(false)
   const finishing = useRef(false) // auto-stop and a tap can both fire before React re-renders
   const sentence = story?.sentences[index]
 
-  // Load the model as soon as the child opens a story (from the cache when Offline ready).
+  const mounted = useRef(true)
   useEffect(() => {
-    loadModel().catch((err) => console.error('[reading] model load failed', err))
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+
+  // Load the cached model as soon as a story opens. Never download from here (Home does that,
+  // with progress): with no cached model the child sees a kind notice and may skip the Sentence.
+  useEffect(() => {
+    if (FAKE) return
+    isModelCached()
+      .then((cached) => (cached ? loadModel().then(() => undefined) : Promise.reject(new Error('model not cached'))))
+      .catch((err) => {
+        console.error('[reading] model not ready', err)
+        if (mounted.current) dispatch({ type: 'model-unavailable' })
+      })
   }, [])
 
   useEffect(() => {
@@ -79,6 +95,12 @@ export function Reading({ storyId }: { storyId: string }) {
       }
       if (FAKE) setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
       const { text } = await transcribe(pcm)
+      if (!mounted.current) return // the child left while Ningning was thinking
+      // Noise can pass the silence gate and come back empty: that is a model miss, not the child's.
+      if (!text.trim()) {
+        setMood(moodFor('silence'))
+        return dispatch({ type: 'failed' })
+      }
       const scored = scoreReading(sentence.text, text)
       session.addAttempt({ sentenceIndex: index, heard: text, ...scored })
       setWords(scored.words)
@@ -104,7 +126,6 @@ export function Reading({ storyId }: { storyId: string }) {
     if (state.phase !== 'ready' && state.phase !== 'reviewed') return
     try {
       await recorder.start()
-      setWords([])
       setMood(moodFor('mic-on'))
       dispatch({ type: 'mic-started' })
     } catch (err) {
@@ -123,15 +144,21 @@ export function Reading({ storyId }: { storyId: string }) {
   }
 
   const onNext = () => {
+    if (state.phase !== 'reviewed') skipped.current = true // skipping only exists when the model cannot run
     if (index + 1 < story.sentences.length) {
+      dispatch({ type: 'next' })
       setIndex(index + 1)
       setWords([])
       setGlow(undefined)
       setMood('idle')
-      dispatch({ type: 'next' })
     } else {
-      finishSession(session)
-      go(`result/${storyId}`)
+      try {
+        finishSession(session, { allowPartial: skipped.current })
+        go(`result/${storyId}`)
+      } catch (err) {
+        console.error('[reading] session incomplete', err) // never strand the child on the last Sentence
+        go('map')
+      }
     }
   }
 
@@ -144,7 +171,7 @@ export function Reading({ storyId }: { storyId: string }) {
       <Ningning key={beat} mood={mood} glow={glow} size={140} label={t(moodCopy[mood])} />
       <p aria-live="polite">{t(moodCopy[mood])}</p>
       <p className="sentence" lang="fil">
-        {words.length
+        {words.length && (state.phase === 'revealing' || state.phase === 'reviewed')
           ? words.map((w, i) => <WordChip key={i} word={w.word} status={i < state.shown || state.phase === 'reviewed' ? w.status : 'pending'} popping={i === state.shown - 1} />)
           : sentence.text}
       </p>
@@ -159,6 +186,12 @@ export function Reading({ storyId }: { storyId: string }) {
         <div className="row">
           <button onClick={onMic}>{t('reading.retry')}</button>
           <button className="big" onClick={onNext}>{t('reading.next')}</button>
+        </div>
+      )}
+      {state.canSkip && state.phase === 'ready' && (
+        <div className="row">
+          <a href="#/">{t('nav.back')}</a>
+          <button onClick={onNext}>{t('reading.skip')}</button>
         </div>
       )}
       <PrivacyMeter />

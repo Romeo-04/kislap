@@ -54,8 +54,9 @@ export function createSession(storyId: string, sentenceCount: number): ReadingSe
 // without reading. Reads are not destructive: StrictMode runs state initializers twice.
 const results = new Map<string, SessionResult>()
 
-export function finishSession(session: ReadingSession): SessionResult {
-  if (!session.isComplete()) throw new Error('finishSession: not every Sentence has an Attempt')
+/** `allowPartial`: only after a Sentence was skipped because the model could not run. */
+export function finishSession(session: ReadingSession, opts: { allowPartial?: boolean } = {}): SessionResult {
+  if (!session.isComplete() && !opts.allowPartial) throw new Error('finishSession: not every Sentence has an Attempt')
   const accuracy = session.accuracy()
   const result = { storyId: session.storyId, accuracy, stars: starsFor(accuracy), practiceWords: session.practiceWords() }
   results.set(session.storyId, result)
@@ -64,4 +65,9 @@ export function finishSession(session: ReadingSession): SessionResult {
 
 export function resultFor(storyId: string): SessionResult | undefined {
   return results.get(storyId)
+}
+
+/** Call once the result is saved, so Back or a reload never records it twice. */
+export function clearResult(storyId: string): void {
+  results.delete(storyId)
 }

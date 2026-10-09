@@ -69,6 +69,12 @@ describe('finishSession / resultFor', () => {
     expect(resultFor('story-3')).toBeUndefined()
   })
 
+  it('finishes a partial session only when a Sentence was skipped (model not ready)', () => {
+    const s = createSession('story-3', 2)
+    s.addAttempt(attempt(0, words('correct', 'missed')))
+    expect(finishSession(s, { allowPartial: true })).toMatchObject({ storyId: 'story-3', accuracy: 0.5, stars: 1 })
+  })
+
   it('refuses an incomplete session', () => {
     const s = createSession('story-1', 2)
     s.addAttempt(attempt(0, words('correct')))

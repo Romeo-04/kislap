@@ -1,7 +1,7 @@
 // Result screen (issue #3 wiring; visual design: #10). Sticker on every finish: ADR-0010.
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
-import { resultFor } from '../game/session'
+import { clearResult, resultFor } from '../game/session'
 import { addPracticeWords, loadProgress, recordStory, saveProgress } from '../game/progress'
 import { loadSettings } from '../game/settings'
 import { playSound } from '../game/sound'
@@ -21,8 +21,9 @@ export function Result({ storyId }: { storyId: string }) {
   useEffect(() => {
     if (!outcome) return
     saveProgress(outcome.progress)
+    clearResult(storyId)
     playSound(outcome.newSticker ? 'sticker' : 'star', loadSettings())
-  }, [outcome])
+  }, [outcome, storyId])
 
   if (!result || !outcome) {
     return (
