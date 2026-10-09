@@ -72,7 +72,7 @@
   "offline.download": "I-download para magamit offline",
   "offline.failed": "Hindi natapos ang pag-download. Subukan ulit.",
   "privacy.clean": "0 na kahilingan mula sa screen na ito",
-  "privacy.explain": "Ang boses mo ay nananatili sa device na ito. Ipinapakita ng counter ang mga kahilingan ng screen na ito habang nagbabasa; makikita ang lahat sa network tab ng browser.",
+  "privacy.explain": "Ang boses mo ay nananatili sa device na ito. Ipinapakita ng counter ang mga kahilingan ng screen na ito habang nagbabasa ka; makikita ang lahat sa network tab ng browser.",
   "privacy.leak": "{n} na kahilingan mula sa screen na ito",
   "progress.collected": "Nakolekta na!",
   "progress.days": "araw ng pagbasa",
