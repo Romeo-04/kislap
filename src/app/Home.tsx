@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { loadProgress, localDate, saveProgress, touchStreak } from '../game/progress'
+import { markWelcomeBack } from '../game/dailyGoal'
 import { Ningning } from '../ui/Ningning'
 import { Wordmark } from '../ui/Wordmark'
 import { PaperScene } from '../ui/PaperScene'
@@ -16,7 +17,10 @@ import './core.css'
 export function Home() {
   const { t } = useI18n()
   const [streak] = useState(() => touchStreak(loadProgress(), localDate()))
-  useEffect(() => saveProgress({ ...loadProgress(), streak: streak.progress.streak }), [streak])
+  useEffect(() => {
+    saveProgress({ ...loadProgress(), streak: streak.progress.streak })
+    if (streak.welcomeBack) markWelcomeBack() // the jar says it once too
+  }, [streak])
   return (
     <section className="hm-screen paper-stage">
       {/* the bushes grow on the hills, so a page that scrolls never pulls them off the ground */}

@@ -2,6 +2,8 @@
 /* every screen that shows the scene is a stage: its own stacking context, so the scene's
    z-index -1 paints above the page background and below the screen's content */
 .paper-stage { position: relative; isolation: isolate; min-height: 100dvh; }
+/* paper focus ring: ink by day, light at night (it sits on the sky), not the older candy pink */
+.paper-stage :focus-visible { outline: 4px solid var(--on-sky); outline-offset: 4px; }
 .paper-scene {
   position: fixed;
   inset: 0;
