@@ -1,6 +1,6 @@
 import './kit.css'
 
-const COLORS = ['#FFC62E', '#F07F2A', '#7CC35A', '#2F9E57', '#FFFFFF', '#FFE27A']
+const COLORS = ['#FFC93C', '#F58A2B', '#8ACF4E', '#2E9A4E', '#FFFDF6', '#FFE79A']
 
 // fixed seed: the burst looks the same every time and the server render matches the client
 function pieces() {
