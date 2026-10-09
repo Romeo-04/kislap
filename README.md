@@ -25,8 +25,8 @@ stickers. Missed words come back in a short practice game.
 - **Mic check.** Say "Kumusta, Ningning!" to test the microphone before reading.
 - **Daily streak.** It counts days played and never resets to zero.
 - **Progress QR.** Show a child's progress to a parent or teacher as a QR code, with no server.
-- **Privacy meter.** An on-screen counter shows that 0 bytes leave the device while the child
-  reads.
+- **Privacy meter.** An on-screen counter shows that 0 network requests leave the device
+  while the child reads.
 - **Filipino and English interface**, switchable at any time.
 - **Works offline** after the first load.
 
