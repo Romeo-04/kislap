@@ -18,6 +18,7 @@ import { WordChip } from '../ui/WordChip'
 import { MicButton } from '../ui/MicButton'
 import { PrivacyMeter } from '../ui/PrivacyMeter'
 import { go } from './router'
+import { haptic } from '../ui/haptics'
 
 const REVEAL_MS = 120
 
@@ -122,8 +123,9 @@ export function Reading({ storyId }: { storyId: string }) {
   })
 
   const onMic = async () => {
+    if (state.phase !== 'listening' && state.phase !== 'ready' && state.phase !== 'reviewed') return
+    haptic(12) // a light tap, like a native record button
     if (state.phase === 'listening') return finish()
-    if (state.phase !== 'ready' && state.phase !== 'reviewed') return
     try {
       await recorder.start()
       setMood(moodFor('mic-on'))

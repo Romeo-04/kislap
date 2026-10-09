@@ -10,23 +10,24 @@ import { MicCheck } from './MicCheck'
 import { MicTest } from './MicTest'
 import { AsrTest } from './AsrTest'
 import { Bench } from './Bench'
+import { GameShell } from '../ui/GameShell'
 
 export function App() {
   const route = useRoute()
   return (
     <I18nProvider>
-      <main className="screen">
+      <GameShell route={route.name}>
         {route.name === 'home' && <Home />}
         {route.name === 'map' && <StoryMap />}
-        {route.name === 'reading' && <Reading storyId={route.storyId} />}
-        {route.name === 'result' && <Result storyId={route.storyId} />}
+        {route.name === 'reading' && <Reading key={route.storyId} storyId={route.storyId} />}
+        {route.name === 'result' && <Result key={route.storyId} storyId={route.storyId} />}
         {route.name === 'wordpop' && <WordPop />}
         {route.name === 'progress' && <Progress />}
         {route.name === 'miccheck' && <MicCheck />}
         {route.name === 'mictest' && <MicTest />}
         {route.name === 'asrtest' && <AsrTest />}
         {route.name === 'bench' && <Bench />}
-      </main>
+      </GameShell>
     </I18nProvider>
   )
 }
