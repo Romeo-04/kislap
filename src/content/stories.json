@@ -1,0 +1,23 @@
+[
+  {
+    "id": "story-1",
+    "title": { "fil": "Ang Maliit na Pusa", "en": "The Little Cat" },
+    "level": "easy",
+    "sentences": [
+      { "text": "Si Mimi ay isang maliit na pusa." },
+      { "text": "Mahilig siyang maglaro sa hardin." }
+    ]
+  },
+  {
+    "id": "story-2",
+    "title": { "fil": "Placeholder: Katamtaman", "en": "Placeholder: Medium" },
+    "level": "medium",
+    "sentences": [{ "text": "Ito ay pansamantalang pangungusap." }]
+  },
+  {
+    "id": "story-3",
+    "title": { "fil": "Placeholder: Mahirap", "en": "Placeholder: Hard" },
+    "level": "hard",
+    "sentences": [{ "text": "Ito ay pansamantalang pangungusap din." }]
+  }
+]
