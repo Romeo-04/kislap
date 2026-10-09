@@ -17,4 +17,4 @@ The sentence text in `expected.json` is a copy from `src/content/stories.json`. 
 Open `/#/golden`, load the clip files, choose model setups, and tap **Transcribe clips**.
 Copy the table and send it to the scorer owner (issue #23).
 
-The table shows the heard text, not an Accuracy yet. Accuracy comes from `scoreReading` once the scorer is on `main`.
+The table shows the heard text only. The page does not score it. To get Accuracy, run `scoreReading` from `src/scoring/score.ts` on each row.

@@ -121,6 +121,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 - **Research-data warning.** This model was trained on the Filipino Speech Corpus, which is for research and non-commercial use only (`docs/validation.md` I8), and a model trained on it carries those terms. **It may not be viable for the App Builders Challenge.** Check the challenge rules before shipping it. If it ships, D8 and D11 must say so.
 - **Can the model be swapped later?** Models are not part of our repo or deploy. The app downloads them from Hugging Face by repo id, and the id and precision per tier live in `src/asr/tier.ts`. Changing a model is a small edit and a redeploy, with no rebuild of the model. It is not swappable at runtime today (`?tier=` only picks between two fixed tiers). A swap needs the same Whisper layout (`encoder_model` and `decoder_model_merged`, 80 mel bins, no `cache_position` input). Every user downloads the new files again, and offline users do not get them until they reconnect. Pre-cache the demo devices.
 - **Not done:** a faster export of the Filipino model (fp16 or a 4-bit decoder on WebGPU). It might keep the accuracy at a few seconds per sentence, but it would be about 390 MB, over the 300 MB target, and it has the research-data problem above.
+
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
 - Q1–Q7 settled (see `docs/validation.md` grill log).
