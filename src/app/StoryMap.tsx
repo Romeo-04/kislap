@@ -28,11 +28,10 @@ function Path({ d, viewBox, className }: { d: string; viewBox: string; className
 }
 
 export function StoryMap() {
-  const { lang, t } = useI18n()
+  const { t } = useI18n()
   const progress = loadProgress()
   const found = STORIES.findIndex((story) => !(story.id in progress.stars))
   const next = STORIES[found < 0 ? 0 : found].id
-  const other = lang === 'fil' ? 'en' : 'fil'
   // hardest first in the page, so the path climbs from the bottom
   const stops = [...STORIES].reverse()
   return (
@@ -48,12 +47,13 @@ export function StoryMap() {
             const art = stickerArt(`sticker-${story.id}`, STORIES)
             return (
               <li key={story.id} className={story.id === next ? 'sm-stop sm-stop--next' : 'sm-stop'}>
-                <a className="sm-card" href={`#/reading/${story.id}`} aria-label={`${story.title[lang]}, ${t(`level.${story.level}`)}, ${stars} / 3`}>
+                <a className="sm-card" href={`#/reading/${story.id}`} aria-label={`${story.title.fil}, ${t(`level.${story.level}`)}, ${stars} / 3`}>
                   <span className="sm-cover">{art && <img src={art.src} alt="" width={56} height={56} />}</span>
                   <span className="sm-text">
                     <span className="sm-level">{t(`level.${story.level}`)}</span>
-                    <strong className="sm-title">{story.title[lang]}</strong>
-                    <span className="sm-sub" lang={other}>{story.title[other]}</span>
+                    {/* the title is story content: Filipino first in every UI language, English under it */}
+                    <strong className="sm-title" lang="fil">{story.title.fil}</strong>
+                    <span className="sm-sub" lang="en">{story.title.en}</span>
                     <StarRow stars={stars} />
                   </span>
                 </a>

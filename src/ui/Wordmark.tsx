@@ -3,14 +3,15 @@
 import { useId } from 'react'
 import './scene.css'
 
-export function Wordmark({ width = 250 }: { width?: number }) {
+/** `rope` lengthens the twine above the tag (in drawing units), so it can run up off the top of the screen. */
+export function Wordmark({ width = 250, rope = 0, className = '' }: { width?: number; rope?: number; className?: string }) {
   // unique ids, in case two wordmarks are ever on one page
   const id = useId().replace(/:/g, '')
   const lift = `wm-lift-${id}`
   const top = `wm-top-${id}`
   const text = { x: 160, y: 162, textLength: 236, lengthAdjust: 'spacingAndGlyphs' as const }
   return (
-    <svg className="wordmark" viewBox="0 -60 320 260" width={width} height={(width * 260) / 320} role="img" aria-label="Kislap">
+    <svg className={`wordmark ${className}`.trim()} viewBox={`0 ${-60 - rope} 320 ${260 + rope}`} width={width} height={(width * (260 + rope)) / 320} role="img" aria-label="Kislap">
       <defs>
         <filter id={lift} filterUnits="userSpaceOnUse" x="-20" y="0" width="360" height="230">
           <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
@@ -26,7 +27,9 @@ export function Wordmark({ width = 250 }: { width?: number }) {
           <rect x="0" y="0" width="320" height="104" />
         </clipPath>
       </defs>
-      <path d="M160 -60 L160 4" stroke="var(--wood-shade)" strokeWidth="3.5" fill="none" />
+      <path d={`M160 ${-60 - rope} L160 4`} stroke="var(--wood-shade)" strokeWidth="3.5" fill="none" />
+      {/* the tag tilts on its knot; the twine above stays plumb */}
+      <g transform="rotate(-4 160 4)">
       <path d="M160 4 L72 90 M160 4 L248 90" stroke="var(--wood-shade)" strokeWidth="3.5" strokeLinecap="round" fill="none" />
       <circle cx="160" cy="4" r="7" fill="var(--brass)" />
       <circle cx="158" cy="2" r="2.5" fill="var(--brass-hi)" />
@@ -43,6 +46,7 @@ export function Wordmark({ width = 250 }: { width?: number }) {
           <text {...text} fill="var(--glow)" stroke="var(--glow-under)" strokeWidth="7" paintOrder="stroke">Kislap</text>
           <text {...text} fill="var(--glow-soft)" clipPath={`url(#${top})`}>Kislap</text>
         </g>
+      </g>
       </g>
     </svg>
   )

@@ -23,6 +23,22 @@ globalThis.localStorage = {
 
 beforeEach(() => store.clear())
 
+describe('default language', () => {
+  it('is English, so a child can follow the screens while reading Filipino stories', () => {
+    expect(defaultProgress().lang).toBe('en')
+  })
+
+  it('opens in English when Filipino was only the old default, saved by Home', () => {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil' }))
+    expect(loadProgress().lang).toBe('en')
+  })
+
+  it('keeps Filipino once the child or a grown-up picked it', () => {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil', langChosen: true }))
+    expect(loadProgress().lang).toBe('fil')
+  })
+})
+
 describe('load and save', () => {
   it('returns defaults when nothing is saved', () => {
     expect(loadProgress()).toEqual(defaultProgress())

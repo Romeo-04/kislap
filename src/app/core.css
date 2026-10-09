@@ -22,9 +22,14 @@
 .hm-welcome { padding: 8px 18px; border-width: 3px; border-radius: var(--r-md); font: 700 18px / 1.3 var(--font-display); text-align: center; }
 .hm-friend { position: relative; display: flex; justify-content: center; width: 100%; }
 .hm-friend .ningning { position: relative; z-index: 1; }
-.hm-bush { position: absolute; z-index: 2; }
-.hm-bush--left { left: -42px; bottom: 140px; width: 130px; }
-.hm-bush--right { right: -42px; bottom: 132px; width: 110px; }
+/* bushes live in the paper scene, on its hill band (top 0 = HILL_TOP in PaperScene, 64% for "high"), as in the part 2 frame */
+.ps-decor { position: absolute; left: 0; right: 0; top: 0; }
+.hm-bush { position: absolute; }
+.hm-bush--left { left: -18px; top: -34px; width: 130px; }
+.hm-bush--right { right: -18px; top: -20px; width: 110px; }
+/* the rope's extra 300 drawing units run above the tag (1 unit = 1px at width 320); pulling the
+   sign up by that much keeps the tag in place and puts the rope's top, the swing's pivot, above the screen */
+.hm-sign { margin-top: -300px; pointer-events: none; }
 /* the stick runs down behind Play, like a puppet held from below the stage */
 .hm-actions { position: relative; z-index: 3; align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: -150px; }
 .hm-play { align-self: stretch; height: 88px; overflow: hidden; gap: var(--s-4); font-size: 36px; }
@@ -150,9 +155,14 @@
 /* ---------- desktop (>=900px) ---------- */
 @media (min-width: 900px) {
   /* Home: the tag, Play and the slips on the left; Ningning between the bushes on the right */
+  /* the two columns keep the 460 : 480 ratio up to their full 1004px with the 64px gap, so the
+     scene's bushes can find Ningning's column from the same numbers (--hm-mid is its centre) */
   .hm-screen {
+    --hm-w: min(100vw - 112px, 1004px); /* 48px padding a side, plus 16px for a scrollbar so nothing overflows */
+    --hm-col: calc((var(--hm-w) - 64px) * 480 / 940);
+    --hm-mid: calc(50% + var(--hm-w) / 2 - var(--hm-col) / 2);
     display: grid;
-    grid-template-columns: minmax(0, 460px) minmax(0, 480px);
+    grid-template-columns: calc((var(--hm-w) - 64px) * 460 / 940) var(--hm-col);
     grid-template-rows: auto auto auto 1fr auto;
     grid-template-areas: "top top" "title friend" "actions friend" ". friend" "bottom friend";
     justify-content: center;
@@ -163,11 +173,13 @@
   }
   .hm-top { grid-area: top; }
   .hm-title { grid-area: title; margin-top: var(--s-4); }
-  .hm-title .wordmark { width: 400px; height: 325px; }
+  /* same pull at width 400: 300 units x 400/320 = 375px; height 560 x 1.25 */
+  .hm-title .wordmark { width: 400px; height: 700px; margin-top: -375px; }
   .hm-friend { grid-area: friend; align-self: center; }
   .hm-friend .ningning { width: 280px; height: 490px; }
-  .hm-bush--left { left: 0; bottom: 120px; width: 190px; }
-  .hm-bush--right { right: 0; bottom: 110px; width: 160px; }
+  /* either side of Ningning, 150px out from the centre of his column */
+  .hm-bush--left { left: calc(var(--hm-mid) - 245px); top: -60px; width: 190px; }
+  .hm-bush--right { left: calc(var(--hm-mid) + 70px); right: auto; top: -45px; width: 160px; }
   .hm-actions { grid-area: actions; margin: 0; }
   .hm-bottom { grid-area: bottom; margin: 0; }
 

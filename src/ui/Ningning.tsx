@@ -107,9 +107,9 @@ export function Ningning({ mood, glow, size = 180, label = 'Ningning', stick: ra
       style={{ '--nn-pivot': `100px ${150 + stick}px` } as React.CSSProperties}
     >
       <defs>
-        {/* die-cut edge, thinner than the handoff's (team note): dilate 4.5, not 9 */}
+        {/* die-cut edge, a third of the handoff's (team notes): dilate 3, not 9 */}
         <filter id={cut} filterUnits="userSpaceOnUse" x="-60" y="-60" width="320" height="320">
-          <feMorphology in="SourceAlpha" operator="dilate" radius="4.5" result="d0" />
+          <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="d0" />
           <feGaussianBlur in="d0" stdDeviation="1" result="d1" />
           <feComponentTransfer in="d1" result="d">
             <feFuncA type="discrete" tableValues="0 1" />

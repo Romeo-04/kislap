@@ -8,6 +8,9 @@ import { StarRow } from './StarRow'
 import { LangToggle } from './LangToggle'
 import { OfflineStatus } from './OfflineStatus'
 import { Confetti } from './Confetti'
+import { savedFilipino } from '../test/lang'
+
+savedFilipino()
 
 const count = (s: string, sub: string) => s.split(sub).length - 1
 

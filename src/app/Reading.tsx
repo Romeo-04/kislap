@@ -25,6 +25,7 @@ import { Button } from '../ui/Button'
 import { BackIcon, RetryIcon } from '../ui/icons'
 import { syllabify } from '../content/syllables'
 import { go } from './router'
+import { goUp } from '../ui/goBack'
 import { haptic } from '../ui/haptics'
 import './screens.css'
 import './core.css'
@@ -237,9 +238,9 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
     <section className="rd-screen paper-stage">
       <PaperScene hills="low" />
       <header className="rd-top">
-        <a className="k-icon-btn" href="#/map" aria-label={t('nav.back')}>
+        <button type="button" className="k-icon-btn" aria-label={t('nav.back')} onClick={() => goUp('#/map')}>
           <BackIcon />
-        </a>
+        </button>
         <ol className="rd-vine" aria-label={`${index + 1}/${total}`}>
           {story.sentences.map((_, i) => (
             <li

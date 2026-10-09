@@ -4,8 +4,8 @@ Source: Claude Design project "Kislap Design System" (`Kislap Design System.dc.h
 This file is the visual source of truth for the paper look. It replaces the candy-adventure look
 (`docs/design/candy-adventure.md`) screen by screen, one issue at a time.
 
-Team change on top of the handoff: the cream die-cut edge on Ningning and the stickers is halved
-(the handoff's edge read as too strong).
+Team change on top of the handoff: the cream die-cut edge read as too strong. Ningning's (and the
+app icon's) is a third of the handoff's (dilate 3, not 9); the stickers' is half (dilate 4, not 8).
 
 Everything looks cut from craft paper and pinned together: flat pieces with a cream die-cut edge,
 lifted off a paper sky by a soft shadow. It is light, flat and warm, not heavy scrapbook texture.

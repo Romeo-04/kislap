@@ -3,6 +3,7 @@
 // Night (Gabi, [data-theme="gabi"] on <html>) shows a paper moon, pinprick stars and three soft
 // fireflies instead of the clouds; CSS picks the set, so the scene always matches the theme.
 // Put it inside a `.paper-stage` element (scene.css), or the page background covers it.
+import type { ReactNode } from 'react'
 import './scene.css'
 
 export type HillLine = 'map' | 'high' | 'mid' | 'low'
@@ -20,7 +21,8 @@ function Cloud({ className }: { className: string }) {
   )
 }
 
-export function PaperScene({ hills }: { hills: HillLine }) {
+/** `children` is scenery set on the hill band (its top is the band's top). The scene is fixed, so it stays on the hills when the page scrolls. */
+export function PaperScene({ hills, children }: { hills: HillLine; children?: ReactNode }) {
   return (
     <div className="paper-scene" aria-hidden="true">
       <div className="ps-night">
@@ -58,6 +60,7 @@ export function PaperScene({ hills }: { hills: HillLine }) {
           <path d="M0 110 Q130 60 260 100 T400 84" fill="none" stroke="var(--rim)" strokeWidth="5" vectorEffect="non-scaling-stroke" />
           <path d="M0 210 Q150 180 300 200 T400 196 L400 300 L0 300 Z" fill="var(--hill-shade)" />
         </svg>
+        {children && <div className="ps-decor">{children}</div>}
       </div>
       <div className="ps-grain" />
     </div>
