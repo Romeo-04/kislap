@@ -9,28 +9,42 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/*.svg', 'sounds/*', 'fonts/*', 'mascot/*', 'stickers/*', 'audio/**/*'],
+      includeAssets: ['favicon.svg', 'icons/*.svg', 'sounds/*', 'fonts/*', 'stickers/*', 'audio/**/*'],
       manifest: {
         name: 'Kislap',
         short_name: 'Kislap',
         description: 'Basa. Kislap. Galing! A reading game that listens on your device.',
         lang: 'fil',
         start_url: '/',
+        id: '/',
         display: 'standalone',
+        display_override: ['standalone', 'minimal-ui'],
         orientation: 'portrait',
-        background_color: '#14122b',
-        theme_color: '#14122b',
-        icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+        background_color: '#fff9f4',
+        theme_color: '#fff9f4',
+        // rounded art with wings near the edge: not safe for maskable crops
+        icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3,ogg,webm,m4a,json}'],
+        // Dev-only model folders under public/models are gitignored. Never precache them.
+        globIgnores: ['models/**'],
         navigateFallback: '/index.html',
+        // The ONNX Runtime files are 26 MB, too big to precache on install. Cache them the first
+        // time the worker loads them, so the app still runs offline after that (ADR-0007).
+        runtimeCaching: [
+          {
+            urlPattern: /\/assets\/ort-wasm-.*\.(wasm|mjs)$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'ort-runtime', expiration: { maxEntries: 4 } },
+          },
+        ],
       },
     }),
   ],
   worker: { format: 'es' },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 })

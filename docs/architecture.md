@@ -49,13 +49,18 @@ one (fake first, real later).
 export interface Recorder {
   start(): Promise<void>;                 // asks for the mic once, then reuses the stream
   stop(): Promise<Float32Array>;          // 16 kHz mono PCM
-  onLevel(cb: (rms: number) => void): () => void;  // drives the mic glow + auto-stop
+  onLevel(cb: (rms: number) => void): () => void;  // drives the mic glow
+  onAutoStop(cb: () => void): () => void;           // 1.5 s quiet after speech, or 15 s max → call stop()
+  release(): void;                                  // free the mic when leaving the screen
 }
-export function createRecorder(opts?: { autoStopSilenceMs?: number /* 1500 */ }): Recorder;
+export function createRecorder(opts?: { autoStopSilenceMs?: number /* 1500 */; maxMs?: number /* 15000 */ }): Recorder;
+// throws MicError { kind: 'denied' | 'unavailable' } from start()
 
 // ---------- src/asr/meter.ts (Lead) ----------
 export function rms(pcm: Float32Array): number;
 export function isMostlySilence(pcm: Float32Array, threshold?: number): boolean;  // ADR-0006
+export function createSilenceDetector(o: { threshold: number; silenceMs: number; maxMs: number }): { push(level: number, tMs: number): 'continue' | 'stop' };
+// src/asr/resample.ts: resample(pcm, fromRate, toRate), concatChunks(chunks)
 
 // ---------- src/asr/tier.ts (Model) ----------
 export type ModelTier = 'large' | 'small';
@@ -69,20 +74,25 @@ export interface TranscribeResult {
   words?: { word: string; start: number; end: number }[];  // only if timestamps work
 }
 export function loadModel(onProgress?: (p: { loaded: number; total: number; file: string }) => void): Promise<TierInfo>;
-export function transcribe(audio: Float32Array): Promise<TranscribeResult>;
-export function isModelCached(): Promise<boolean>;
+export function transcribe(audio: Float32Array): Promise<TranscribeResult>;  // loads the model itself if needed
+export function isModelCached(): Promise<boolean>;   // asks the worker; false (and a console warning) on error
 export function warmUp(): Promise<void>;         // one silent inference so the first real one is fast
 
 // Worker messages (src/asr/worker.ts)
 type ToWorker =
   | { type: 'load'; tier: TierInfo }
   | { type: 'transcribe'; id: number; audio: Float32Array }   // transfer audio.buffer
-  | { type: 'warmup' };
+  | { type: 'warmup' }
+  | { type: 'iscached'; tier: TierInfo };
 type FromWorker =
   | { type: 'progress'; loaded: number; total: number; file: string }
   | { type: 'ready'; tier: TierInfo }
+  | { type: 'warmed' }
+  | { type: 'cached'; value: boolean }
   | { type: 'result'; id: number; text: string; ms: number }
   | { type: 'error'; id?: number; message: string };
+// If the worker crashes, the client rejects every waiting request and starts a fresh worker on the next call.
+// Fake mode (dev only): add ?fake to the URL and transcribe() returns setFakeHeard() text without a model.
 
 // ---------- src/scoring/* (Content-QA) — pure ----------
 export type WordStatus = 'correct' | 'unclear' | 'missed';
@@ -97,14 +107,20 @@ export const SCORING = { correct: 0.85, unclear: 0.6, stars: [0.5, 0.7, 0.9] } a
 // ---------- src/content/syllables.ts (Content-QA) — "pantig" help ----------
 export function syllabify(word: string): string[];   // "bata" -> ["ba","ta"], "ngipin" -> ["ngi","pin"]
 
-// ---------- src/game/session.ts (Lead) ----------
+// ---------- src/game/session.ts (Lead, #3) ----------
 export interface SentenceAttempt { sentenceIndex: number; heard: string; words: WordResult[]; accuracy: number }
-export interface ReadingSession {
-  storyId: string;
-  attempts: SentenceAttempt[];        // best attempt per sentence counts
-  accuracy(): number;                 // mean over sentences of the best attempt
-  practiceWords(): string[];          // missed + unclear
-}
+export function createSession(storyId: string, sentenceCount: number): {
+  addAttempt(a: SentenceAttempt): void;   // keeps the best Attempt per Sentence (a retry never lowers the score)
+  accuracy(): number;                     // word-weighted over best Attempts: (correct + 0.5·unclear) / words
+  practiceWords(): string[];              // missed + unclear from best Attempts
+  isComplete(): boolean;
+};
+export function finishSession(s): { storyId; accuracy; stars; practiceWords };  // throws if incomplete
+export function resultFor(storyId: string): SessionResult | undefined;          // in memory; a direct link finds nothing
+
+// ---------- src/game/readingMachine.ts (Lead, #3) ----------
+// Pure reducer for docs/uml/state.md §1: ready → listening → thinking → revealing → reviewed.
+// silence / model failure / mic failure → ready with a kind notice, never a Missed mark.
 
 // ---------- src/game/mascot.ts (Designer) ----------
 export type MascotMood = 'idle' | 'listening' | 'thinking' | 'cheering' | 'encouraging' | 'celebrating';
@@ -125,9 +141,16 @@ export function loadProgress(): Progress;     // key 'kislap.progress.v1', safe 
 export function saveProgress(p: Progress): void;
 export function recordStory(p: Progress, storyId: string, stars: 0|1|2|3): { progress: Progress; newSticker?: string };
 export function touchStreak(p: Progress, today: string): { progress: Progress; welcomeBack: boolean };
+export function addPracticeWords(p: Progress, words: string[]): Progress;   // normalized, deduped, newest 20
+export function localDate(d?: Date): string;   // local YYYY-MM-DD; the one "today" helper for streak and goals
+export function defaultProgress(): Progress;
+// recordStory: sticker-<storyId> on every first finish (ADR-0010), sticker-<storyId>-gold at 3 stars.
+// saveProgress never throws (logs on quota or blocked storage).
 
 // ---------- src/privacy/meter.ts (Lead) ----------
-export function startPrivacyMeter(): { bytesSent(): number; requests(): string[]; stop(): void };
+export function summarize(entries: { name: string; transferSize: number }[], origin: string): { requests: number; bytes: number; urls: string[] };
+export function startPrivacyMeter(): { snapshot(): PrivacySummary; onChange(cb): () => void; report(entry): void; stop(): void };
+// Counts requests, not "bytes sent": Resource Timing has no sent size. Worker requests must be report()-ed.
 ```
 
 ## 4. Key runtime flows
@@ -160,7 +183,7 @@ kislap/
   CLAUDE.md  CONTEXT.md  PROGRESS.md  README.md  kislap-spec.md
   .claude/skills/git-operations/SKILL.md
   docs/  architecture.md  validation.md  adr/  uml/
-  public/  manifest.webmanifest  icons/  sounds/  fonts/  mascot/
+  public/  manifest.webmanifest  icons/  sounds/  fonts/  stickers/
   src/
     main.tsx
     app/        Home, StoryMap, Reading, Result, WordPop, Progress, MicCheck, router.tsx

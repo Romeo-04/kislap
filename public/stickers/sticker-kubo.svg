@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="320" height="320" style="display:block;overflow:visible" role="img" aria-label="Bahay kubo">
+<defs>
+<filter id="kd-cut" x="-20%" y="-20%" width="140%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="4" result="d"/><feGaussianBlur in="d" stdDeviation="3" result="b"/><feOffset in="b" dy="5" result="o"/><feFlood flood-color="#1B3A52" flood-opacity="0.18"/><feComposite in2="o" operator="in" result="sh"/><feFlood flood-color="#FFF3D1"/><feComposite in2="d" operator="in" result="edge"/><feMerge><feMergeNode in="sh"/><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="kd-ghost" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="4" result="d"/><feFlood flood-color="#FFF3D1"/><feComposite in2="d" operator="in" result="edge"/><feMerge><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<pattern id="kd-weave" width="7" height="7" patternUnits="userSpaceOnUse"><path d="M0 7 L7 0" stroke="#E9AE14" stroke-width="1.6"></path></pattern>
+</defs>
+<g filter="url(#kd-cut)" stroke="#A08566" stroke-linejoin="round" stroke-linecap="round">
+<path d="M22 134 Q80 126 138 134" fill="none" stroke="#2F9E57" stroke-width="4"></path>
+<path d="M112 134 Q106 118 118 115 Q124 104 133 114 Q144 116 141 134 Z" fill="#8ACF4E" stroke-width="2.5"></path>
+<rect x="50" y="104" width="6" height="30" fill="#E9AE14" stroke-width="2.5"></rect><rect x="96" y="104" width="6" height="30" fill="#E9AE14" stroke-width="2.5"></rect>
+<path d="M70 106 L64 134 M80 106 L74 134 M68 115 H78 M66 124 H76" fill="none" stroke-width="2.5"></path>
+<rect x="42" y="72" width="68" height="34" rx="2" fill="#FFE27A" stroke-width="3"></rect>
+<rect x="43.5" y="73.5" width="65" height="31" fill="url(#kd-weave)" stroke="none"></rect>
+<rect x="64" y="82" width="22" height="16" rx="2" fill="#FFC93C" stroke-width="2.5"></rect>
+<path d="M62 82 L56 72 L84 68 L88 82 Z" fill="#E9AE14" stroke-width="2.5"></path>
+<path d="M62 98 L58 76" fill="none" stroke-width="2"></path>
+<path d="M22 80 Q50 54 76 22 Q102 54 132 80 Q76 72 22 80 Z" fill="#E9AE14" stroke-width="3"></path>
+<path d="M42 68 Q48 61 51 54 M60 72 Q64 58 69 44 M90 72 Q87 58 83 44 M108 68 Q103 61 100 54" fill="none" stroke-width="2"></path>
+</g>
+</svg>
