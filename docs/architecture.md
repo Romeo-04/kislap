@@ -74,20 +74,25 @@ export interface TranscribeResult {
   words?: { word: string; start: number; end: number }[];  // only if timestamps work
 }
 export function loadModel(onProgress?: (p: { loaded: number; total: number; file: string }) => void): Promise<TierInfo>;
-export function transcribe(audio: Float32Array): Promise<TranscribeResult>;
-export function isModelCached(): Promise<boolean>;
+export function transcribe(audio: Float32Array): Promise<TranscribeResult>;  // loads the model itself if needed
+export function isModelCached(): Promise<boolean>;   // asks the worker; false (and a console warning) on error
 export function warmUp(): Promise<void>;         // one silent inference so the first real one is fast
 
 // Worker messages (src/asr/worker.ts)
 type ToWorker =
   | { type: 'load'; tier: TierInfo }
   | { type: 'transcribe'; id: number; audio: Float32Array }   // transfer audio.buffer
-  | { type: 'warmup' };
+  | { type: 'warmup' }
+  | { type: 'iscached'; tier: TierInfo };
 type FromWorker =
   | { type: 'progress'; loaded: number; total: number; file: string }
   | { type: 'ready'; tier: TierInfo }
+  | { type: 'warmed' }
+  | { type: 'cached'; value: boolean }
   | { type: 'result'; id: number; text: string; ms: number }
   | { type: 'error'; id?: number; message: string };
+// If the worker crashes, the client rejects every waiting request and starts a fresh worker on the next call.
+// Fake mode (dev only): add ?fake to the URL and transcribe() returns setFakeHeard() text without a model.
 
 // ---------- src/scoring/* (Content-QA) — pure ----------
 export type WordStatus = 'correct' | 'unclear' | 'missed';
@@ -102,14 +107,20 @@ export const SCORING = { correct: 0.85, unclear: 0.6, stars: [0.5, 0.7, 0.9] } a
 // ---------- src/content/syllables.ts (Content-QA) — "pantig" help ----------
 export function syllabify(word: string): string[];   // "bata" -> ["ba","ta"], "ngipin" -> ["ngi","pin"]
 
-// ---------- src/game/session.ts (Lead) ----------
+// ---------- src/game/session.ts (Lead, #3) ----------
 export interface SentenceAttempt { sentenceIndex: number; heard: string; words: WordResult[]; accuracy: number }
-export interface ReadingSession {
-  storyId: string;
-  attempts: SentenceAttempt[];        // best attempt per sentence counts
-  accuracy(): number;                 // mean over sentences of the best attempt
-  practiceWords(): string[];          // missed + unclear
-}
+export function createSession(storyId: string, sentenceCount: number): {
+  addAttempt(a: SentenceAttempt): void;   // keeps the best Attempt per Sentence (a retry never lowers the score)
+  accuracy(): number;                     // word-weighted over best Attempts: (correct + 0.5·unclear) / words
+  practiceWords(): string[];              // missed + unclear from best Attempts
+  isComplete(): boolean;
+};
+export function finishSession(s): { storyId; accuracy; stars; practiceWords };  // throws if incomplete
+export function resultFor(storyId: string): SessionResult | undefined;          // in memory; a direct link finds nothing
+
+// ---------- src/game/readingMachine.ts (Lead, #3) ----------
+// Pure reducer for docs/uml/state.md §1: ready → listening → thinking → revealing → reviewed.
+// silence / model failure / mic failure → ready with a kind notice, never a Missed mark.
 
 // ---------- src/game/mascot.ts (Designer) ----------
 export type MascotMood = 'idle' | 'listening' | 'thinking' | 'cheering' | 'encouraging' | 'celebrating';

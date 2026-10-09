@@ -68,6 +68,7 @@ export function createRecorder(opts: RecorderOptions = {}): Recorder {
   let source: MediaStreamAudioSourceNode | undefined
   let processor: ScriptProcessorNode | undefined
   let starting: Promise<void> | undefined // a double tap must not build two pipelines
+  let generation = 0 // bumped by release(): a start() still waiting on the mic prompt must not connect
 
   const disconnect = () => {
     processor?.disconnect()
@@ -79,7 +80,13 @@ export function createRecorder(opts: RecorderOptions = {}): Recorder {
 
   const begin = async () => {
     disconnect()
+    const gen = generation
     const stream = await getStream()
+    if (gen !== generation) {
+      stream.getTracks().forEach((t) => t.stop())
+      sharedStream = undefined
+      return
+    }
     sharedCtx ??= new AudioContext()
     const ctx = sharedCtx
     await ctx.resume()
@@ -131,6 +138,7 @@ export function createRecorder(opts: RecorderOptions = {}): Recorder {
     },
 
     release() {
+      generation++
       disconnect()
       sharedStream?.getTracks().forEach((t) => t.stop())
       sharedStream = undefined

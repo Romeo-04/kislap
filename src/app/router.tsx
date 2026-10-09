@@ -10,6 +10,8 @@ export type Route =
   | { name: 'progress' }
   | { name: 'miccheck' }
   | { name: 'mictest' }
+  | { name: 'asrtest' }
+  | { name: 'bench' }
 
 export function parseRoute(hash: string): Route {
   const [name, arg] = hash.replace(/^#\/?/, '').split('/')
@@ -21,6 +23,8 @@ export function parseRoute(hash: string): Route {
     case 'progress': return { name: 'progress' }
     case 'miccheck': return { name: 'miccheck' }
     case 'mictest': return { name: 'mictest' }
+    case 'asrtest': return { name: 'asrtest' }
+    case 'bench': return { name: 'bench' }
     default: return { name: 'home' }
   }
 }
