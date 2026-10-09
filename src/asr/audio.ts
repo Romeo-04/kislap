@@ -37,8 +37,16 @@ let sharedStream: MediaStream | undefined
 let sharedCtx: AudioContext | undefined
 
 // Ask for the mic once and reuse the stream, so the child sees one permission prompt.
-async function getStream(): Promise<MediaStream> {
-  if (sharedStream?.active) return sharedStream
+let pendingStream: Promise<MediaStream> | undefined
+
+function getStream(): Promise<MediaStream> {
+  if (sharedStream?.active) return Promise.resolve(sharedStream)
+  // Share one in-flight request so two callers never open two mic streams.
+  pendingStream ??= openStream().finally(() => (pendingStream = undefined))
+  return pendingStream
+}
+
+async function openStream(): Promise<MediaStream> {
   if (!navigator.mediaDevices?.getUserMedia) throw new MicError('unavailable', 'getUserMedia not available (needs HTTPS)')
   try {
     sharedStream = await navigator.mediaDevices.getUserMedia({
@@ -59,6 +67,7 @@ export function createRecorder(opts: RecorderOptions = {}): Recorder {
   let chunks: Float32Array[] = []
   let source: MediaStreamAudioSourceNode | undefined
   let processor: ScriptProcessorNode | undefined
+  let starting: Promise<void> | undefined // a double tap must not build two pipelines
 
   const disconnect = () => {
     processor?.disconnect()
@@ -68,34 +77,40 @@ export function createRecorder(opts: RecorderOptions = {}): Recorder {
     source = undefined
   }
 
-  return {
-    async start() {
-      disconnect()
-      const stream = await getStream()
-      sharedCtx ??= new AudioContext()
-      const ctx = sharedCtx
-      await ctx.resume()
-      chunks = []
-      const detector = createSilenceDetector({ threshold: SPEECH_LEVEL, silenceMs: autoStopSilenceMs, maxMs })
-      const startedAt = performance.now()
-      let autoStopped = false
+  const begin = async () => {
+    disconnect()
+    const stream = await getStream()
+    sharedCtx ??= new AudioContext()
+    const ctx = sharedCtx
+    await ctx.resume()
+    chunks = []
+    const detector = createSilenceDetector({ threshold: SPEECH_LEVEL, silenceMs: autoStopSilenceMs, maxMs })
+    const startedAt = performance.now()
+    let autoStopped = false
 
-      source = ctx.createMediaStreamSource(stream)
-      // ScriptProcessorNode is deprecated but works on every target browser and needs no extra module file.
-      processor = ctx.createScriptProcessor(2048, 1, 1)
-      processor.onaudioprocess = (e) => {
-        const frame = e.inputBuffer.getChannelData(0).slice()
-        chunks.push(frame)
-        const level = rms(frame)
-        levelListeners.forEach((cb) => cb(level))
-        if (!autoStopped && detector.push(level, performance.now() - startedAt) === 'stop') {
-          autoStopped = true
-          stopListeners.forEach((cb) => cb())
-        }
+    source = ctx.createMediaStreamSource(stream)
+    // ScriptProcessorNode is deprecated but works on every target browser and needs no extra module file.
+    processor = ctx.createScriptProcessor(2048, 1, 1)
+    processor.onaudioprocess = (e) => {
+      const frame = e.inputBuffer.getChannelData(0).slice()
+      chunks.push(frame)
+      const level = rms(frame)
+      levelListeners.forEach((cb) => cb(level))
+      if (!autoStopped && detector.push(level, performance.now() - startedAt) === 'stop') {
+        autoStopped = true
+        stopListeners.forEach((cb) => cb())
       }
-      source.connect(processor)
-      processor.connect(ctx.destination) // Chrome only fires onaudioprocess when connected; output stays silent
+    }
+    source.connect(processor)
+    processor.connect(ctx.destination) // Chrome only fires onaudioprocess when connected; output stays silent
+  }
+
+  return {
+    start() {
+      starting ??= begin().finally(() => (starting = undefined))
+      return starting
     },
+
 
     async stop() {
       disconnect()

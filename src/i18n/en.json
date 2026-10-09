@@ -23,5 +23,7 @@
   "progress.title": "My firefly jar",
   "miccheck.say": "Say: \"Kumusta, Ningning!\"",
   "nav.back": "Back",
-  "mic.denied": "Ningning needs the microphone to listen."
+  "mic.denied": "Ningning needs the microphone to listen.",
+  "reading.modelRetry": "Ningning got a little tired. Let's try again!",
+  "mic.unavailable": "The microphone was not found. Check that it is connected."
 }

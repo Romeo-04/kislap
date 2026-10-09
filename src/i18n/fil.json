@@ -23,5 +23,7 @@
   "progress.title": "Ang aking garapon",
   "miccheck.say": "Sabihin: \"Kumusta, Ningning!\"",
   "nav.back": "Bumalik",
-  "mic.denied": "Kailangan ni Ningning ang mikropono para makinig."
+  "mic.denied": "Kailangan ni Ningning ang mikropono para makinig.",
+  "reading.modelRetry": "Medyo napagod si Ningning. Subukan natin ulit!",
+  "mic.unavailable": "Hindi mahanap ang mikropono. Tingnan kung nakakabit ito."
 }

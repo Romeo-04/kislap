@@ -24,6 +24,7 @@ export function Reading({ storyId }: { storyId: string }) {
   const [mood, setMood] = useState<MascotMood>('idle')
   const [notice, setNotice] = useState('')
   const finishRef = useRef<() => void>(() => {})
+  const finishing = useRef(false) // auto-stop and a stop tap can land in the same frame
 
   useEffect(() => {
     const off = recorder.onAutoStop(() => finishRef.current())
@@ -35,25 +36,35 @@ export function Reading({ storyId }: { storyId: string }) {
 
   const sentence = story?.sentences[index]
 
+  // A kind retry that never marks a word: used for silence and for any model failure.
+  const retryKindly = (key: 'reading.silence' | 'reading.modelRetry') => {
+    setNotice(t(key))
+    setMood(moodFor('silence'))
+    setPhase('ready')
+  }
+
   const finish = async () => {
-    if (!sentence) return
+    if (!sentence || finishing.current) return
+    finishing.current = true
     setPhase('thinking')
     setMood(moodFor('mic-off'))
-    const pcm = await recorder.stop()
-    // Silence gate (ADR-0006): never send silence to Whisper, never mark words for it.
-    if (isMostlySilence(pcm)) {
-      setNotice(t('reading.silence'))
-      setMood(moodFor('silence'))
-      setPhase('ready')
-      return
+    try {
+      const pcm = await recorder.stop()
+      // Silence gate (ADR-0006): never send silence to Whisper, never mark words for it.
+      if (isMostlySilence(pcm)) return retryKindly('reading.silence')
+      setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
+      const { text } = await transcribe(pcm)
+      const scored = scoreReading(sentence.text, text)
+      session.attempts.push({ sentenceIndex: index, heard: text, ...scored })
+      setWords(scored.words)
+      setMood(moodFor('scored', scored.accuracy))
+      setPhase('reviewed')
+    } catch (err) {
+      console.error('[reading] transcription failed', err)
+      retryKindly('reading.modelRetry') // a model error never costs the child
+    } finally {
+      finishing.current = false
     }
-    setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
-    const { text } = await transcribe(pcm)
-    const scored = scoreReading(sentence.text, text)
-    session.attempts.push({ sentenceIndex: index, heard: text, ...scored })
-    setWords(scored.words)
-    setMood(moodFor('scored', scored.accuracy))
-    setPhase('reviewed')
   }
 
   const onMic = async () => {
@@ -65,7 +76,8 @@ export function Reading({ storyId }: { storyId: string }) {
       setMood(moodFor('mic-on'))
       setPhase('listening')
     } catch (err) {
-      setNotice(err instanceof MicError ? t('mic.denied') : String(err))
+      console.error('[reading] mic start failed', err)
+      setNotice(t(err instanceof MicError && err.kind === 'denied' ? 'mic.denied' : 'mic.unavailable'))
     }
   }
 

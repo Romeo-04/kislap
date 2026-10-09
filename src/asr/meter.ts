@@ -15,7 +15,7 @@ export function isMostlySilence(pcm: Float32Array, threshold = SILENCE_RMS): boo
 }
 
 export interface SilenceDetectorOptions {
-  /** Level (RMS of one ~50 ms frame) that counts as speech. */
+  /** Level (RMS of one ~43 ms frame at 48 kHz) that counts as speech. */
   threshold: number
   /** Quiet time after speech that ends the recording. */
   silenceMs: number
