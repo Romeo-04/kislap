@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { SCORING } from './config'
 import { scoreReading } from './score'
 import { starsFor } from './stars'
 
@@ -99,9 +100,11 @@ describe('scoreReading', () => {
   it.each([
     ['abcdefghijabcdefghij', 'xbcdefghijxbcdefghij', 'correct', 1],
     ['abcdefghijabcdefghij', 'xbcdefghijxycdefghij', 'correct', 1],
-    ['abcdefghij', 'xxcdefghij', 'unclear', 0.5],
-    ['abcde', 'abxde', 'unclear', 0.5],
+    ['abcdefghij', 'xxcdefghij', 'correct', 1],
+    ['abcde', 'abxde', 'correct', 1],
+    ['abcd', 'abxd', 'unclear', 0.5],
     ['abcde', 'abxye', 'unclear', 0.5],
+    ['abcd', 'abxy', 'unclear', 0.5],
     ['abcde', 'abxyz', 'missed', 0],
   ] as const)('classifies similarity boundaries for %s / %s', (expected, heard, status, accuracy) => {
     const result = scoreReading(expected, heard)
@@ -152,5 +155,32 @@ describe('model errors never cost the child (review of #58)', () => {
 
   it('still marks a really skipped word as missed', () => {
     expect(statusOf('Si Lila ay masaya', 'si lila masaya')).toEqual(['correct', 'correct', 'missed', 'correct'])
+  })
+})
+
+describe('cut-offs and spacing errors stay separate (review of the cut-off change)', () => {
+  const statusOf = (expected: string, heard: string) => scoreReading(expected, heard).words.map((w) => w.status)
+
+  it('counts one wrong letter in a five-letter word as correct, and in a four-letter word as unclear', () => {
+    // Known trade-off (ADR-0011): at 0.80 a different real word one letter away from a word of five
+    // or more letters is also marked correct. These pin that behaviour so a change is a choice.
+    expect(statusOf('sanga', 'sana')).toEqual(['correct']) // 0.80
+    expect(statusOf('bahay', 'buhay')).toEqual(['correct']) // 0.80
+    expect(statusOf('bata', 'bato')).toEqual(['unclear']) // 0.75
+  })
+
+  it('does not absorb a skipped short word into its long neighbour as a join', () => {
+    // "ningningay" against "ningning" is 0.80. It must not count as a spacing error.
+    expect(statusOf('Si Ningning ay nasa sanga', 'si ningning nasa sanga')).toEqual(['correct', 'correct', 'missed', 'correct', 'correct'])
+    // "siningning" against "ningning" is 0.80 too.
+    expect(statusOf('Si Ningning pala', 'ningning pala')).toEqual(['missed', 'correct', 'correct'])
+  })
+
+  it('still accepts a real spacing error', () => {
+    expect(statusOf('May story time ngayon', 'may storytime ngayon')).toEqual(['correct', 'correct', 'correct', 'correct'])
+  })
+
+  it('keeps the spacing check at least as strict as the correct cut-off', () => {
+    expect(SCORING.spacing).toBeGreaterThanOrEqual(SCORING.correct)
   })
 })
