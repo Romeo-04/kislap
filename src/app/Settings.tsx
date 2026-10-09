@@ -5,6 +5,7 @@ import { loadSettings, saveSettings, type Settings as SettingsData } from '../ga
 import { Ningning } from '../ui/Ningning'
 import { TopBar } from '../ui/TopBar'
 import { ChevronIcon, MicIcon } from '../ui/icons'
+import { OfflineBadge } from '../ui/OfflineBadge'
 import { applyTheme } from '../ui/theme'
 import { PaperScene } from '../ui/PaperScene'
 import './screens.css'
@@ -73,6 +74,9 @@ export function Settings() {
           <span>{t('miccheck.title')}</span>
           <ChevronIcon />
         </a>
+        <div className="st-offline">
+          <OfflineBadge />
+        </div>
       </div>
       <div className="st-mascot">
         <Ningning mood="idle" glow={settings.theme === 'gabi' ? 1 : 0.6} size={130} />

@@ -216,3 +216,6 @@
   .mc-bottom { grid-area: bottom; margin: 0; padding: var(--s-6) 0 var(--s-7); }
   .mc-denied, .mc-steps { margin-inline: 0; }
 }
+
+/* Offline status lives in Settings (Home only shows it while the child must act). */
+.st-offline { display: flex; justify-content: center; margin-top: var(--s-3); }
