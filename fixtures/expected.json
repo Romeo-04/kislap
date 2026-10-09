@@ -1,0 +1,18 @@
+{
+  "about": "Golden clips for scorer tuning and model checks (#18). Text is copied from src/content/stories.json (PR #55). If a story sentence changes there, update it here.",
+  "naming": "Save each recording as <clip id>__<reader>.<ext>, for example s1-01-clean__marcus.webm. Use at least 2 different adult readers. Audio files are gitignored.",
+  "clips": [
+    { "id": "s1-01-clean", "storyId": "story-1", "sentence": 1, "variant": "clean", "text": "Gabi na sa aming nayon." },
+    { "id": "s1-04-skip", "storyId": "story-1", "sentence": 4, "variant": "skip the word 'pala'", "text": "Si Ningning pala ang ilaw." },
+    { "id": "s1-05-clean", "storyId": "story-1", "sentence": 5, "variant": "clean", "text": "Dumapo siya sa isang sanga." },
+    { "id": "s1-07-mispronounce", "storyId": "story-1", "sentence": 7, "variant": "say 'pusa' as 'pusga'", "text": "Dala ni Lila ang pusa." },
+    { "id": "s2-01-clean", "storyId": "story-2", "sentence": 1, "variant": "clean", "text": "May munting hardin sa tabi ng aming bahay." },
+    { "id": "s2-03-skip", "storyId": "story-2", "sentence": 3, "variant": "skip the word 'tuyong'", "text": "Isang gabi, napansin ni Lila ang tuyong lupa." },
+    { "id": "s2-05-stumble", "storyId": "story-2", "sentence": 5, "variant": "slow, stumble on 'diniligan'", "text": "Dahan-dahan niyang diniligan ang tatlong bagong halaman." },
+    { "id": "s2-08-noisy", "storyId": "story-2", "sentence": 8, "variant": "clean words, background noise (fan, TV)", "text": "Sabay nilang inalagaan ang munting hardin." },
+    { "id": "s3-01-taglish", "storyId": "story-3", "sentence": 1, "variant": "clean, English words 'story time'", "text": "May story time ngayong gabi sa aming barangay." },
+    { "id": "s3-02-taglish", "storyId": "story-3", "sentence": 2, "variant": "clean, English word 'favorite'", "text": "Dala ni Lila ang favorite niyang libro." },
+    { "id": "s3-06-quote", "storyId": "story-3", "sentence": 6, "variant": "clean, with quoted speech", "text": "Nang mahirapan siya, sinabi ni Ben, \"Kaya mo iyan.\"" },
+    { "id": "s3-07-skip", "storyId": "story-3", "sentence": 7, "variant": "skip the word 'ulit'", "text": "Binasa niya ulit ang sentence nang dahan-dahan." }
+  ]
+}

@@ -3,25 +3,7 @@
 // Load time includes the download on the first run. Run twice to see cached load time.
 import { useEffect, useRef, useState } from 'react'
 import type { FromWorker, ToWorker } from '../asr/messages'
-import { TIERS, type TierInfo } from '../asr/tier'
-
-const RATE = 16_000
-
-interface Setup {
-  label: string
-  tier: TierInfo
-  dtype: string | Record<string, string>
-}
-
-const SETUPS: Setup[] = [
-  { label: 'base q8 (WASM)', tier: { ...TIERS.small, device: 'wasm' }, dtype: 'q8' },
-  { label: 'base q4 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: 'q4' },
-  {
-    label: 'small Filipino enc fp32 + dec q4 (WebGPU)',
-    tier: TIERS.large,
-    dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
-  },
-]
+import { RATE, SETUPS, toPcm, type Setup } from '../asr/devkit'
 
 interface Row {
   label: string
@@ -53,19 +35,6 @@ async function probeGpu(): Promise<GpuInfo> {
   } catch {
     return { available: false }
   }
-}
-
-/** Decode a recorded blob to 16 kHz mono Float32 (the contract format). */
-async function toPcm(blob: Blob): Promise<Float32Array> {
-  const ctx = new AudioContext()
-  const decoded = await ctx.decodeAudioData(await blob.arrayBuffer())
-  await ctx.close()
-  const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * RATE), RATE)
-  const src = offline.createBufferSource()
-  src.buffer = decoded
-  src.connect(offline.destination)
-  src.start()
-  return (await offline.startRendering()).getChannelData(0)
 }
 
 /** Ask one fresh worker to load a setup, then time the first and the second inference. */
