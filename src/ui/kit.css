@@ -1,26 +1,29 @@
-/* UI kit, drawn to the Claude Design handoff (layer 2). Tokens: src/styles/tokens.css. */
+/* UI kit, Claude Design part 2 (paper puppet). Every piece is cut paper: a cream die-cut edge,
+   a solid underside in its own darker tone, a soft blue drop. No dark outlines, no gradients. */
 
-/* ---------- buttons: hard toy shadow, press sinks 4px, hover changes the fill ---------- */
+/* ---------- buttons: candy (primary, one per screen) and paper (secondary) ---------- */
 .k-btn {
+  position: relative;
   min-height: 64px;
   padding: 0 var(--s-6);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s-3);
-  border: var(--stroke) solid var(--line);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--r-pill);
-  box-shadow: var(--toy);
   color: var(--ink);
   cursor: pointer;
   transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
 }
-.k-btn--primary { background: var(--glow); font: 800 28px var(--font-display); padding: 0 36px; }
+.k-btn--primary { background: var(--glow); box-shadow: var(--lift-glow); font: 800 28px var(--font-display); padding: 0 36px; }
 .k-btn--primary:hover { background: var(--glow-hover); }
-.k-btn--secondary { background: #FFFFFF; font: 700 26px var(--font-display); }
+.k-btn--primary:active { transform: translateY(4px); box-shadow: var(--pressed-glow); }
+.k-btn--secondary { background: var(--paper); box-shadow: 0 5px 0 var(--underside), 0 11px 16px rgba(27, 58, 82, .16); font: 700 26px var(--font-display); }
 .k-btn--secondary:hover { background: var(--cream-hover); }
-.k-btn:active, .k-icon-btn:active { transform: translateY(4px); box-shadow: var(--toy-pressed); }
-.k-btn:disabled { cursor: default; box-shadow: none; transform: translateY(4px); }
+.k-btn--secondary:active { transform: translateY(4px); box-shadow: var(--pressed); }
+/* not available: a dashed cut line, never a grey fade */
+.k-btn:disabled { cursor: default; background: var(--paper-warm); border-style: dashed; border-color: var(--cut-line); box-shadow: none; transform: translateY(4px); }
 
 .k-icon-btn {
   width: 52px;
@@ -28,18 +31,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: var(--stroke) solid var(--card-line, var(--line));
+  border: var(--edge-w) solid var(--edge);
   border-radius: 18px;
-  background: var(--surface);
-  color: var(--fg);
-  box-shadow: 0 4px 0 var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--underside), 0 8px 14px var(--drop);
   cursor: pointer;
   transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
 }
-.k-icon-btn:hover { background: var(--cream-hover); color: var(--ink); }
-.k-icon-btn--settings { width: 48px; height: 48px; border-radius: 16px; box-shadow: none; }
+.k-icon-btn:hover { background: var(--cream-hover); }
+.k-icon-btn:active { transform: translateY(4px); box-shadow: var(--pressed); }
+.k-icon-btn--settings { width: 48px; height: 48px; border-radius: 16px; }
 
-/* ---------- mic: 112px; recording stays pressed in, halos scale 1 to 1.5 with volume ---------- */
+/* ---------- mic: 112px candy circle; recording stays pressed in, halos grow with the voice ---------- */
 .k-mic {
   position: relative;
   width: var(--mic-size);
@@ -56,15 +60,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 4px solid var(--line);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--r-pill);
   background: var(--glow);
-  box-shadow: var(--toy);
+  box-shadow: var(--lift-glow);
   transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
 }
 .k-mic--idle:hover .k-mic__face { background: var(--glow-hover); }
 .k-mic--idle:active .k-mic__face,
-.k-mic--recording .k-mic__face { transform: translateY(4px); box-shadow: var(--toy-pressed); }
+.k-mic--recording .k-mic__face { transform: translateY(4px); box-shadow: 0 1px 0 var(--glow-under), 0 6px 12px rgba(27, 58, 82, .2); }
 .k-mic__halo {
   position: absolute;
   border-radius: var(--r-pill);
@@ -72,15 +76,15 @@
   transform: scale(0.8);
   transition: transform 80ms ease-out, opacity var(--t-base);
 }
-.k-mic__halo--outer { inset: -26px; background: var(--glow-soft); }
-.k-mic__halo--inner { inset: -11px; background: #FFD43B; }
+.k-mic__halo--outer { inset: -28px; background: var(--glow-soft); }
+.k-mic__halo--inner { inset: -12px; background: #FFD43B; }
 .k-mic--recording .k-mic__halo { transform: scale(calc(1 + var(--mic-level) * 0.5)); }
 .k-mic--recording .k-mic__halo--outer { opacity: 0.55; }
 .k-mic--recording .k-mic__halo--inner { opacity: 0.7; }
 .k-mic--thinking { cursor: default; color: var(--muted); }
 .k-mic--thinking .k-mic__face {
-  border: 4px dashed var(--muted);
-  background: var(--bg);
+  border: var(--edge-w) dashed var(--cut-line);
+  background: var(--paper-warm);
   box-shadow: none;
   transform: translateY(4px);
 }
@@ -88,23 +92,23 @@
   .k-mic--recording .k-mic__halo { transform: scale(1.25); }
 }
 
-/* ---------- word chip: state is a shape, text stays tinta ---------- */
+/* ---------- word chip: state is a shape, text stays ink ---------- */
 .k-word {
   position: relative;
   display: inline-block;
   padding: 0 6px;
-  border: var(--stroke) solid transparent;
+  border: 3px solid transparent;
   border-radius: 14px;
   background: none;
   font: inherit;
-  color: var(--fg);
+  color: var(--ink);
   text-underline-offset: 8px;
   transition: transform var(--t-fast) var(--ease-pop);
 }
 .k-word--tappable { cursor: pointer; }
 .k-word--correct { text-decoration: underline 5px var(--correct); }
 .k-word--unclear { text-decoration: underline wavy 4px var(--unclear); text-underline-offset: 10px; }
-.k-word--missed { border: var(--stroke) dashed var(--missed); background: #FFFFFF; color: var(--ink); }
+.k-word--missed { border: 3px dashed var(--missed); background: var(--paper); }
 .k-word--pop { transform: scale(1.08); }
 .k-word__check { position: absolute; top: -10px; right: -4px; line-height: 0; }
 .k-word__syllables {
@@ -115,53 +119,61 @@
   z-index: 2;
   white-space: nowrap;
   padding: 6px 18px;
-  background: #FFFFFF;
-  border: var(--stroke) solid var(--line);
+  background: var(--paper);
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--r-md);
-  box-shadow: 0 4px 0 var(--line);
+  box-shadow: 0 3px 0 var(--underside), 0 9px 16px rgba(27, 58, 82, .16);
   font: 800 26px / 1.2 var(--font-display);
   color: var(--ink);
 }
 
-/* ---------- stars: flat row on the map, arch on Result, each pops 300ms apart ---------- */
+/* ---------- stars: flat row on the map, raised arch on Result, each pops 300ms apart ---------- */
 .k-stars { display: inline-flex; gap: 6px; align-items: flex-end; }
 .k-stars--arch { gap: var(--s-1); }
 .k-stars--arch .k-stars__slot:nth-child(2) { margin-bottom: 22px; }
 .k-stars--arch .k-stars__slot { animation: k-star-pop 300ms var(--ease-pop) both; animation-delay: calc(900ms + var(--i) * 300ms); }
-.k-star { display: block; }
+.k-star { display: block; filter: drop-shadow(0 3px 0 var(--underside)); }
 @keyframes k-star-pop { from { transform: scale(0.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* ---------- language toggle ---------- */
+/* ---------- language toggle: a small cream pill ---------- */
 .k-lang {
   height: var(--tap-min);
   padding: 0 20px;
-  border: var(--stroke) solid var(--card-line, var(--line));
+  border: var(--edge-w) solid var(--edge);
   border-radius: var(--r-pill);
-  background: var(--surface);
-  color: var(--fg);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--underside), 0 8px 14px var(--drop);
   font: 700 18px var(--font-display);
   cursor: pointer;
-  transition: transform var(--t-fast), background-color var(--t-fast);
+  transition: transform var(--t-fast), background-color var(--t-fast), box-shadow var(--t-fast);
 }
-.k-lang:hover { background: var(--cream-hover); color: var(--ink); }
-.k-lang:active { transform: translateY(2px); }
+.k-lang:hover { background: var(--cream-hover); }
+.k-lang:active { transform: translateY(2px); box-shadow: var(--pressed); }
 
-/* ---------- offline badge ---------- */
-.k-offline { margin: 0; }
-.k-offline--ready { display: flex; justify-content: center; align-items: center; gap: var(--s-2); font: 700 16px var(--font-read); }
-[data-theme="gabi"] .k-offline--ready svg path { stroke: var(--leaf); }
+/* ---------- offline status: words on a cream paper slip, never a dot ---------- */
+.k-offline {
+  margin: 0;
+  padding: var(--s-2) var(--s-4);
+  border: var(--edge-w) solid var(--edge);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 3px 0 var(--underside), 0 8px 14px rgba(27, 58, 82, .14);
+}
+.k-offline--ready { display: inline-flex; justify-content: center; align-items: center; gap: var(--s-2); font: 700 16px var(--font-read); }
 .k-offline--loading { display: flex; flex-direction: column; gap: var(--s-2); }
-.k-offline__track { height: 20px; border: var(--stroke) solid var(--line); border-radius: var(--r-pill); background: #FFFFFF; overflow: hidden; }
-.k-offline__fill { height: 100%; background: var(--glow); border-right: var(--stroke) solid var(--line); transition: width var(--t-base); }
+.k-offline__track { height: 20px; border: var(--edge-w) solid var(--edge-deep); border-radius: var(--r-pill); background: var(--paper-warm); overflow: hidden; }
+.k-offline__fill { height: 100%; background: var(--glow); border-right: var(--edge-w) solid var(--edge); transition: width var(--t-base); }
 .k-offline__label { margin: 0; display: flex; justify-content: space-between; font: 400 16px var(--font-read); }
 
-/* ---------- confetti: one 900ms burst, then the pieces stay ---------- */
+/* ---------- confetti: cream-edged paper bits, one 900ms burst, then they stay ---------- */
 .k-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .k-confetti__bit {
   position: absolute;
   left: 50%;
   top: 55%;
-  border: 2px solid var(--ink);
+  border: 3px solid var(--edge);
   animation: k-burst 900ms cubic-bezier(.2, .9, .3, 1) both;
 }
 .k-confetti__bit--0 { border-radius: 3px; }
@@ -176,3 +188,11 @@
   .k-confetti__bit { animation: none; transform: translate(var(--x), var(--y)) rotate(var(--r)); }
   .k-stars--arch .k-stars__slot { animation: none; }
 }
+
+/* the older candy-adventure styles fade disabled buttons; paper shows "not now" with a dashed cut */
+.k-btn:disabled, .k-mic:disabled, .k-icon-btn:disabled, .k-lang:disabled { opacity: 1; }
+
+/* readiness slip variants on Home (#10) */
+.k-offline-need { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.k-offline-need .k-btn { min-height: 56px; font-size: 22px; }
+.k-offline--note { font: 700 16px / 1.3 var(--font-read); text-align: center; text-wrap: pretty; }

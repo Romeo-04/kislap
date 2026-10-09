@@ -42,13 +42,13 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #8 | Design tokens and UI kit | CP1 | 🔨 PR open (Claude Design tokens, Baloo 2 + Andika, kit in `src/ui/`) |
-| #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
-| #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: candy adventure design + mobile-native shell |
-| #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
-| #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
+| #8 | Design tokens and UI kit | CP1 | 🔨 PR open: part 2 paper puppet tokens, kit, `PaperScene`, `Wordmark` (`docs/design/paper-puppet.md`) |
+| #9 | Ningning SVG, 6 moods, glow | CP1 | ✅ done (PR #61); part 2 paper puppet redraw in PR #87 (wings on brass pins, stick, thinner edge) |
+| #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: Home, Story map, Reading (five states) and Result in the paper look, phone and desktop |
+| #11 | Sounds and Sticker art | CP2 | ✅ done (PR #63); part 2 paper look for the stickers in PR #83 |
+| #12 | Sticker jar + progress screen (Should) | Freeze | 🔨 PR open: firefly jar in the paper look (floating stickers, tap to see big, days, goal ring, stars), phone and desktop |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
-| #45 | Mic-check screen (Should) | Freeze | ⏳ |
+| #45 | Mic-check screen (Should) | Freeze | 🔨 PR open: Mic check + Settings in the paper look, phone and desktop |
 | #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
 | D4 #28, D11 #35 | Deliverables | — | ⏳ D11 draft in `docs/assets.md` |
 
@@ -92,6 +92,15 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10 05:30** — 05:00 sweep: main healthy (348 tests, build green), production reading loop verified offline with the real model (8/8 sentences, sticker). #84 (progress recovery, #68) conflicted with main's language rule: fix PR into its branch keeps langChosen and logs every recovered field.
+- **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
+- **2026-10-10 01:45** — #11: the 12 stickers move to the part 2 paper look: a cream die-cut edge (half the handoff's width, per the team), printed lines in the cut line colour, every colour from the paper tokens, no dark outlines. Locked stickers are cream paper with a dashed cut line instead of a grey silhouette. Same art and mapping; 128 KB to about 35 KB without the provenance blocks.
+- **2026-10-10 01:25** — #9: Ningning is the part 2 paper puppet in `src/ui/Ningning.tsx`: four wings turn on brass pins per mood, an optional puppet stick sways ±3°, the die-cut edge is half the handoff's. The v1 mood motion stays (idle bob, cheering and celebrating hops, encouraging lean, thought bubbles popping in); the halo screen-blends only on the paper sky. New app icon; the v1 mood SVGs are gone.
+- **2026-10-10 01:10** — #8: Claude Design part 2 "paper puppet theatre" replaces the candy-adventure look, issue by issue. This PR: paper tokens, the kit redrawn as cut paper, `src/ui/PaperScene.tsx` (sky, hills, Gabi night) and `src/ui/Wordmark.tsx`. `adventure.css` stays until each screen moves; a paper scope in `tokens.css` keeps paper pieces on paper values meanwhile. Next: #9 Ningning, #11 stickers, then the screens (#10, #45, #12, #13), each with a desktop layout.
+- **2026-10-10** — @emyol fixed #68: loadProgress validates persisted fields separately and preserves valid rewards while recovering damaged containers, language, model tier and streak fields. Added regression coverage for the reported crashes and partial-data recovery; device QA in #24 remains pending.
+- **2026-10-10** — Paper polish: the UI now opens in English (stories, sentences and story titles stay Filipino; the toggle still switches the UI). Back goes up to the parent screen (`goUp` in `src/ui/goBack.ts`), so Home, map, story, Back, Back lands on Home instead of the story. Home's bushes sit on the paper scene's hill line and stay put when the page scrolls; the Kislap sign hangs from a rope that runs off the top of the screen. Ningning's die-cut edge is thinner again (dilate 3).
+- **2026-10-10** — #12: the firefly jar (`#/progress`) is a paper screen. Earned stickers float on their glow in the jar and the rest wait as cream paper outlines; tapping one shows it big with its name, and what earns it if it is still to come. Days of reading, a daily goal ring (2 stories a day, `src/game/dailyGoal.ts`, counted once per finish from Result) and stars per story sit below; desktop puts the jar on the left. Home marks the welcome back so the jar says it once.
+- **2026-10-10** — #10: Home, Story map, Reading and Result move to the paper puppet look, each with a desktop layout at 900px and wider. Reading and Result split into a view (`ReadingView`, `ResultView`) and the lead's logic, unchanged. The map covers use the sticker art, Ningning waits by the next story, and Result now shows confetti and the sticker at 0 stars too, as in the design. The readiness badge is a paper slip. `AdventureMap` is gone.
 - **2026-10-09 23:55** — D2 and D12 filled: team stochastic4 (Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, Marcus Ceasar Austria) and the AI tools (ChatGPT, Claude, Claude Code and skills, Claude Design, CodeRabbit). Members confirm spelling on #26.
 - **2026-10-09 23:55** — Candy adventure design (Home, map, stickers, mic check, Word Pop) and a mobile-native shell for phones: bottom tabs, settings sheet, thumb-reach mic, haptics, theme-colour status bar. All its copy moved to i18n.
 - **2026-10-09 23:10** — Checkpoint 2: #59 (model, re-reviewed and approved), #62, #58 (+ lead fixes #73) and #72 (reading loop) merged. Real Whisper-base read a spoken sentence offline in 9.6 s with 0 third-party requests. Disclosures, LICENSE and post text in #74. Team name: stochastic4. #1 closed (phone mic check passed).
