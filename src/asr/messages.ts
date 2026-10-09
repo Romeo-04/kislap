@@ -5,10 +5,12 @@ export type ToWorker =
   | { type: 'load'; tier: TierInfo }
   | { type: 'transcribe'; id: number; audio: Float32Array }
   | { type: 'warmup' }
+  | { type: 'iscached'; tier: TierInfo }
 
 export type FromWorker =
   | { type: 'progress'; loaded: number; total: number; file: string }
   | { type: 'ready'; tier: TierInfo }
   | { type: 'warmed' }
+  | { type: 'cached'; value: boolean }
   | { type: 'result'; id: number; text: string; ms: number }
   | { type: 'error'; id?: number; message: string }

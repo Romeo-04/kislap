@@ -90,7 +90,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
-- **2026-10-09 18:45** — #14: real Whisper worker and client in `src/asr/` (load with byte progress, transcribe with transferred audio, `isModelCached`, `warmUp`). Model check page at `/#/asrtest`. Fake mode stays on until `loadModel()` runs, so the Reading screen is unchanged. Worker contract gains a `warmed` message. Tested on a laptop in Chrome with a real recording.
+- **2026-10-09 18:45** — #14: real Whisper worker and client in `src/asr/` (load with byte progress, transcribe with transferred audio, `isModelCached`, `warmUp`). Model check page at `/#/asrtest`. `transcribe()` loads the model itself (from the cache after the first download). Fake mode is dev only: add `?fake` to the URL. Worker contract gains `warmed`, `iscached`, and `cached` messages. A worker crash rejects every waiting request and the next call starts a fresh worker. ONNX Runtime files now come from our own site, not jsDelivr, and are cached at runtime for offline use. Tested on a laptop in Chrome with a real recording.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
 - **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
