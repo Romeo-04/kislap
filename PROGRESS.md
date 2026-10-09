@@ -43,13 +43,13 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | # | Task | Gate | Status |
 |---|---|---|---|
 | #8 | Design tokens and UI kit | CP1 | 🔨 PR open (Claude Design tokens, Baloo 2 + Andika, kit in `src/ui/`) |
-| #9 | Ningning SVG, 6 moods, glow | CP1 | ⏳ |
+| #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | ⏳ |
 | #11 | Sounds and Sticker art | CP2 | ⏳ |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | ⏳ |
-| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ⏳ |
+| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
 | D4 #28, D11 #35 | Deliverables | — | ⏳ |
 
 ### Model engineer (@acmrsu) — epic #43
@@ -87,11 +87,11 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
 - Q1–Q7 settled (see `docs/validation.md` grill log).
-- Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
 
 - **2026-10-09 21:27** — #19 / PR #53: revised the stories for a clearer reading progression. The easy story uses short, familiar words and a complete cat-and-firefly plot; the medium story has a garden problem and resolution; the hard story uses longer clauses and Taglish. Each has eight sentences of four to ten words. Content checks, the existing test, typecheck, and build pass. Awaiting teammate review.
+- **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
 - **2026-10-09 17:53** — #19 / PR #53: applied the three grammar corrections from review (Dumapo, Sabay silang umuwi, Dahan-dahan) and added quotation marks to Ben's dialogue. Story IDs, levels, and sentence counts are unchanged. Awaiting teammate approval.
 - **2026-10-09 17:37** — #19: replaced the scaffold stories with three original stories in Ningning's world. Eight sentences each, four to ten words per sentence, bilingual titles, and stable story IDs. Content checks, the existing test, build, and lint pass. Awaiting teammate review.
