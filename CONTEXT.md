@@ -49,14 +49,14 @@ The result for one Expected word: correct, unclear, or missed.
 _Avoid_: Grade, verdict, error
 
 **Correct**:
-A Word mark where the Heard text matches the Expected word closely (similarity ≥ 0.85).
+A Word mark where the Heard text matches the Expected word closely (similarity ≥ 0.80).
 
 **Unclear**:
-A Word mark where the match is partial (0.60 ≤ similarity < 0.85). Worth half credit.
+A Word mark where the match is partial (0.50 ≤ similarity < 0.80). Worth half credit.
 _Avoid_: Wrong, mistake, mispronounced
 
 **Missed**:
-A Word mark where the Expected word was not heard or matched poorly (< 0.60). It is a chance to
+A Word mark where the Expected word was not heard or matched poorly (< 0.50). It is a chance to
 practise, never a failure.
 _Avoid_: Wrong, failed, error
 

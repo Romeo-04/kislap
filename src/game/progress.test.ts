@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   addPracticeWords,
   defaultProgress,
@@ -23,6 +23,22 @@ globalThis.localStorage = {
 
 beforeEach(() => store.clear())
 
+describe('default language', () => {
+  it('is English, so a child can follow the screens while reading Filipino stories', () => {
+    expect(defaultProgress().lang).toBe('en')
+  })
+
+  it('opens in English when Filipino was only the old default, saved by Home', () => {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil' }))
+    expect(loadProgress().lang).toBe('en')
+  })
+
+  it('keeps Filipino once the child or a grown-up picked it', () => {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil', langChosen: true }))
+    expect(loadProgress().lang).toBe('fil')
+  })
+})
+
 describe('load and save', () => {
   it('returns defaults when nothing is saved', () => {
     expect(loadProgress()).toEqual(defaultProgress())
@@ -40,6 +56,106 @@ describe('load and save', () => {
     store.set(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'en' }))
     expect(loadProgress().stickers).toEqual([])
     expect(loadProgress().lang).toBe('en')
+  })
+})
+
+describe('saved progress recovery (#68)', () => {
+  it('recovers null containers before gameplay consumers use them', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, stars: null, stickers: null, streak: null }))
+    const loaded = loadProgress()
+    expect(touchStreak(loaded, '2026-10-10').progress.streak.days).toBe(1)
+    expect(recordStory(loaded, 'story-1', 2).progress.stars['story-1']).toBe(2)
+  })
+
+  it('recovers invalid practice words without blocking new words', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, practiceWords: 'bata' }))
+    expect(addPracticeWords(loadProgress(), ['pusa']).practiceWords).toEqual(['pusa'])
+  })
+
+  it('rejects unsupported language and tier while retaining earned rewards', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'xx', tier: 'cloud', stars: { 'story-1': 3 } }))
+    const loaded = loadProgress()
+    expect(loaded.lang).toBe('en') // main's default: only a real language pick keeps Filipino
+    expect(loaded.tier).toBeUndefined()
+    expect(loaded.stars).toEqual({ 'story-1': 3 })
+  })
+
+  it('keeps a real language pick through recovery (langChosen survives the save on Home)', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'fil', langChosen: true, stars: 'broken' }))
+    const loaded = loadProgress()
+    expect(loaded.lang).toBe('fil')
+    expect(loaded.langChosen).toBe(true)
+  })
+
+  it('does not warn on a clean save, including a real Filipino pick', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const clean = { ...defaultProgress(), lang: 'fil' as const, langChosen: true as const, stars: { 'story-1': 3 as const }, stickers: ['sticker-story-1'], practiceWords: ['bata'], streak: { days: 2, lastPlayed: '2026-10-09' } }
+    store.set(PROGRESS_KEY, JSON.stringify(clean))
+    expect(loadProgress()).toEqual(clean)
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
+  it('warns when it repairs damaged practice words or a broken streak', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, practiceWords: 'bata', streak: null }))
+    loadProgress()
+    expect(warn).toHaveBeenCalledWith('[progress] recovered a damaged save', expect.objectContaining({ practiceWords: 1, streakReset: true }))
+    warn.mockClear()
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days: 3, lastPlayed: 'garbage' } }))
+    expect(loadProgress().streak).toEqual({ days: 3, lastPlayed: '' })
+    expect(warn).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
+  })
+
+  it('warns when a save from an unknown version is replaced', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 2, stickers: ['sticker-story-1'] }))
+    expect(loadProgress()).toEqual(defaultProgress())
+    expect(warn).toHaveBeenCalledWith('[progress] unsupported save version; starting fresh', 2)
+    warn.mockRestore()
+  })
+
+  it('retains valid entries from partially damaged collections', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({
+      version: 1, lang: 'en', tier: 'small',
+      stars: { 'story-1': 3, 'story-2': 0, tooHigh: 4, negative: -1, fraction: 1.5, string: '2', empty: null },
+      stickers: ['sticker-story-1', null, 7, '', 'sticker-story-1'],
+      practiceWords: ['bata', {}, false, ' ', 'pusa'],
+    }))
+    const loaded = loadProgress()
+    expect(loaded.lang).toBe('en')
+    expect(loaded.tier).toBe('small')
+    expect(loaded.stars).toEqual({ 'story-1': 3, 'story-2': 0 })
+    expect(loaded.stickers).toEqual(['sticker-story-1'])
+    expect(loaded.practiceWords).toEqual(['bata', 'pusa'])
+  })
+
+  it('preserves the earned streak count when its date is damaged', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days: 7, lastPlayed: '2026-02-30' } }))
+    const loaded = loadProgress()
+    expect(loaded.streak).toEqual({ days: 7, lastPlayed: '' })
+    expect(touchStreak(loaded, '2026-10-10').progress.streak.days).toBe(8)
+  })
+
+  it.each([-1, 1.5, '7', null])('recovers an invalid streak count: %s', (days) => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days, lastPlayed: '2026-10-09' } }))
+    expect(touchStreak(loadProgress(), '2026-10-10').progress.streak.days).toBe(1)
+  })
+
+  it('does not treat arrays as records', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, stars: [3], streak: [] }))
+    expect(loadProgress()).toEqual(defaultProgress())
+  })
+
+  it('round-trips all valid fields without losing earned progress', () => {
+    const progress = {
+      version: 1 as const, lang: 'en' as const, tier: 'large' as const,
+      stars: { 'story-1': 3 as const }, stickers: ['sticker-story-1'], practiceWords: ['bata'],
+      streak: { days: 9, lastPlayed: '2024-02-29' },
+    }
+    saveProgress(progress)
+    expect(loadProgress()).toEqual(progress)
   })
 })
 

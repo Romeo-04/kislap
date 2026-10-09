@@ -102,7 +102,7 @@ export function similarity(a: string, b: string): number;          // align.ts, 
 export function align(expected: string[], heard: string[]): Array<[number | null, number | null]>;
 export function scoreReading(expectedText: string, heardText: string): { words: WordResult[]; accuracy: number };
 export function starsFor(accuracy: number): 0 | 1 | 2 | 3;         // stars.ts
-export const SCORING = { correct: 0.85, unclear: 0.6, stars: [0.5, 0.7, 0.9] } as const;  // config.ts
+export const SCORING = { correct: 0.8, unclear: 0.5, spacing: 0.85, stars: [0.5, 0.7, 0.9] } as const;  // config.ts, see ADR-0011
 
 // ---------- src/content/syllables.ts (Content-QA) — "pantig" help ----------
 export function syllabify(word: string): string[];   // "bata" -> ["ba","ta"], "ngipin" -> ["ngi","pin"]
@@ -183,7 +183,7 @@ kislap/
   CLAUDE.md  CONTEXT.md  PROGRESS.md  README.md  kislap-spec.md
   .claude/skills/git-operations/SKILL.md
   docs/  architecture.md  validation.md  adr/  uml/
-  public/  manifest.webmanifest  icons/  sounds/  fonts/  mascot/
+  public/  manifest.webmanifest  icons/  sounds/  fonts/  stickers/
   src/
     main.tsx
     app/        Home, StoryMap, Reading, Result, WordPop, Progress, MicCheck, router.tsx
