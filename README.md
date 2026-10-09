@@ -110,7 +110,7 @@ docs/
 | Member | Role | GitHub |
 |---|---|---|
 | Jhezra Tolentino | Lead: app shell, integration, offline, deploy | @Romeo-04 |
-| Ric Ian Barrios | Design: screens, Ningning, art | @Seedlign |
+| Ric Ian Barrios | Design: screens, Ningning, art, demo video | @Seedlign |
 | Amiel Josiah Acuna | Speech model on the device | @acmrsu |
 | Marcus Ceasar Austria | Content, scoring, and QA | @emyol |
 

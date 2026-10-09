@@ -61,7 +61,7 @@ handle before posting]**
 >
 > Try it: https://kislap.vercel.app · Code: https://github.com/Romeo-04/kislap
 >
-> Team stochastic4: [names]. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
+> Team stochastic4: Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, and Marcus Ceasar Austria. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
 
 Rules for both posts: the video plays inline, the post is public, no accuracy or "first" claims
 (spec §19). Save both URLs here and in the README.
