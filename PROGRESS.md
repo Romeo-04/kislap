@@ -73,7 +73,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
 | #22 | i18n copy fil + en | CP2 | 🔨 Copy and scaffold wiring verified; open for suggestions and integrated UI review |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
-| #24 | Device QA, offline + network checks | Freeze | ⏳ |
+| #24 | Device QA, offline + network checks | Freeze | 🔨 `docs/qa.md` prepared; #68 fixed by #84; device checks pending |
 | #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
 | D14 #38 | Deliverable | — | ⏳ |
 
@@ -128,6 +128,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 
 ## Log
 
+- **2026-10-10 06:00** — #24 / PR #70: `docs/qa.md` updated to main. #68 marked fixed by #84; real routes, button labels and tier; spec §12 offline check, Network-tab rule and Privacy meter check for laptop and Poco X6 Pro. The meter cannot see model-worker requests (`meter.report()` has no caller), so the Network log is the proof.
 - **2026-10-10 05:30** — 05:00 sweep: main healthy (348 tests, build green), production reading loop verified offline with the real model (8/8 sentences, sticker). #84 (progress recovery, #68) conflicted with main's language rule: fix PR into its branch keeps langChosen and logs every recovered field.
 - **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
 - **2026-10-10 01:45** — #11: the 12 stickers move to the part 2 paper look: a cream die-cut edge (half the handoff's width, per the team), printed lines in the cut line colour, every colour from the paper tokens, no dark outlines. Locked stickers are cream paper with a dashed cut line instead of a grey silhouette. Same art and mapping; 128 KB to about 35 KB without the provenance blocks.
@@ -137,6 +138,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 - **2026-10-10** — Paper polish: the UI now opens in English (stories, sentences and story titles stay Filipino; the toggle still switches the UI). Back goes up to the parent screen (`goUp` in `src/ui/goBack.ts`), so Home, map, story, Back, Back lands on Home instead of the story. Home's bushes sit on the paper scene's hill line and stay put when the page scrolls; the Kislap sign hangs from a rope that runs off the top of the screen. Ningning's die-cut edge is thinner again (dilate 3).
 - **2026-10-10** — #12: the firefly jar (`#/progress`) is a paper screen. Earned stickers float on their glow in the jar and the rest wait as cream paper outlines; tapping one shows it big with its name, and what earns it if it is still to come. Days of reading, a daily goal ring (2 stories a day, `src/game/dailyGoal.ts`, counted once per finish from Result) and stars per story sit below; desktop puts the jar on the left. Home marks the welcome back so the jar says it once.
 - **2026-10-10** — #10: Home, Story map, Reading and Result move to the paper puppet look, each with a desktop layout at 900px and wider. Reading and Result split into a view (`ReadingView`, `ResultView`) and the lead's logic, unchanged. The map covers use the sticker art, Ningning waits by the next story, and Result now shows confetti and the sticker at 0 stars too, as in the design. The readiness badge is a paper slip. `AdventureMap` is gone.
+- **2026-10-09** — @emyol prepared the #24 device evidence matrix and #37 claim-review notes in docs/qa.md. Reproduced malformed saved-progress failures on PR #52 and filed #68. Physical-device and final release checks remain pending.
 - **2026-10-09 23:55** — D2 and D12 filled: team stochastic4 (Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, Marcus Ceasar Austria) and the AI tools (ChatGPT, Claude, Claude Code and skills, Claude Design, CodeRabbit). Members confirm spelling on #26.
 - **2026-10-09 23:55** — Candy adventure design (Home, map, stickers, mic check, Word Pop) and a mobile-native shell for phones: bottom tabs, settings sheet, thumb-reach mic, haptics, theme-colour status bar. All its copy moved to i18n.
 - **2026-10-09 23:10** — Checkpoint 2: #59 (model, re-reviewed and approved), #62, #58 (+ lead fixes #73) and #72 (reading loop) merged. Real Whisper-base read a spoken sentence offline in 9.6 s with 0 third-party requests. Disclosures, LICENSE and post text in #74. Team name: stochastic4. #1 closed (phone mic check passed).
