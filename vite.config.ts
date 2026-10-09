@@ -23,7 +23,7 @@ export default defineConfig({
         icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3,ogg,webm,m4a,json}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2,mp3,ogg,webm,m4a,json}'],
         navigateFallback: '/index.html',
       },
     }),

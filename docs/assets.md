@@ -67,11 +67,20 @@ copies an existing mascot, brand or character. The SVGs carry a C2PA provenance 
 | File | What it is | Licence |
 |---|---|---|
 | `public/icons/kislap.svg` | App icon: Ningning on night green | Own work |
-| `public/mascot/ningning-{idle,listening,thinking,cheering,encouraging,celebrating}.svg` | Ningning, six moods (source for `src/ui/Ningning.tsx`) | Own work |
+| `public/mascot/ningning-{idle,listening,thinking,cheering,encouraging,celebrating}.svg` | Ningning, six moods: the Claude Design drawings the 3D model follows | Own work |
+| `public/mascot/ningning-<mood>.webp` | Ningning in 3D, six 640 x 640 renders shown by `src/ui/Ningning.tsx` (156,040 bytes in total) | Own work |
+| `art/ningning.blend`, `art/build_ningning.py` | Source for the 3D renders. Modelled from primitives by script in Blender 5.4 through Blender MCP; no imported or generated models | Own work |
 | `public/stickers/sticker-{sampaguita,kubo,alitaptap,kalabaw,jeep,parol}.svg` | Six stickers | Own work |
 | `public/stickers/sticker-*-locked.svg` | The same six, not yet earned | Own work |
 
 Sticker art total: 128,506 bytes (about 126 KiB).
+
+## Tools for art
+
+| Tool | Licence | Used for |
+|---|---|---|
+| Blender 5.4 | GPL-3.0 (the renders it makes are ours) | Modelling and rendering the 3D Ningning |
+| Blender MCP (`mcp-for-blender` add-on 1.8) | See the add-on | Letting Claude Code drive Blender; asset libraries and AI 3D generators were switched off |
 
 ## Sounds
 

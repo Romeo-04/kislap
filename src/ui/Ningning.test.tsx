@@ -2,21 +2,22 @@ import { describe, expect, it } from 'vitest'
 import { renderToStaticMarkup as html } from 'react-dom/server'
 import { Ningning } from './Ningning'
 
+const MOODS = ['idle', 'listening', 'thinking', 'cheering', 'encouraging', 'celebrating'] as const
+
 describe('Ningning', () => {
   it('marks its mood on the root so CSS can move it', () => {
     expect(html(<Ningning mood="listening" />)).toContain('data-mood="listening"')
   })
 
-  it('keeps the named groups from the design assets', () => {
-    const out = html(<Ningning mood="idle" />)
-    for (const part of ['glow', 'wings', 'antennae', 'tail-light', 'body', 'eyes', 'mouth']) {
-      expect(out).toContain(`data-part="${part}"`)
+  it('shows the 3D render for each mood', () => {
+    for (const mood of MOODS) {
+      expect(html(<Ningning mood={mood} />)).toContain(`href="/mascot/ningning-${mood}.webp"`)
     }
   })
 
-  it('shows the thought bubbles only while thinking', () => {
-    expect(html(<Ningning mood="thinking" />)).toContain('data-part="thought"')
-    expect(html(<Ningning mood="idle" />)).not.toContain('data-part="thought"')
+  it('draws the live glow behind the render', () => {
+    const out = html(<Ningning mood="idle" />)
+    expect(out.indexOf('data-part="glow"')).toBeLessThan(out.indexOf('data-part="art"'))
   })
 
   it('sets halo opacity to glow x 0.45 and glow x 0.7', () => {
