@@ -7,7 +7,8 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 - **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
 - **Deployed URL:** _not yet (#1)_
-- **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14)
+- **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
+- **Flutter spike:** @Seedlign, decide by 17:00 (#48, `docs/spikes/flutter-whisper-trial.md`)
 
 ## Checkpoints
 
@@ -23,7 +24,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open · 🔨 in progress · ✅ done.
 
-### Lead — epic #41
+### Lead (@Romeo-04) — epic #41
 
 | # | Task | Gate | Status |
 |---|---|---|---|
@@ -36,7 +37,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #7 | Demo Day kit | Demo | ⏳ |
 | D1 #25, D2 #26, D3 #27, D5 #29, D9 #33, D10 #34, D12 #36, D13 #37, D15 #39 | Deliverables | — | ⏳ |
 
-### Designer — epic #42
+### Designer (@Seedlign) — epic #42
 
 | # | Task | Gate | Status |
 |---|---|---|---|
@@ -46,9 +47,11 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #11 | Sounds and Sticker art | CP2 | ⏳ |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
+| #45 | Mic-check screen (Should) | Freeze | ⏳ |
+| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ⏳ |
 | D4 #28, D11 #35 | Deliverables | — | ⏳ |
 
-### Model engineer — epic #43
+### Model engineer (@acmrsu) — epic #43
 
 | # | Task | Gate | Status |
 |---|---|---|---|
@@ -57,9 +60,10 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #16 | Model tiers (Filipino small on laptop, base on phone) | CP2 | ⏳ |
 | #17 | Stretch: export whisper-small-fsc q4f16 (stop 22:00) | CP2 | ⏳ |
 | #18 | Golden recordings + eval script | CP2 | ⏳ |
+| #47 | Local progress QR (Should) | Freeze | ⏳ |
 | D6 #30, D7 #31, D8 #32 | Deliverables | — | ⏳ |
 
-### Content, scoring & QA — epic #44
+### Content, scoring & QA (@emyol) — epic #44
 
 | # | Task | Gate | Status |
 |---|---|---|---|
@@ -69,6 +73,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #22 | i18n copy fil + en | CP2 | ⏳ |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
 | #24 | Device QA, offline + network checks | Freeze | ⏳ |
+| #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
 | D14 #38 | Deliverable | — | ⏳ |
 
 ## Measurements (fill at Checkpoint 1)
@@ -80,11 +85,16 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
-- Q1 Large-tier model · Q2 X + LinkedIn posting · Q3 Demo Day plan · Q4 Under-50 % reward ·
-  Q5 Creative additions · Q6 Eden review tonight · Q7 GitHub usernames
+- Q1–Q7 settled (see `docs/validation.md` grill log).
+- **@Seedlign has not accepted the repo invite yet**, so the designer issues are unassigned.
+  After they accept, run:
+  `gh issue list -R Romeo-04/kislap --label owner:designer --json number --jq '.[].number' | xargs -I{} gh issue edit {} -R Romeo-04/kislap --add-assignee Seedlign`
+- Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
 
-- **2026-10-09 16:40** — Repo bootstrapped: spec validated (`docs/validation.md`), architecture,
+- **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
+- **2026-10-09 15:55** — Grill round 1 settled Q1–Q6: Filipino ONNX on laptop, all six creative additions (#45–#47 new), sticker on every finish (ADR-0010), Eden removed (ADR-0009 accepted). Flutter spike delegated (#48).
+- **2026-10-09 15:45** — Repo bootstrapped: spec validated (`docs/validation.md`), architecture,
   9 ADRs, 7 UML diagrams, glossary. 5 milestones, 44 issues (24 tasks, 15 deliverables,
   tracker, 4 epics with sub-issues).

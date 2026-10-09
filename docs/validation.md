@@ -54,9 +54,9 @@ the bottom and grows as the team answers.
 | I29 | Stack: Vite + TS + React, PWA, Vercel | §2, §5 | Decision | Holds (ADR-0002) | — |
 | I30 | Progress on device only | §2 #12 | Decision | Holds (ADR-0008) | — |
 | I31 | Star thresholds 50/70/90; unclear = half | §2, §8 | Decision | Holds (ADR-0005) | Tune after Checkpoint 2 with real recordings. |
-| I32 | Under 50 % → 0 stars + kind retry | §15 | Decision | **For the user** | Grill Q4. |
+| I32 | Under 50 % → 0 stars + kind retry | §15 | Decision | **Settled** | Q4: 0 Stars, but a Sticker for finishing (ADR-0010). |
 | I33 | Owner of D6/D7 is the model engineer, but README is content-QA's | §16 vs §21 | Inconsistent (minor) | **Inconsistent** | Resolved: model engineer drafts the facts, content-QA owns the README text. |
-| I34 | Git skill requires Eden review per PR | skill §1 | Decision | **For the user** | Grill Q6; ADR-0009 proposed. |
+| I34 | Git skill requires Eden review per PR | skill §1 | Decision | **Settled** | Q6: Eden does not apply to Kislap. Removed from the skill; one teammate approves (ADR-0009 accepted). |
 | I35 | Git skill forbids Co-Authored-By / "Generated with" | skill | Decision | Holds | Applied to every commit and PR in this repo. |
 
 ## Fixes applied to `kislap-spec.md`
@@ -86,10 +86,11 @@ Round 1 is in the session summary and in `PROGRESS.md` under "Open decisions". A
 
 | Q | Decision | Answer | Date |
 |---|---|---|---|
-| Q1 | Large-tier model | _pending_ | |
-| Q2 | Social posting (X + LinkedIn) | _pending_ | |
-| Q3 | Demo Day plan and presenter | _pending_ | |
-| Q4 | Under-50 % reward | _pending_ | |
-| Q5 | Creative additions to adopt | _pending_ | |
-| Q6 | Eden review tonight | _pending_ | |
-| Q7 | GitHub usernames for the 4 roles | _pending_ | |
+| Q1 | Large-tier model | **Option A**: `internetoftim/whisper-small-pld-fil-ONNX` on the laptop (enc fp32, dec q4, ~586 MB). Bootstrap and phone stay on `onnx-community/whisper-base`. Research-use data disclosed in D8/D11. Own export (#17) stays an optional stretch. | 2026-10-09 |
+| Q2 | Social posting (X + LinkedIn) | The user (lead) owns the account and posts on both, tagging @cognition and Devin. | 2026-10-09 |
+| Q3 | Demo Day plan and presenter | All four attend. The user brings the demo phone. Every member must be able to run the demo. | 2026-10-09 |
+| Q4 | Under-50 % reward | 0 Stars + a Sticker for finishing + kind message (ADR-0010). | 2026-10-09 |
+| Q5 | Creative additions to adopt | **All six**: Privacy meter (#6), syllable help (#21), firefly jar (#12), mic-check screen, echo reading with pre-recorded teammate audio, local progress QR. New issues for the last three. | 2026-10-09 |
+| Q6 | Eden review tonight | Not related to this project. Removed from the skill; one teammate approves (ADR-0009). | 2026-10-09 |
+| Q7 | GitHub usernames for the 4 roles | Lead @Romeo-04 · Designer @Seedlign · Model engineer @acmrsu · Content-QA @emyol. All issues assigned by owner label; @Seedlign's assignments wait on the repo invite. | 2026-10-09 |
+| Spike | Flutter instead of the web app? | Delegated as a 45-minute spike, decide by 17:00 (`docs/spikes/flutter-whisper-trial.md`). Web plan continues in parallel. | 2026-10-09 |

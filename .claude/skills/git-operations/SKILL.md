@@ -9,15 +9,16 @@ Ported from Creator Loans v2 on 2026-10-09 for `Romeo-04/kislap`. The convention
 unchanged. What changed: the MAJOR-bump list names Kislap's committed terms (scoring
 thresholds, the story content schema, on-device progress storage) instead of the loan terms.
 
-**Hackathon override (2026-10-09).** Until submission (10:00, 2026-10-10) the Eden review step
-is **optional**: open the PR, get one teammate to approve it, then merge. If Eden is reachable,
-use it. See `docs/adr/` and `PROGRESS.md` for the current decision.
+**No Eden in this repo (decided 2026-10-09).** Eden Code Reviewer belongs to Creator Loans and
+does not apply to Kislap. The review step here is **one teammate approves the PR** (ADR-0009).
+The tools `pr-review-toolkit`, `pr-comment-loop`, and `pr-test-recording` named below are
+optional here: use them if they are installed, skip them if not.
 
 ## Every task gets a branch and a pull request
 
 **D17, 2026-09-18.** *"every task to be done should have proper branch name and PR"*, and
-*"every PR made should pass through"* **Eden Code Reviewer** at
-`https://pr.ed3n.ventures/reviews`.
+*"every PR made should pass through"* review. In Kislap, review means one teammate approves
+(ADR-0009).
 
 Four consequences for everything below:
 
@@ -31,9 +32,8 @@ Four consequences for everything below:
    section's earlier rule that "it is only a docs change" was no exception to a separate PR.
 3. **The branch name is part of the deliverable.** The naming rules below are no longer a
    nicety. Name the *subject*, not the activity.
-4. **Eden is the owner's to drive.** It is invitation-gated behind their Google account. **Do
-   not attempt to authenticate and do not ask for the credential.** Open the pull request,
-   report its URL, and name that the owner must paste it. See `pr-comment-loop` §0.
+4. **A teammate approves.** Open the pull request, report its URL in the team chat, and ask
+   the owner of the neighbouring module (see `docs/architecture.md` §2) to approve it.
 
 **Opening a pull request no longer needs a yes.** Granted 2026-09-18: *"freely create a pr"*.
 This resolves the contradiction between D17's mandatory pull request and v1's per-PR approval
@@ -158,7 +158,7 @@ Say what went out after the fact, naming the commits — a push nobody can see i
 one nobody approved.
 
 **Opening a PR is covered too**, as of 2026-09-18. Open it when the branch is ready, then
-report the URL and say it needs pasting into Eden.
+report the URL and ask a teammate to approve it.
 
 **Pushing to `main` directly is out.** The standing push permission covers feature branches. A
 task reaches `main` through a reviewed pull request or it does not reach `main`.
@@ -197,11 +197,10 @@ branch is ready.
 gh pr create --base main --head <branch> --title "<tag>: <title>" --body-file <file>
 ```
 
-**After opening, report the URL and say it needs pasting into Eden.** The pull request is not
-reviewed until the owner does that, and it does not merge until the review comes back. A pull
-request sitting open with green checks and no Eden review is **not** ready to merge.
+**After opening, report the URL and ask a teammate to approve it.** A pull request with green
+checks and no approval is **not** ready to merge.
 
-**Write the body for Eden as well as for a person.** It reviews the diff you hand it, so the
+**Write the body for a reviewer who did not see the work.** They review the diff you hand them, so the
 body has to say what the change is for, what was verified, and what is deliberately excluded —
 otherwise a deliberate omission reads as an oversight and comes back as a finding you then have
 to decline.

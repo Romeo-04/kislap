@@ -88,7 +88,8 @@ The hackathon requires every submission to answer: **"Why does this product bene
 | **Should** | Sticker collection |
 | **Should** | Word Pop mini-game |
 | **Should** | Daily streak (no punishment for a missed day) |
-| **Could** | Real-time word highlighting, text-to-speech help for hard words, mascot outfits, LoRA model |
+| **Should** (added 2026-10-09) | Privacy meter ("0 bytes sent"), syllable help (pantig), firefly-jar sticker screen, mic-check screen, echo reading with pre-recorded teammate audio, local progress QR export |
+| **Could** | Real-time word highlighting, mascot outfits, LoRA model |
 
 ---
 
@@ -173,6 +174,8 @@ export function starsFor(accuracy: number): 0 | 1 | 2 | 3;
 ---
 
 ## 7. Model plan
+
+**Decided 2026-10-09 (grill Q1):** laptop large tier = `internetoftim/whisper-small-pld-fil-ONNX` (ready ONNX). Phone and bootstrap = `onnx-community/whisper-base`. The text below is the original plan.
 
 **Primary model:** `sapinsapin/whisper-small-fsc` (Whisper-small fine-tuned on the Filipino Speech Corpus). The model card reports 15.9 percent word error rate and 7.1 percent character error rate on its held-out split.
 
@@ -314,7 +317,7 @@ Suggested base: "A child's voice is sensitive data. Kislap processes it on the d
 
 ## 15. Open items
 
-1. **Under 50 percent behavior.** Current rule: 0 stars plus a kind retry message. Change it if the team wants at least 1 star for every attempt.
+1. ~~**Under 50 percent behavior.**~~ **Settled 2026-10-09 (ADR-0010):** 0 stars, but finishing a story always earns a sticker, with a kind message.
 
 ---
 
