@@ -55,22 +55,25 @@ child reads.
 
 1. The microphone records one sentence. Recording stops on a tap or after a short silence.
 2. A loudness check skips clips that are only silence.
-3. A Whisper model, running in a Web Worker through Transformers.js (WebGPU, or WebAssembly as a
-   fallback), writes down what it heard.
+3. A Whisper model, running in a Web Worker through Transformers.js on WebAssembly, writes down what
+   it heard.
 4. The scorer aligns the heard words with the story words and marks each one.
 5. Ningning reacts, and stars, stickers, and practice words are saved on the device.
 
 | Device | Speech model |
 |---|---|
-| Every device (laptop and phone) | `onnx-community/whisper-base`, on WebAssembly, `language: tagalog` |
+| Every device (laptop and phone) | `onnx-community/whisper-base`, **q8**, on WebAssembly (about 73 MB), `language: tagalog` |
 
-A Filipino fine-tune for laptops (`internetoftim/whisper-small-pld-fil-ONNX`) was tested but is not
-used: it does not run in the current Transformers.js version.
+A WebGPU option (the same model in fp16, about 139 MB) exists for testing only. It runs only when
+`?tier=large` is in the URL, and it is off by default because it has not passed the full reading loop
+and the offline check on a real GPU. If it fails, the app switches to the WebAssembly model on its own.
+
+Filipino fine-tunes were tested but are not used. `internetoftim/whisper-small-pld-fil-ONNX` does not run in the current Transformers.js version. Our own int8 export of `sapinsapin/whisper-small-fsc` (a public backup repo, `acmrsu/kislap-whisper-small`) runs, but it takes 11 s or more per sentence on a laptop and is about 278 MB. It was trained on research-use data (Filipino Speech Corpus), so it may not be viable for the App Builders Challenge, and it is not shipped.
 
 ## Tech stack
 
 Vite · TypeScript · React · Transformers.js (`@huggingface/transformers`) · ONNX Runtime Web ·
-WebAssembly (WebGPU when enabled) · vite-plugin-pwa (Workbox) · Vitest · Vercel (static hosting).
+WebAssembly (WebGPU only with the `?tier=large` test switch, off by default) · vite-plugin-pwa (Workbox) · Vitest · Vercel (static hosting).
 
 ## Getting started
 
@@ -120,7 +123,7 @@ Built during the AppBuildersPH Hackathon 2026 (Oct 9–10). No code from earlier
 
 | Function | Where it runs | Needs internet? |
 |---|---|---|
-| Speech recognition (Whisper) | In the browser, in a Web Worker (Transformers.js + ONNX Runtime Web, WebGPU or WebAssembly) | Only to download the model once |
+| Speech recognition (Whisper) | In the browser, in a Web Worker (Transformers.js + ONNX Runtime Web, WebAssembly) | Only to download the model once |
 | Silence check | In the browser (loudness of the recording) | No |
 | Word scoring and word marks | In the browser (word alignment with spelling similarity) | No |
 | Mascot, stars, stickers, Word Pop, sounds | In the browser | No |
@@ -133,12 +136,16 @@ cloud AI.
 
 | Model | Used on | Licence and data |
 |---|---|---|
-| Whisper base (OpenAI), ONNX export `onnx-community/whisper-base` | Every device | Apache-2.0 (`openai/whisper-base` card); the ONNX export card states no licence |
+| Whisper base (OpenAI), ONNX export `onnx-community/whisper-base`, q8 (~73 MB), on WebAssembly | Every device | Apache-2.0 (`openai/whisper-base` card); the ONNX export card states no licence |
 
-Tested but not shipped: `internetoftim/whisper-small-pld-fil-ONNX`, a Filipino fine-tune (model
-cards MIT and Apache-2.0; its UP-DSP PLD training data is for research and non-commercial use).
+Tested but not shipped:
 
-The model is downloaded from Hugging Face at run time. They are not part of this repository.
+- The same `onnx-community/whisper-base` export in fp16 (~139 MB) on WebGPU. It is in the code as a test option (`?tier=large`) and is never picked by default.
+
+- `internetoftim/whisper-small-pld-fil-ONNX`, a Filipino fine-tune (model cards MIT and Apache-2.0; its UP-DSP PLD training data is for research and non-commercial use).
+- Our own int8 export of `sapinsapin/whisper-small-fsc` (about 278 MB; trained on the Filipino Speech Corpus, which is for research and non-commercial use; it may not be viable for the App Builders Challenge).
+
+The models are downloaded from Hugging Face at run time. They are not part of this repository.
 
 ### Services
 
@@ -153,7 +160,7 @@ The model is downloaded from Hugging Face at run time. They are not part of this
 ### Technologies
 
 Vite 8 · TypeScript 6 · React 19 · Transformers.js 4.3 (`@huggingface/transformers`) · ONNX Runtime
-Web 1.31 (dev build, via Transformers.js) · WebGPU / WebAssembly · vite-plugin-pwa 2 (Workbox 7) ·
+Web 1.31 (dev build, via Transformers.js) · WebAssembly (WebGPU only with the `?tier=large` test switch, off by default) · vite-plugin-pwa 2 (Workbox 7) ·
 Vitest 5 · oxlint. Full list with versions and licences: `docs/assets.md`.
 
 ### Existing assets
