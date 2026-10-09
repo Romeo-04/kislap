@@ -11,6 +11,7 @@ import { createSession } from '../game/session'
 import { addPracticeWords, loadProgress, saveProgress } from '../game/progress'
 import { moodFor, type MascotMood } from '../game/mascot'
 import { go } from './router'
+import { PrivacyMeter } from '../ui/PrivacyMeter'
 
 const moodCopy = {
   idle: 'mascot.idle', listening: 'reading.listening', thinking: 'reading.thinking',
@@ -130,6 +131,7 @@ export function Reading({ storyId }: { storyId: string }) {
           <button className="big" onClick={onNext}>{t('reading.next')}</button>
         </div>
       )}
+      <PrivacyMeter />
     </section>
   )
 }

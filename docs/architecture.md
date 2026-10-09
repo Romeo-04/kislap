@@ -137,7 +137,9 @@ export function defaultProgress(): Progress;
 // saveProgress never throws (logs on quota or blocked storage).
 
 // ---------- src/privacy/meter.ts (Lead) ----------
-export function startPrivacyMeter(): { bytesSent(): number; requests(): string[]; stop(): void };
+export function summarize(entries: { name: string; transferSize: number }[], origin: string): { requests: number; bytes: number; urls: string[] };
+export function startPrivacyMeter(): { snapshot(): PrivacySummary; onChange(cb): () => void; report(entry): void; stop(): void };
+// Counts requests, not "bytes sent": Resource Timing has no sent size. Worker requests must be report()-ed.
 ```
 
 ## 4. Key runtime flows

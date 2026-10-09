@@ -39,3 +39,7 @@ button.mic { width: var(--mic-size); height: var(--mic-size); align-self: center
   font: 700 18px var(--font-display); cursor: pointer;
 }
 .mascot-placeholder { font-size: 4rem; }
+
+.privacy-meter { font-size: 0.9rem; color: var(--muted); align-self: center; }
+.privacy-meter.leak { color: var(--missed); }
+.privacy-meter ul { text-align: left; word-break: break-all; }
