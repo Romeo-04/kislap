@@ -1,11 +1,24 @@
 // Keep this list narrow: spelling variants, not general translation or stemming.
 const variants = new Map<string, string>([
-  ['zero', '0'], ['sero', '0'],
-  ['isa', '1'], ['dalawa', '2'], ['tatlo', '3'], ['apat', '4'], ['lima', '5'],
-  ['anim', '6'], ['pito', '7'], ['walo', '8'], ['siyam', '9'], ['sampu', '10'],
   ['kamusta', 'kumusta'], ['favourite', 'favorite'], ['basketbol', 'basketball'],
   ['nagbasketbol', 'nagbasketball'],
 ])
+
+// Whisper may write a number as a digit, a bare word, or the linked form (-ng) in the story.
+// They share one canonical form; the scorer also keeps the spelling, so a near miss still counts.
+const NUMBER_WORDS: Array<[number, string[]]> = [
+  [0, ['zero', 'sero']], [1, ['isa', 'isang']], [2, ['dalawa', 'dalawang']], [3, ['tatlo', 'tatlong']],
+  [4, ['apat']], [5, ['lima', 'limang']], [6, ['anim']], [7, ['pito', 'pitong']], [8, ['walo', 'walong']],
+  [9, ['siyam']], [10, ['sampu', 'sampung']],
+]
+const numbers = new Map<string, string>(
+  NUMBER_WORDS.flatMap(([n, words]) => [[String(n), `#${n}`], ...words.map((w): [string, string] => [w, `#${n}`])]),
+)
+
+/** The number a word stands for (`#3`), or the word itself. */
+export function canonical(normalized: string): string {
+  return numbers.get(normalized) ?? normalized
+}
 
 /** Shared boundaries keep each displayed word paired with its normalized form. */
 export function tokenize(text: string): Array<{ word: string; normalized: string }> {
