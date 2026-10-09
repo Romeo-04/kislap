@@ -11,6 +11,9 @@
   pointer-events: none;
   transition: background-color var(--t-base);
 }
+.ps-day, .ps-night { position: absolute; inset: 0; }
+.ps-night, [data-theme="gabi"] .ps-day { display: none; }
+[data-theme="gabi"] .ps-night { display: block; }
 .ps-cloud { position: absolute; overflow: visible; }
 .ps-cloud--a { left: 56%; top: 12%; width: 120px; height: 56px; }
 .ps-cloud--b { left: -36px; top: 27%; width: 156px; height: 73px; }
@@ -41,4 +44,4 @@
   .wordmark { animation: wm-drop 400ms var(--ease-pop) both, wm-swing 4s ease-in-out 400ms infinite; }
 }
 @keyframes wm-drop { from { transform: translateY(-60px) rotate(-4deg); opacity: 0; } to { transform: rotate(-4deg); opacity: 1; } }
-@keyframes wm-swing { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(-2deg); } }
+@keyframes wm-swing { 0%, 100% { transform: rotate(-4deg); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(-2deg); } }

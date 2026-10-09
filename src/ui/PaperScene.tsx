@@ -1,6 +1,7 @@
 // The paper scene behind every screen (Claude Design part 2, PaperScene): sky, clouds, a mangrove
 // treeline with a kubo, two hills with cream rims, a shade band and a light paper grain.
-// Night (Gabi) swaps the clouds for a paper moon, pinprick stars and three soft fireflies.
+// Night (Gabi, [data-theme="gabi"] on <html>) shows a paper moon, pinprick stars and three soft
+// fireflies instead of the clouds; CSS picks the set, so the scene always matches the theme.
 // Put it inside a `.paper-stage` element (scene.css), or the page background covers it.
 import './scene.css'
 
@@ -19,11 +20,10 @@ function Cloud({ className }: { className: string }) {
   )
 }
 
-export function PaperScene({ hills, night = false }: { hills: HillLine; night?: boolean }) {
+export function PaperScene({ hills }: { hills: HillLine }) {
   return (
     <div className="paper-scene" aria-hidden="true">
-      {night ? (
-        <>
+      <div className="ps-night">
           <svg viewBox="0 0 80 80" className="ps-moon">
             <circle cx="40" cy="40" r="30" fill="var(--edge)" />
             <circle cx="52" cy="34" r="26" fill="var(--sky)" />
@@ -38,14 +38,12 @@ export function PaperScene({ hills, night = false }: { hills: HillLine; night?: 
           <span className="ps-firefly ps-firefly--a" />
           <span className="ps-firefly ps-firefly--b" />
           <span className="ps-firefly ps-firefly--c" />
-        </>
-      ) : (
-        <>
+      </div>
+      <div className="ps-day">
           <Cloud className="ps-cloud--a" />
           <Cloud className="ps-cloud--b" />
           <Cloud className="ps-cloud--c" />
-        </>
-      )}
+      </div>
       <div className="ps-land" style={{ top: HILL_TOP[hills] }}>
         <svg viewBox="0 0 400 90" preserveAspectRatio="none" className="ps-treeline">
           <path

@@ -96,6 +96,8 @@ describe('paper look (Claude Design part 2)', () => {
     expect(out).toContain('stroke="var(--edge)"')
     expect(out).toContain('k-star__shade')
     expect(out).not.toContain('stroke="var(--ink)"')
+    expect(html(<StarRow stars={2} />).split('k-star__shade').length - 1).toBe(2)
+    expect(html(<StarRow stars={0} />)).not.toContain('k-star__shade')
   })
 
   it('draws empty stars as cream with a dashed cut line, not grey', () => {

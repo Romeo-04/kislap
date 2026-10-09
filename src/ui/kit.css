@@ -190,4 +190,4 @@
 }
 
 /* the older candy-adventure styles fade disabled buttons; paper shows "not now" with a dashed cut */
-.k-btn:disabled, .k-mic:disabled { opacity: 1; }
+.k-btn:disabled, .k-mic:disabled, .k-icon-btn:disabled, .k-lang:disabled { opacity: 1; }

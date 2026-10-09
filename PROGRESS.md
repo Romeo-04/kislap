@@ -42,7 +42,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #8 | Design tokens and UI kit | CP1 | 🔨 PR open (Claude Design tokens, Baloo 2 + Andika, kit in `src/ui/`) |
+| #8 | Design tokens and UI kit | CP1 | 🔨 PR open: part 2 paper puppet tokens, kit, `PaperScene`, `Wordmark` (`docs/design/paper-puppet.md`) |
 | #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: candy adventure design + mobile-native shell |
 | #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
@@ -92,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10 01:10** — #8: Claude Design part 2 "paper puppet theatre" replaces the candy-adventure look, issue by issue. This PR: paper tokens, the kit redrawn as cut paper, `src/ui/PaperScene.tsx` (sky, hills, Gabi night) and `src/ui/Wordmark.tsx`. `adventure.css` stays until each screen moves; a paper scope in `tokens.css` keeps paper pieces on paper values meanwhile. Next: #9 Ningning, #11 stickers, then the screens (#10, #45, #12, #13), each with a desktop layout.
 - **2026-10-09 23:55** — D2 and D12 filled: team stochastic4 (Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, Marcus Ceasar Austria) and the AI tools (ChatGPT, Claude, Claude Code and skills, Claude Design, CodeRabbit). Members confirm spelling on #26.
 - **2026-10-09 23:55** — Candy adventure design (Home, map, stickers, mic check, Word Pop) and a mobile-native shell for phones: bottom tabs, settings sheet, thumb-reach mic, haptics, theme-colour status bar. All its copy moved to i18n.
 - **2026-10-09 23:10** — Checkpoint 2: #59 (model, re-reviewed and approved), #62, #58 (+ lead fixes #73) and #72 (reading loop) merged. Real Whisper-base read a spoken sentence offline in 9.6 s with 0 third-party requests. Disclosures, LICENSE and post text in #74. Team name: stochastic4. #1 closed (phone mic check passed).
