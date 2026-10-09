@@ -6,7 +6,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 ## Now
 
 - **Phase:** Parallel build (15:00–19:00). Next gate: **Checkpoint 1 at 19:00**.
-- **Deployed URL:** _not yet (#1)_
+- **Deployed URL:** https://kislap.vercel.app (device check: https://kislap.vercel.app/#/mictest)
 - **Speech model in use:** _none yet_ → bootstrap `onnx-community/whisper-base` q8 (#14); laptop target `internetoftim/whisper-small-pld-fil-ONNX` (#16, Q1 = A)
 - **Flutter spike:** @Seedlign, decide by 17:00 (#48, `docs/spikes/flutter-whisper-trial.md`)
 
@@ -28,7 +28,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 | # | Task | Gate | Status |
 |---|---|---|---|
-| #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | ⏳ |
+| #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | 🔨 PR open; phone mic check left |
 | #2 | Audio recorder, level meter, silence gate, auto-stop | CP1 | ⏳ |
 | #3 | Reading loop integration | CP2 | ⏳ |
 | #4 | On-device progress | CP2 | ⏳ |
@@ -93,6 +93,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
 - **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
 - **2026-10-09 15:55** — Grill round 1 settled Q1–Q6: Filipino ONNX on laptop, all six creative additions (#45–#47 new), sticker on every finish (ADR-0010), Eden removed (ADR-0009 accepted). Flutter spike delegated (#48).
 - **2026-10-09 15:45** — Repo bootstrapped: spec validated (`docs/validation.md`), architecture,

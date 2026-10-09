@@ -16,3 +16,5 @@ models/
 *.onnx
 .claude/settings.local.json
 .playwright-mcp/
+
+.vercel
