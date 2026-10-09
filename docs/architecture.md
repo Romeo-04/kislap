@@ -74,20 +74,25 @@ export interface TranscribeResult {
   words?: { word: string; start: number; end: number }[];  // only if timestamps work
 }
 export function loadModel(onProgress?: (p: { loaded: number; total: number; file: string }) => void): Promise<TierInfo>;
-export function transcribe(audio: Float32Array): Promise<TranscribeResult>;
-export function isModelCached(): Promise<boolean>;
+export function transcribe(audio: Float32Array): Promise<TranscribeResult>;  // loads the model itself if needed
+export function isModelCached(): Promise<boolean>;   // asks the worker; false (and a console warning) on error
 export function warmUp(): Promise<void>;         // one silent inference so the first real one is fast
 
 // Worker messages (src/asr/worker.ts)
 type ToWorker =
   | { type: 'load'; tier: TierInfo }
   | { type: 'transcribe'; id: number; audio: Float32Array }   // transfer audio.buffer
-  | { type: 'warmup' };
+  | { type: 'warmup' }
+  | { type: 'iscached'; tier: TierInfo };
 type FromWorker =
   | { type: 'progress'; loaded: number; total: number; file: string }
   | { type: 'ready'; tier: TierInfo }
+  | { type: 'warmed' }
+  | { type: 'cached'; value: boolean }
   | { type: 'result'; id: number; text: string; ms: number }
   | { type: 'error'; id?: number; message: string };
+// If the worker crashes, the client rejects every waiting request and starts a fresh worker on the next call.
+// Fake mode (dev only): add ?fake to the URL and transcribe() returns setFakeHeard() text without a model.
 
 // ---------- src/scoring/* (Content-QA) — pure ----------
 export type WordStatus = 'correct' | 'unclear' | 'missed';
