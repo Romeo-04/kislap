@@ -119,3 +119,38 @@ describe('scoreReading', () => {
     expect(result.accuracy).toBe(1)
   })
 })
+
+describe('model errors never cost the child (review of #58)', () => {
+  const statusOf = (expected: string, heard: string) => scoreReading(expected, heard).words.map((w) => w.status)
+
+  it('accepts a digit or a bare number word for a linked number word', () => {
+    expect(statusOf('May tatlong ibon', 'may 3 ibon')).toEqual(['correct', 'correct', 'correct'])
+    expect(statusOf('May tatlong ibon', 'may tatlo ibon')).toEqual(['correct', 'correct', 'correct'])
+    expect(statusOf('isang pusa', '1 pusa')).toEqual(['correct', 'correct'])
+    expect(statusOf('isang pusa', 'isa pusa')).toEqual(['correct', 'correct'])
+    expect(statusOf('sampung bata', '10 bata')).toEqual(['correct', 'correct'])
+  })
+
+  it('keeps near-miss credit on number words instead of dropping to zero', () => {
+    const [lima] = scoreReading('Lima', 'lim').words
+    expect(lima.status).toBe('unclear')
+  })
+
+  it('treats ñ and n as the same letter (Whisper often drops the tilde)', () => {
+    expect(statusOf('Si Niña', 'si nina')).toEqual(['correct', 'correct'])
+  })
+
+  it('accepts a hyphenated word heard as two words', () => {
+    expect(statusOf('Dahan-dahan siyang naglakad', 'dahan dahan siyang naglakad')).toEqual(['correct', 'correct', 'correct'])
+    expect(statusOf('nag-basketball kami', 'nag basketball kami')).toEqual(['correct', 'correct'])
+  })
+
+  it('accepts two expected words heard as one joined word', () => {
+    expect(statusOf('May story time ngayon', 'may storytime ngayon')).toEqual(['correct', 'correct', 'correct', 'correct'])
+    expect(statusOf('ang reading corner', 'ang readingcorner')).toEqual(['correct', 'correct', 'correct'])
+  })
+
+  it('still marks a really skipped word as missed', () => {
+    expect(statusOf('Si Lila ay masaya', 'si lila masaya')).toEqual(['correct', 'correct', 'missed', 'correct'])
+  })
+})
