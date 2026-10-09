@@ -86,13 +86,11 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
 - Q1–Q7 settled (see `docs/validation.md` grill log).
-- **@Seedlign has not accepted the repo invite yet**, so the designer issues are unassigned.
-  After they accept, run:
-  `gh issue list -R Romeo-04/kislap --label owner:designer --json number --jq '.[].number' | xargs -I{} gh issue edit {} -R Romeo-04/kislap --add-assignee Seedlign`
 - Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
 
+- **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
 - **2026-10-09 16:05** — Q7: issues assigned by role (designer pending invite).
 - **2026-10-09 15:55** — Grill round 1 settled Q1–Q6: Filipino ONNX on laptop, all six creative additions (#45–#47 new), sticker on every finish (ADR-0010), Eden removed (ADR-0009 accepted). Flutter spike delegated (#48).
