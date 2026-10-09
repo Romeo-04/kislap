@@ -1,18 +1,178 @@
 {
-  "about": "Golden clips for scorer tuning and model checks (#18). Text is copied from src/content/stories.json (PR #55). If a story sentence changes there, update it here.",
-  "naming": "Save each recording as <clip id>__<reader>.<ext>, for example s1-01-clean__marcus.webm. Use at least 2 different adult readers. Audio files are gitignored.",
-  "clips": [
-    { "id": "s1-01-clean", "storyId": "story-1", "sentence": 1, "variant": "clean", "text": "Gabi na sa aming nayon." },
-    { "id": "s1-04-skip", "storyId": "story-1", "sentence": 4, "variant": "skip the word 'pala'", "text": "Si Ningning pala ang ilaw." },
-    { "id": "s1-05-clean", "storyId": "story-1", "sentence": 5, "variant": "clean", "text": "Dumapo siya sa isang sanga." },
-    { "id": "s1-07-mispronounce", "storyId": "story-1", "sentence": 7, "variant": "say 'pusa' as 'pusga'", "text": "Dala ni Lila ang pusa." },
-    { "id": "s2-01-clean", "storyId": "story-2", "sentence": 1, "variant": "clean", "text": "May munting hardin sa tabi ng aming bahay." },
-    { "id": "s2-03-skip", "storyId": "story-2", "sentence": 3, "variant": "skip the word 'tuyong'", "text": "Isang gabi, napansin ni Lila ang tuyong lupa." },
-    { "id": "s2-05-stumble", "storyId": "story-2", "sentence": 5, "variant": "slow, stumble on 'diniligan'", "text": "Dahan-dahan niyang diniligan ang tatlong bagong halaman." },
-    { "id": "s2-08-noisy", "storyId": "story-2", "sentence": 8, "variant": "clean words, background noise (fan, TV)", "text": "Sabay nilang inalagaan ang munting hardin." },
-    { "id": "s3-01-taglish", "storyId": "story-3", "sentence": 1, "variant": "clean, English words 'story time'", "text": "May story time ngayong gabi sa aming barangay." },
-    { "id": "s3-02-taglish", "storyId": "story-3", "sentence": 2, "variant": "clean, English word 'favorite'", "text": "Dala ni Lila ang favorite niyang libro." },
-    { "id": "s3-06-quote", "storyId": "story-3", "sentence": 6, "variant": "clean, with quoted speech", "text": "Nang mahirapan siya, sinabi ni Ben, \"Kaya mo iyan.\"" },
-    { "id": "s3-07-skip", "storyId": "story-3", "sentence": 7, "variant": "skip the word 'ulit'", "text": "Binasa niya ulit ang sentence nang dahan-dahan." }
-  ]
+    "about":  "Golden clips for scorer tuning and model checks (#18). Text is from src/content/stories.json at commit 0b61d5c (17:55, PR #55). The stories were revised at 21:28 (74bac56), so this is the OLD text on purpose: the clips were recorded from it. Re-record and rebuild this file from the final stories before using it for final tuning.",
+    "naming":  "Name each file \u003cclip id\u003e.\u003cext\u003e (for example story-1-1.m4a). To tell readers apart, add the reader after two underscores: story-1-1__marcus.m4a. Audio files are gitignored.",
+    "clips":  [
+                  {
+                      "id":  "story-1-1",
+                      "storyId":  "story-1",
+                      "sentence":  1,
+                      "variant":  "read clearly",
+                      "text":  "Gabi na sa aming nayon."
+                  },
+                  {
+                      "id":  "story-1-2",
+                      "storyId":  "story-1",
+                      "sentence":  2,
+                      "variant":  "read clearly",
+                      "text":  "Si Lila ay nasa labas."
+                  },
+                  {
+                      "id":  "story-1-3",
+                      "storyId":  "story-1",
+                      "sentence":  3,
+                      "variant":  "read clearly",
+                      "text":  "May munting ilaw sa tabi."
+                  },
+                  {
+                      "id":  "story-1-4",
+                      "storyId":  "story-1",
+                      "sentence":  4,
+                      "variant":  "read clearly",
+                      "text":  "Si Ningning pala ang ilaw."
+                  },
+                  {
+                      "id":  "story-1-5",
+                      "storyId":  "story-1",
+                      "sentence":  5,
+                      "variant":  "read clearly",
+                      "text":  "Dumapo siya sa isang sanga.",
+                      "check":  "this sentence differs between two early versions of the story; confirm which one was read"
+                  },
+                  {
+                      "id":  "story-1-6",
+                      "storyId":  "story-1",
+                      "sentence":  6,
+                      "variant":  "read clearly",
+                      "text":  "May pusa sa tabi nito."
+                  },
+                  {
+                      "id":  "story-1-7",
+                      "storyId":  "story-1",
+                      "sentence":  7,
+                      "variant":  "read clearly",
+                      "text":  "Dala ni Lila ang pusa."
+                  },
+                  {
+                      "id":  "story-1-8",
+                      "storyId":  "story-1",
+                      "sentence":  8,
+                      "variant":  "read clearly",
+                      "text":  "Sabay silang umuwi sa bahay.",
+                      "check":  "this sentence differs between two early versions of the story; confirm which one was read"
+                  },
+                  {
+                      "id":  "story-2-1",
+                      "storyId":  "story-2",
+                      "sentence":  1,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "May munting hardin sa tabi ng aming bahay."
+                  },
+                  {
+                      "id":  "story-2-2",
+                      "storyId":  "story-2",
+                      "sentence":  2,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Tuwing gabi, dumadalaw si Ningning sa mga halaman."
+                  },
+                  {
+                      "id":  "story-2-3",
+                      "storyId":  "story-2",
+                      "sentence":  3,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Isang gabi, napansin ni Lila ang tuyong lupa."
+                  },
+                  {
+                      "id":  "story-2-4",
+                      "storyId":  "story-2",
+                      "sentence":  4,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Kumuha siya ng tubig mula sa kusina."
+                  },
+                  {
+                      "id":  "story-2-5",
+                      "storyId":  "story-2",
+                      "sentence":  5,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Dahan-dahan niyang diniligan ang tatlong bagong halaman.",
+                      "check":  "this sentence differs between two early versions of the story; confirm which one was read"
+                  },
+                  {
+                      "id":  "story-2-6",
+                      "storyId":  "story-2",
+                      "sentence":  6,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Tumabi si Ningning habang nagdidilig si Lila."
+                  },
+                  {
+                      "id":  "story-2-7",
+                      "storyId":  "story-2",
+                      "sentence":  7,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Dumating ang kapatid niya upang tumulong."
+                  },
+                  {
+                      "id":  "story-2-8",
+                      "storyId":  "story-2",
+                      "sentence":  8,
+                      "variant":  "scuffed, uneven reading",
+                      "text":  "Sabay nilang inalagaan ang munting hardin."
+                  },
+                  {
+                      "id":  "story-3-1",
+                      "storyId":  "story-3",
+                      "sentence":  1,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "May story time ngayong gabi sa aming barangay."
+                  },
+                  {
+                      "id":  "story-3-2",
+                      "storyId":  "story-3",
+                      "sentence":  2,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Dala ni Lila ang favorite niyang libro."
+                  },
+                  {
+                      "id":  "story-3-3",
+                      "storyId":  "story-3",
+                      "sentence":  3,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Inayos ng mga bata ang reading corner sa bakuran."
+                  },
+                  {
+                      "id":  "story-3-4",
+                      "storyId":  "story-3",
+                      "sentence":  4,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Dumating si Ningning kasama ang ibang alitaptap."
+                  },
+                  {
+                      "id":  "story-3-5",
+                      "storyId":  "story-3",
+                      "sentence":  5,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Nagbasa si Lila habang nakikinig ang kanyang mga kaibigan."
+                  },
+                  {
+                      "id":  "story-3-6",
+                      "storyId":  "story-3",
+                      "sentence":  6,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Nang mahirapan siya, sinabi ni Ben, \"Kaya mo iyan.\"",
+                      "check":  "this sentence differs between two early versions of the story; confirm which one was read"
+                  },
+                  {
+                      "id":  "story-3-7",
+                      "storyId":  "story-3",
+                      "sentence":  7,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Binasa niya ulit ang sentence nang dahan-dahan."
+                  },
+                  {
+                      "id":  "story-3-8",
+                      "storyId":  "story-3",
+                      "sentence":  8,
+                      "variant":  "read clearly (unsure); has English words",
+                      "text":  "Nagpalakpakan ang lahat, at nagningning ang mga alitaptap."
+                  }
+              ]
 }
