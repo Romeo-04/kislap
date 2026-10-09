@@ -43,9 +43,9 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | # | Task | Gate | Status |
 |---|---|---|---|
 | #8 | Design tokens and UI kit | CP1 | 🔨 PR open: part 2 paper puppet tokens, kit, `PaperScene`, `Wordmark` (`docs/design/paper-puppet.md`) |
-| #9 | Ningning SVG, 6 moods, glow | CP1 | ✅ done (PR #61); part 2 paper puppet redraw in PR #82 (wings on brass pins, stick, thinner edge) |
+| #9 | Ningning SVG, 6 moods, glow | CP1 | ✅ done (PR #61); part 2 paper puppet redraw in PR #87 (wings on brass pins, stick, thinner edge) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | 🔨 PR open: candy adventure design + mobile-native shell |
-| #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
+| #11 | Sounds and Sticker art | CP2 | ✅ done (PR #63); part 2 paper look for the stickers in PR #83 |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | ⏳ |
@@ -92,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10 01:45** — #11: the 12 stickers move to the part 2 paper look: a cream die-cut edge (half the handoff's width, per the team), printed lines in the cut line colour, every colour from the paper tokens, no dark outlines. Locked stickers are cream paper with a dashed cut line instead of a grey silhouette. Same art and mapping; 128 KB to about 35 KB without the provenance blocks.
 - **2026-10-10 01:25** — #9: Ningning is the part 2 paper puppet in `src/ui/Ningning.tsx`: four wings turn on brass pins per mood, an optional puppet stick sways ±3°, the die-cut edge is half the handoff's. The v1 mood motion stays (idle bob, cheering and celebrating hops, encouraging lean, thought bubbles popping in); the halo screen-blends only on the paper sky. New app icon; the v1 mood SVGs are gone.
 - **2026-10-10 01:10** — #8: Claude Design part 2 "paper puppet theatre" replaces the candy-adventure look, issue by issue. This PR: paper tokens, the kit redrawn as cut paper, `src/ui/PaperScene.tsx` (sky, hills, Gabi night) and `src/ui/Wordmark.tsx`. `adventure.css` stays until each screen moves; a paper scope in `tokens.css` keeps paper pieces on paper values meanwhile. Next: #9 Ningning, #11 stickers, then the screens (#10, #45, #12, #13), each with a desktop layout.
 - **2026-10-09 23:55** — D2 and D12 filled: team stochastic4 (Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, Marcus Ceasar Austria) and the AI tools (ChatGPT, Claude, Claude Code and skills, Claude Design, CodeRabbit). Members confirm spelling on #26.
