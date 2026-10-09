@@ -77,7 +77,7 @@ Rules for both posts: the video plays inline, the post is public, no accuracy or
 | Progress (stars, stickers, streak, practice words) | Browser `localStorage` on the device |
 | Privacy meter | In the browser (Resource Timing API) |
 
-No audio and no text leaves the device. The on-screen Privacy meter and the browser network tab
+No audio and no text leaves the device. The browser network tab (the full check) and the on-screen Privacy meter
 both show zero requests during reading.
 
 ## D7 What requires internet
@@ -138,7 +138,7 @@ oxlint. **[add any library added after 18:00]**
 ## D13 Why does this product benefit from running AI locally?
 
 A child's voice is sensitive data. Kislap processes it on the device, and it never goes to a
-server. There is no account and no upload, and anyone can check this: the on-screen Privacy
-meter and the browser network tab show zero requests while a child reads. Because the model runs
+server. There is no account and no upload, and anyone can check this: the browser's network tab
+shows zero requests while a child reads, and an on-screen Privacy meter counts them too. Because the model runs
 locally, Kislap also works with no internet after the first download, in places where the signal
 is weak or data is costly.
