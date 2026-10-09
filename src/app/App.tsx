@@ -8,21 +8,22 @@ import { WordPop } from './WordPop'
 import { Progress } from './Progress'
 import { MicCheck } from './MicCheck'
 import { MicTest } from './MicTest'
+import { GameShell } from '../ui/GameShell'
 
 export function App() {
   const route = useRoute()
   return (
     <I18nProvider>
-      <main className="screen">
+      <GameShell route={route.name}>
         {route.name === 'home' && <Home />}
         {route.name === 'map' && <StoryMap />}
-        {route.name === 'reading' && <Reading storyId={route.storyId} />}
-        {route.name === 'result' && <Result storyId={route.storyId} />}
+        {route.name === 'reading' && <Reading key={route.storyId} storyId={route.storyId} />}
+        {route.name === 'result' && <Result key={route.storyId} storyId={route.storyId} />}
         {route.name === 'wordpop' && <WordPop />}
         {route.name === 'progress' && <Progress />}
         {route.name === 'miccheck' && <MicCheck />}
         {route.name === 'mictest' && <MicTest />}
-      </main>
+      </GameShell>
     </I18nProvider>
   )
 }
