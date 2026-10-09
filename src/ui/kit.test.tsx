@@ -6,7 +6,7 @@ import { MicButton } from './MicButton'
 import { WordChip } from './WordChip'
 import { StarRow } from './StarRow'
 import { LangToggle } from './LangToggle'
-import { OfflineBadge } from './OfflineBadge'
+import { OfflineStatus } from './OfflineStatus'
 import { Confetti } from './Confetti'
 
 const count = (s: string, sub: string) => s.split(sub).length - 1
@@ -71,15 +71,15 @@ describe('LangToggle', () => {
   })
 })
 
-describe('OfflineBadge', () => {
+describe('OfflineStatus', () => {
   it('shows a filling bar and a rounded percent while downloading', () => {
-    const out = html(<I18nProvider><OfflineBadge progress={0.624} /></I18nProvider>)
+    const out = html(<I18nProvider><OfflineStatus progress={0.624} /></I18nProvider>)
     expect(out).toContain('width:62%')
     expect(out).toContain('62%</b>')
   })
 
   it('shows the words, not a dot, when ready', () => {
-    expect(html(<I18nProvider><OfflineBadge ready /></I18nProvider>)).toContain('Handa kahit offline')
+    expect(html(<I18nProvider><OfflineStatus ready /></I18nProvider>)).toContain('Handa kahit offline')
   })
 })
 

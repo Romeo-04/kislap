@@ -4,8 +4,8 @@ import './kit.css'
 
 type Props = { ready: true; progress?: never } | { ready?: false; progress: number }
 
-/** Ready is a check and words, not a dot. Downloading is a bar that fills, not a spinner. */
-export function OfflineBadge(props: Props) {
+/** Visual only; the readiness logic is the lead's OfflineBadge (#5). Ready is a check and words, not a dot. Downloading is a bar that fills, not a spinner. */
+export function OfflineStatus(props: Props) {
   const { t } = useI18n()
   if (props.ready) {
     return (
