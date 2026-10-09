@@ -45,12 +45,12 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #8 | Design tokens and UI kit | CP1 | 🔨 PR open (Claude Design tokens, Baloo 2 + Andika, kit in `src/ui/`) |
 | #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | ⏳ |
-| #11 | Sounds and Sticker art | CP2 | ⏳ |
+| #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | ⏳ |
 | #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
-| D4 #28, D11 #35 | Deliverables | — | ⏳ |
+| D4 #28, D11 #35 | Deliverables | — | ⏳ D11 draft in `docs/assets.md` |
 
 ### Model engineer (@acmrsu) — epic #43
 
@@ -91,6 +91,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 ## Log
 
 - **2026-10-09 21:27** — #19 / PR #53: revised the stories for a clearer reading progression. The easy story uses short, familiar words and a complete cat-and-firefly plot; the medium story has a garden problem and resolution; the hard story uses longer clauses and Taglish. Each has eight sentences of four to ten words. Content checks, the existing test, typecheck, and build pass. Awaiting teammate review.
+- **2026-10-09 19:30** — #11: sticker art mapped to stories by level (`src/content/stickers.ts`), soft Web Audio sounds (`src/game/sound.ts`), sound/night setting under `kislap.settings.v1`, D11 draft `docs/assets.md`.
 - **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
 - **2026-10-09 17:53** — #19 / PR #53: applied the three grammar corrections from review (Dumapo, Sabay silang umuwi, Dahan-dahan) and added quotation marks to Ben's dialogue. Story IDs, levels, and sentence counts are unchanged. Awaiting teammate approval.
