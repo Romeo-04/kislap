@@ -9,21 +9,22 @@ stickers. Missed words are saved for practice.
 
 ## Why Kislap
 
-The World Bank reports that 91 percent of 10-year-olds in the Philippines cannot read and
-understand an age-appropriate text. Children learn to read by reading aloud, and reading aloud
-needs someone who listens. Many children practise alone.
+In April 2026 the World Bank reported that 91 percent of ten-year-olds in the Philippines cannot
+read and understand a simple, age-appropriate text ([source](https://www.worldbank.org/en/news/press-release/2026/04/03/world-bank-backs-better-learning-for-21-million-filipino-students)).
+Children learn to read by reading out loud to someone who listens, notices the word they stumbled
+on, and helps them try again, and that listener is exactly what many Filipino children are
+missing at home.
 
-Imagine Lila, seven years old, in a barangay where the signal comes and goes. Her mother gets
-home after dark, and no one is free to listen when she reads. With Kislap on the family phone,
-Ningning listens. The word Lila missed glows orange, Ningning says "Subukan natin ulit!", she
-tries again, and she earns a sticker. No one else sees her mistakes, nothing is uploaded, and it
-works with the data off.
+Imagine Lila, seven years old, in a barangay where the signal comes and goes. Her mother gets home
+after dark, and when Lila reads aloud there is no one beside her, so the hard words simply stay
+hard. With Kislap on the family phone, Ningning the firefly listens to each sentence. The word Lila
+rushed glows orange, Ningning says "Subukan natin ulit!" and shows it in syllables, and she reads it
+again, gets it, and earns a sticker. Nobody else hears her mistakes, nothing is sent anywhere, and
+it all works with the data switched off.
 
-Kislap gives every child a patient listener at any hour. It is kind by design: no timers, no
-"wrong", and a finished story always earns a sticker. Because the AI runs on the device, it
-works where the signal is weak and keeps a child's voice private.
-
-**Try it:** https://kislap.vercel.app (Chrome on a laptop or an Android phone)
+Kislap gives every child a patient listener at any hour. It is kind by design, with no timers and
+no word "wrong", and because the AI runs on the device it keeps a child's voice private and keeps
+working where the signal is weakest.
 
 ## Features
 
