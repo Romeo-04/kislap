@@ -70,7 +70,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #19 | Three original stories | CP1 | ⏳ |
 | #20 | Forgiving scorer + ≥ 10 tests | CP1 | ⏳ |
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
-| #22 | i18n copy fil + en | CP2 | ⏳ |
+| #22 | i18n copy fil + en | CP2 | 🔨 Copy and scaffold wiring verified; open for suggestions and integrated UI review |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
 | #24 | Device QA, offline + network checks | Freeze | ⏳ |
 | #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
@@ -89,6 +89,8 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 - Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
+
+- **2026-10-09 21:18** — #22: expanded both language dictionaries with incoming UI/offline keys and four cheering/encouraging variants each. Localized scaffold screen labels, mascot states, and accessible controls. Eight tests and build pass; lint has only the existing i18n Fast Refresh warning. Independent diff review found no blockers. The user approved the wording while asking to keep the issue open for suggestions. Final integrated UI and confirmed native-speaker review remain in `docs/i18n-review.md`.
 
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
