@@ -17,3 +17,4 @@ on Taglish, and a model error must never cost the child.
 - Story text avoids digits and abbreviations, because Whisper may write "tatlo" as "3".
   Normalization also maps a short list of number words and Taglish spellings.
 - Changing a threshold after release changes what a Star means (MAJOR in semver).
+- The 0.85 and 0.60 cut-offs were replaced by 0.80 and 0.50 in ADR-0011, before the first release.
