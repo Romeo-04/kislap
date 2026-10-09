@@ -92,5 +92,5 @@ Round 1 is in the session summary and in `PROGRESS.md` under "Open decisions". A
 | Q4 | Under-50 % reward | 0 Stars + a Sticker for finishing + kind message (ADR-0010). | 2026-10-09 |
 | Q5 | Creative additions to adopt | **All six**: Privacy meter (#6), syllable help (#21), firefly jar (#12), mic-check screen, echo reading with pre-recorded teammate audio, local progress QR. New issues for the last three. | 2026-10-09 |
 | Q6 | Eden review tonight | Not related to this project. Removed from the skill; one teammate approves (ADR-0009). | 2026-10-09 |
-| Q7 | GitHub usernames for the 4 roles | _pending (roles restated to the user)_ | |
+| Q7 | GitHub usernames for the 4 roles | Lead @Romeo-04 · Designer @Seedlign · Model engineer @acmrsu · Content-QA @emyol. All issues assigned by owner label; @Seedlign's assignments wait on the repo invite. | 2026-10-09 |
 | Spike | Flutter instead of the web app? | Delegated as a 45-minute spike, decide by 17:00 (`docs/spikes/flutter-whisper-trial.md`). Web plan continues in parallel. | 2026-10-09 |
