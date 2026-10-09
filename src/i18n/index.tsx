@@ -20,7 +20,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => loadProgress().lang)
   const setLang = (next: Lang) => {
     setLangState(next)
-    saveProgress({ ...loadProgress(), lang: next })
+    saveProgress({ ...loadProgress(), lang: next, langChosen: true })
   }
   // Missing English text falls back to Filipino, then to the key itself.
   const t = (key: MessageKey) => MESSAGES[lang][key] ?? MESSAGES.fil[key] ?? key

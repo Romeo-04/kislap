@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   addPracticeWords,
   defaultProgress,
@@ -22,6 +22,22 @@ globalThis.localStorage = {
 } as Storage
 
 beforeEach(() => store.clear())
+
+describe('default language', () => {
+  it('is English, so a child can follow the screens while reading Filipino stories', () => {
+    expect(defaultProgress().lang).toBe('en')
+  })
+
+  it('opens in English when Filipino was only the old default, saved by Home', () => {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil' }))
+    expect(loadProgress().lang).toBe('en')
+  })
+
+  it('keeps Filipino once the child or a grown-up picked it', () => {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ ...defaultProgress(), lang: 'fil', langChosen: true }))
+    expect(loadProgress().lang).toBe('fil')
+  })
+})
 
 describe('load and save', () => {
   it('returns defaults when nothing is saved', () => {
@@ -59,9 +75,45 @@ describe('saved progress recovery (#68)', () => {
   it('rejects unsupported language and tier while retaining earned rewards', () => {
     store.set(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'xx', tier: 'cloud', stars: { 'story-1': 3 } }))
     const loaded = loadProgress()
-    expect(loaded.lang).toBe('fil')
+    expect(loaded.lang).toBe('en') // main's default: only a real language pick keeps Filipino
     expect(loaded.tier).toBeUndefined()
     expect(loaded.stars).toEqual({ 'story-1': 3 })
+  })
+
+  it('keeps a real language pick through recovery (langChosen survives the save on Home)', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'fil', langChosen: true, stars: 'broken' }))
+    const loaded = loadProgress()
+    expect(loaded.lang).toBe('fil')
+    expect(loaded.langChosen).toBe(true)
+  })
+
+  it('does not warn on a clean save, including a real Filipino pick', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const clean = { ...defaultProgress(), lang: 'fil' as const, langChosen: true as const, stars: { 'story-1': 3 as const }, stickers: ['sticker-story-1'], practiceWords: ['bata'], streak: { days: 2, lastPlayed: '2026-10-09' } }
+    store.set(PROGRESS_KEY, JSON.stringify(clean))
+    expect(loadProgress()).toEqual(clean)
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
+  it('warns when it repairs damaged practice words or a broken streak', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, practiceWords: 'bata', streak: null }))
+    loadProgress()
+    expect(warn).toHaveBeenCalledWith('[progress] recovered a damaged save', expect.objectContaining({ practiceWords: 1, streakReset: true }))
+    warn.mockClear()
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days: 3, lastPlayed: 'garbage' } }))
+    expect(loadProgress().streak).toEqual({ days: 3, lastPlayed: '' })
+    expect(warn).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
+  })
+
+  it('warns when a save from an unknown version is replaced', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 2, stickers: ['sticker-story-1'] }))
+    expect(loadProgress()).toEqual(defaultProgress())
+    expect(warn).toHaveBeenCalledWith('[progress] unsupported save version; starting fresh', 2)
+    warn.mockRestore()
   })
 
   it('retains valid entries from partially damaged collections', () => {
