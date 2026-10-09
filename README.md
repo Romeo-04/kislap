@@ -7,6 +7,9 @@ story aloud, one sentence at a time. A speech model runs **in the browser, on th
 device**, and checks each word. Ningning the firefly reacts, and the child earns stars and
 stickers. Missed words are saved for practice.
 
+**Try it:** https://romeo-04.github.io/kislap/ (Chrome on a laptop or an Android phone; mirror:
+https://kislap.vercel.app)
+
 ## Why Kislap
 
 In April 2026 the World Bank reported that 91 percent of ten-year-olds in the Philippines cannot
@@ -173,6 +176,7 @@ The models are downloaded from Hugging Face at run time. They are not part of th
 | Service | Used for |
 |---|---|
 | Vercel | Static hosting of the app (HTTPS). No server functions, no analytics. |
+| GitHub Pages | Static hosting of the same build (HTTPS), the main link while Vercel's daily deploy limit is reached. |
 | Hugging Face Hub (including its file CDN) | Model files, downloaded once |
 | GitHub | Source code |
 
