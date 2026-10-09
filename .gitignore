@@ -14,6 +14,10 @@ test-results/
 # model export work stays out of git (upload to Hugging Face instead)
 models/
 *.onnx
+# golden recordings (#18): keep the manifest, never commit voices
+fixtures/*
+!fixtures/expected.json
+!fixtures/README.md
 .claude/settings.local.json
 .playwright-mcp/
 

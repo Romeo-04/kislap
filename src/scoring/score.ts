@@ -40,14 +40,14 @@ function alignScored(expected: string[], heard: string[]): Array<{ heard?: strin
       if (i === 0 && j === 0) continue
       const options: Array<[number, Step]> = []
       if (i > 0 && j > 0) options.push([cost[i - 1][j - 1] + 1 - wordSimilarity(expected[i - 1], heard[j - 1]), 'pair'])
-      // Split and join exist only for real spacing errors: the joined form must read as correct.
+      // Split and join exist only for real spacing errors: the joined form must be a very close match (SCORING.spacing).
       if (i > 0 && j > 1) {
         const sim = wordSimilarity(expected[i - 1], heard[j - 2] + heard[j - 1])
-        if (sim >= SCORING.correct) options.push([cost[i - 1][j - 2] + 1 - sim, 'split'])
+        if (sim >= SCORING.spacing) options.push([cost[i - 1][j - 2] + 1 - sim, 'split'])
       }
       if (i > 1 && j > 0) {
         const sim = wordSimilarity(expected[i - 2] + expected[i - 1], heard[j - 1])
-        if (sim >= SCORING.correct) options.push([cost[i - 2][j - 1] + 2 * (1 - sim), 'join'])
+        if (sim >= SCORING.spacing) options.push([cost[i - 2][j - 1] + 2 * (1 - sim), 'join'])
       }
       if (i > 0) options.push([cost[i - 1][j] + 1, 'skip'])
       if (j > 0) options.push([cost[i][j - 1] + 1, 'extra'])
