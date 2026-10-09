@@ -32,6 +32,9 @@ listens while the child reads aloud. Hackathon: AppBuildersPH 2026 (Local AI). *
 
 - Git: follow `.claude/skills/git-operations/SKILL.md`. One branch and one PR per task. The branch
   name is written on each task in its GitHub issue.
+- Review: run `/review-pr` (pr-review-toolkit, vendored in `.claude/agents/` and
+  `.claude/commands/`) on your branch before you open a PR. Use the same toolkit to review a
+  teammate's PR, in a separate worktree.
 - Every task lives in a GitHub issue. Each person has one epic issue (`epic` label) with a task
   list. Tick the box, or close the linked atomic issue, when the task is done.
 - After you finish a task, update `PROGRESS.md` in the same PR.
