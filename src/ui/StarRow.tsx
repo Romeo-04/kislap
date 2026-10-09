@@ -13,7 +13,7 @@ export function StarRow({ stars, arch = false, size = 26 }: Props) {
     <span className={arch ? 'k-stars k-stars--arch' : 'k-stars'} role="img" aria-label={`${stars} / 3`}>
       {[0, 1, 2].map((i) => (
         <span key={i} className="k-stars__slot" style={{ '--i': i } as React.CSSProperties}>
-          <StarShape size={arch ? (i === 1 ? 100 : 76) : size} on={i < stars} strokeWidth={arch ? 2.4 : 3} />
+          <StarShape size={arch ? (i === 1 ? 100 : 76) : size} on={i < stars} />
         </span>
       ))}
     </span>

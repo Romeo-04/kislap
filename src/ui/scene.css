@@ -1,0 +1,47 @@
+/* Paper scene layers (Claude Design part 2). It sits behind the screen and never takes taps. */
+/* every screen that shows the scene is a stage: its own stacking context, so the scene's
+   z-index -1 paints above the page background and below the screen's content */
+.paper-stage { position: relative; isolation: isolate; min-height: 100dvh; }
+.paper-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--sky);
+  pointer-events: none;
+  transition: background-color var(--t-base);
+}
+.ps-day, .ps-night { position: absolute; inset: 0; }
+.ps-night, [data-theme="gabi"] .ps-day { display: none; }
+[data-theme="gabi"] .ps-night { display: block; }
+.ps-cloud { position: absolute; overflow: visible; }
+.ps-cloud--a { left: 56%; top: 12%; width: 120px; height: 56px; }
+.ps-cloud--b { left: -36px; top: 27%; width: 156px; height: 73px; }
+.ps-cloud--c { right: 5%; top: 39%; width: 84px; height: 39px; }
+.ps-moon { position: absolute; right: 9%; top: 8%; width: 72px; height: 72px; }
+.ps-stars { position: absolute; left: 0; top: 0; width: 100%; height: 60%; }
+.ps-firefly { position: absolute; width: 28px; height: 28px; border-radius: var(--r-pill); background: #FFD95A55; }
+.ps-firefly::after { content: ''; position: absolute; inset: 35%; border-radius: var(--r-pill); background: var(--glow-soft); }
+.ps-firefly--a { left: 14%; top: 44%; }
+.ps-firefly--b { left: 78%; top: 52%; width: 22px; height: 22px; }
+.ps-firefly--c { left: 58%; top: 38%; width: 18px; height: 18px; }
+.ps-land { position: absolute; left: 0; right: 0; bottom: 0; }
+.ps-treeline { position: absolute; left: 0; top: -58px; width: 100%; height: 90px; }
+.ps-hills { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+/* 9% multiply paper grain, drawn on the device (inline SVG noise, no download) */
+.ps-grain {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%3E%3Cfilter%20id%3D'g'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.9'%20numOctaves%3D'2'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20type%3D'saturate'%20values%3D'0'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'160'%20height%3D'160'%20filter%3D'url(%23g)'%2F%3E%3C%2Fsvg%3E");
+  background-size: 160px 160px;
+}
+
+/* ---------- wordmark tag: hangs on twine, tilted, and swings a little ---------- */
+.wordmark { display: block; overflow: visible; transform-origin: 50% 0; transform: rotate(-4deg); }
+@media (prefers-reduced-motion: no-preference) {
+  .wordmark { animation: wm-drop 400ms var(--ease-pop) both, wm-swing 4s ease-in-out 400ms infinite; }
+}
+@keyframes wm-drop { from { transform: translateY(-60px) rotate(-4deg); opacity: 0; } to { transform: rotate(-4deg); opacity: 1; } }
+@keyframes wm-swing { 0%, 100% { transform: rotate(-4deg); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(-2deg); } }
