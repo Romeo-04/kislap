@@ -1,4 +1,8 @@
-// STUB — real tier choice: issue #16 (model engineer). Decided models: docs/validation.md (Q1).
+// Model tiers (issue #16). Both tiers run Whisper base, so the child-facing quality is the same:
+//   large = WebGPU, q4 (about 136 MB). Laptops with a GPU. 1.3 s per sentence in our tests.
+//   small = WebAssembly, q8 (about 73 MB). Phones and anything without WebGPU.
+// The names stay 'large' and 'small' because on-device progress already stores them (ADR-0008).
+// Why not the Filipino small models: too slow (6 to 26 s on a laptop) and too large. See PROGRESS.md.
 
 import type { DataType } from '@huggingface/transformers'
 
@@ -12,15 +16,14 @@ export interface TierInfo {
 }
 
 export const TIERS: Record<ModelTier, TierInfo> = {
-  large: { tier: 'large', modelId: 'internetoftim/whisper-small-pld-fil-ONNX', device: 'webgpu', approxMB: 586 },
-  small: { tier: 'small', modelId: 'onnx-community/whisper-base', device: 'wasm', approxMB: 77 },
+  large: { tier: 'large', modelId: 'onnx-community/whisper-base', device: 'webgpu', approxMB: 136 },
+  small: { tier: 'small', modelId: 'onnx-community/whisper-base', device: 'wasm', approxMB: 73 },
 }
 
-// Precision per tier. Small: whole model q8 (~77 MB). Large: fp32 encoder + q4 decoder (~586 MB).
-// Shared by the worker (what it loads) and isModelCached (what it looks for).
+// Precision per tier. Shared by the worker (what it loads) and the cache check (what it looks for).
 export const DTYPE: Record<ModelTier, DataType | Record<string, DataType>> = {
   small: 'q8',
-  large: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
+  large: 'q4',
 }
 
 export async function hasWebGPU(): Promise<boolean> {
@@ -33,8 +36,22 @@ export async function hasWebGPU(): Promise<boolean> {
   }
 }
 
-export async function pickTier(): Promise<TierInfo> {
+/** Phones have WebGPU but it was unusable on one we tested (97 s per sentence), so they use WASM. */
+export function isMobile(): boolean {
+  const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } }
+  return nav.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+}
+
+/** The order of the rules, kept pure so it can be tested: ?tier= override, then the saved tier, then the probe. */
+export function chooseTier(input: { forced?: string | null; saved?: ModelTier; gpu: boolean; mobile: boolean }): TierInfo {
+  if (input.forced === 'large' || input.forced === 'small') return TIERS[input.forced]
+  if (input.saved) return TIERS[input.saved]
+  return input.gpu && !input.mobile ? TIERS.large : TIERS.small
+}
+
+/** `saved` is the tier remembered in on-device progress (it is set when the GPU tier failed). */
+export async function pickTier(saved?: ModelTier): Promise<TierInfo> {
   const forced = new URLSearchParams(location.search).get('tier')
-  if (forced === 'large' || forced === 'small') return TIERS[forced]
-  return TIERS.small
+  const gpu = forced || saved ? false : await hasWebGPU() // skip the probe when a rule already decided
+  return chooseTier({ forced, saved, gpu, mobile: isMobile() })
 }

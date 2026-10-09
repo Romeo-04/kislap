@@ -177,3 +177,64 @@ describe('fake mode', () => {
     expect(FakeWorker.all).toHaveLength(0)
   })
 })
+
+describe('tier choice and fallback', () => {
+  const desktop = { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', gpu: { requestAdapter: async () => ({}) } }
+  const phone = { userAgent: 'Mozilla/5.0 (Linux; Android 15) Mobile Safari/537.36', gpu: { requestAdapter: async () => ({}) } }
+  let store: Record<string, string>
+
+  beforeEach(() => {
+    store = {}
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => void (store[k] = v),
+    })
+  })
+
+  const loadMsg = (w: FakeWorker) => w.sent.find((s) => s.msg.type === 'load')!.msg as Extract<ToWorker, { type: 'load' }>
+
+  it('asks for the GPU tier on a desktop with WebGPU', async () => {
+    vi.stubGlobal('navigator', desktop)
+    void client.loadModel()
+    await tick()
+    expect(loadMsg(FakeWorker.all[0]).tier).toEqual(TIERS.large)
+  })
+
+  it('asks for the WebAssembly tier on a phone, even with WebGPU', async () => {
+    vi.stubGlobal('navigator', phone)
+    void client.loadModel()
+    await tick()
+    expect(loadMsg(FakeWorker.all[0]).tier).toEqual(TIERS.small)
+  })
+
+  it('falls back to WebAssembly in a fresh worker when the GPU model fails, and remembers it', async () => {
+    vi.stubGlobal('navigator', desktop)
+    const p = client.loadModel()
+    await tick()
+    FakeWorker.all[0].reply({ type: 'error', message: 'GPU device lost' })
+    await tick()
+    const second = FakeWorker.all[1]
+    expect(FakeWorker.all[0].terminated).toBe(true)
+    expect(loadMsg(second).tier).toEqual(TIERS.small)
+    second.reply({ type: 'ready', tier: TIERS.small })
+    await expect(p).resolves.toEqual(TIERS.small)
+    expect(JSON.parse(store['kislap.progress.v1']).tier).toBe('small')
+  })
+
+  it('uses the remembered tier next time, without trying the GPU', async () => {
+    vi.stubGlobal('navigator', desktop)
+    store['kislap.progress.v1'] = JSON.stringify({ version: 1, tier: 'small' })
+    void client.loadModel()
+    await tick()
+    expect(loadMsg(FakeWorker.all[0]).tier).toEqual(TIERS.small)
+  })
+
+  it('does not fall back when the WebAssembly tier itself fails', async () => {
+    vi.stubGlobal('navigator', phone)
+    const p = client.loadModel()
+    await tick()
+    FakeWorker.all[0].reply({ type: 'error', message: 'network error' })
+    await expect(p).rejects.toThrow('network error')
+    expect(FakeWorker.all).toHaveLength(1)
+  })
+})

@@ -65,7 +65,9 @@ export function createSilenceDetector(o: { threshold: number; silenceMs: number;
 // ---------- src/asr/tier.ts (Model) ----------
 export type ModelTier = 'large' | 'small';
 export interface TierInfo { tier: ModelTier; modelId: string; device: 'webgpu' | 'wasm'; approxMB: number }
-export function pickTier(): Promise<TierInfo>;   // URL ?tier= override > saved > WebGPU probe
+export function pickTier(saved?: ModelTier): Promise<TierInfo>;   // URL ?tier= override > saved tier > WebGPU probe (a phone always gets 'small')
+// 'large' = whisper-base q4 on WebGPU (~136 MB). 'small' = whisper-base q8 on WASM (~73 MB). If 'large' fails to load,
+// the client starts a fresh worker with 'small' and saves tier: 'small' in progress. Decided from the benchmarks in PROGRESS.md.
 
 // ---------- src/asr/transcribe.ts (Model) — main-thread API to the worker ----------
 export interface TranscribeResult {
