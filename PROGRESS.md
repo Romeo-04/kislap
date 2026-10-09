@@ -105,10 +105,13 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 |---|---|---|---|
 | base q8 (WASM) | 77% | 8 | 3.0 s |
 | base q4 (WebGPU) | 72% | 7 | 1.2 s |
+| base enc fp32 + dec q4 (WebGPU) | 76% | 10 | 1.5 s |
+| **base fp16 (WebGPU)** | **79%** | **10** | **1.0 s** |
 | Filipino int8 (own export), WASM | 93% | 19 | 11.1 s |
 | Filipino int8 (own export), WebGPU | 92% | 19 | 24.4 s |
 
 - **Scorer cut-offs.** At 0.75 / 0.45 (now 0.85 / 0.60) clean accuracy rises to 84% (q8) and 79% (q4), a wrong sentence earns a star only 1 to 2% of the time, and a mispronounced word ("sampita") stays "unclear". At 0.70 / 0.40 the same word becomes "correct" on `base q8`, so do not go looser. For Emyol and #23.
+- **Laptop precision.** q4 on WebGPU read worse than q8 (72% against 77%). fp16 on WebGPU is better than both (79%) and the fastest (1.0 s), at about the same download as q4 (139 MB against 136 MB). It needs the `shader-f16` GPU feature. PR #75 uses it for the laptop tier.
 - **Skipped words** were marked "missed" in every setup. A repeated word and a hesitation are not penalised, by design.
 - **A more accurate model lets the scorer separate good from bad reads better.** With the Filipino model, flawed reads score about 20 points below clean ones. With the base models the gap is only 10 to 12 points.
 - One reader and 32 clips: treat these as a guide. The earlier first set of clips (old story text) scored the base models about 54%, much lower. The sets differ in sentences and mic distance, so do not compare them directly.
