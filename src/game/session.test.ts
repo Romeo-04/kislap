@@ -60,7 +60,7 @@ describe('finishSession / resultFor', () => {
     const s = createSession('story-2', 1)
     s.addAttempt(attempt(0, words('correct', 'correct', 'correct', 'missed'))) // 0.75 → 2 stars
     finishSession(s)
-    const expected = { storyId: 'story-2', accuracy: 0.75, stars: 2, practiceWords: ['w3'] }
+    const expected = { storyId: 'story-2', accuracy: 0.75, stars: 2, practiceWords: ['w3'], wcpm: 0, correctWords: ['w0', 'w1', 'w2'] }
     expect(resultFor('story-2')).toEqual(expected)
     expect(resultFor('story-2')).toEqual(expected)
   })
@@ -73,6 +73,13 @@ describe('finishSession / resultFor', () => {
     const s = createSession('story-3', 2)
     s.addAttempt(attempt(0, words('correct', 'missed')))
     expect(finishSession(s, { allowPartial: true })).toMatchObject({ storyId: 'story-3', accuracy: 0.5, stars: 1 })
+  })
+
+  it('reports words correct per minute from the speaking time of the best attempts', () => {
+    const s = createSession('story-9', 2)
+    s.addAttempt({ ...attempt(0, words('correct', 'correct', 'missed')), seconds: 1.5 })
+    s.addAttempt({ ...attempt(1, words('correct', 'correct', 'correct', 'correct')), seconds: 1.5 })
+    expect(finishSession(s).wcpm).toBe(120) // 6 correct words in 3 s
   })
 
   it('refuses an incomplete session', () => {

@@ -1,12 +1,15 @@
 // Reading session (issue #3): all Attempts on one Story. Contract: docs/architecture.md §3.
 import type { WordResult } from '../scoring/score'
 import { starsFor, type Stars } from '../scoring/stars'
+import { wcpm } from './fluency'
 
 export interface SentenceAttempt {
   sentenceIndex: number
   heard: string
   words: WordResult[]
   accuracy: number
+  /** speaking time of this attempt, silence trimmed (for reading speed) */
+  seconds?: number
 }
 
 export interface ReadingSession {
@@ -16,6 +19,10 @@ export interface ReadingSession {
   accuracy(): number
   /** Missed and Unclear words from the best Attempts, for Word Pop. */
   practiceWords(): string[]
+  /** words read correctly in the best attempts (for reading speed and words mastered) */
+  correctWords(): string[]
+  /** speaking time of the best attempts */
+  seconds(): number
   isComplete(): boolean
 }
 
@@ -24,6 +31,9 @@ export interface SessionResult {
   accuracy: number
   stars: Stars
   practiceWords: string[]
+  /** words correct per minute; 0 when no speaking time was measured */
+  wcpm: number
+  correctWords: string[]
 }
 
 const credit = (w: WordResult) => (w.status === 'correct' ? 1 : w.status === 'unclear' ? 0.5 : 0)
@@ -43,6 +53,12 @@ export function createSession(storyId: string, sentenceCount: number): ReadingSe
     practiceWords() {
       return [...best.values()].flatMap((a) => a.words.filter((w) => w.status !== 'correct').map((w) => w.word))
     },
+    correctWords() {
+      return [...best.values()].flatMap((a) => a.words.filter((w) => w.status === 'correct').map((w) => w.word))
+    },
+    seconds() {
+      return [...best.values()].reduce((s, a) => s + (a.seconds ?? 0), 0)
+    },
     isComplete() {
       return best.size === sentenceCount
     },
@@ -58,7 +74,15 @@ const results = new Map<string, SessionResult>()
 export function finishSession(session: ReadingSession, opts: { allowPartial?: boolean } = {}): SessionResult {
   if (!session.isComplete() && !opts.allowPartial) throw new Error('finishSession: not every Sentence has an Attempt')
   const accuracy = session.accuracy()
-  const result = { storyId: session.storyId, accuracy, stars: starsFor(accuracy), practiceWords: session.practiceWords() }
+  const correct = session.correctWords()
+  const result = {
+    storyId: session.storyId,
+    accuracy,
+    stars: starsFor(accuracy),
+    practiceWords: session.practiceWords(),
+    wcpm: wcpm(correct.length, session.seconds()),
+    correctWords: correct,
+  }
   results.set(session.storyId, result)
   return result
 }
