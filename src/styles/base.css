@@ -1,47 +1,48 @@
-/* Minimal base styles so placeholders are usable. Design tokens and the real UI kit: issue #8. */
+/* Page base on top of tokens.css. Screen layout lives with each screen (#10). */
 :root {
-  --bg: #14122b;
-  --fg: #fdf8e8;
-  --muted: #b9b4d6;
-  --glow: #ffd84d;
-  --correct: #3ccf7a;
-  --unclear: #f2c94c;
-  --missed: #f2994a;
-  color-scheme: dark;
-  font-family: system-ui, sans-serif;
+  color-scheme: light;
+  font-family: var(--font-read);
   background: var(--bg);
   color: var(--fg);
+  -webkit-font-smoothing: antialiased;
 }
+[data-theme="gabi"] { color-scheme: dark; }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-height: 100dvh; }
-a { color: var(--glow); }
+body { margin: 0; min-height: 100dvh; background: var(--bg); }
+button { font: inherit; color: inherit; touch-action: manipulation; }
+a { color: var(--fg); text-decoration-thickness: 2px; }
+:focus-visible { outline: 4px solid var(--glow); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; }
 
-.screen { max-width: 40rem; margin: 0 auto; padding: 1.5rem; }
-.stack { display: flex; flex-direction: column; gap: 1rem; }
+.screen { max-width: 40rem; margin: 0 auto; padding: var(--s-5); }
+.stack { display: flex; flex-direction: column; gap: var(--s-4); }
 .center { align-items: center; text-align: center; }
-.row { display: flex; gap: 1rem; justify-content: center; }
+.row { display: flex; gap: var(--s-4); justify-content: center; }
 .muted { color: var(--muted); }
+.sentence { font: 400 var(--text-sentence) / 1.5 var(--font-read); }
 
-button, a.big {
-  min-height: 48px;
-  min-width: 48px;
-  padding: 0.75rem 1.25rem;
-  border: 0;
-  border-radius: 999px;
-  font: inherit;
-  cursor: pointer;
+/* LEGACY: placeholder screens still use these until the core screens land (#10). Delete with them. */
+button.big, a.big {
+  min-height: 64px; padding: 0 36px; display: inline-flex; align-items: center; justify-content: center;
+  border: var(--stroke) solid var(--line); border-radius: var(--r-pill); background: var(--glow);
+  box-shadow: var(--toy); color: var(--ink); font: 800 28px var(--font-display); text-decoration: none; cursor: pointer;
 }
-button.big, a.big { background: var(--glow); color: var(--bg); font-weight: 700; text-decoration: none; }
-button.mic { width: 96px; height: 96px; font-size: 2.5rem; align-self: center; }
-
-.sentence { font-size: 1.9rem; line-height: 1.5; }
-.word.correct { color: var(--correct); }
-.word.unclear { color: var(--unclear); text-decoration: underline dotted; }
-.word.missed { color: var(--missed); text-decoration: underline wavy; }
+button.mic { width: var(--mic-size); height: var(--mic-size); align-self: center; }
+.word.correct { text-decoration: underline 5px var(--correct); text-underline-offset: 8px; }
+.word.unclear { text-decoration: underline wavy 4px var(--unclear); text-underline-offset: 10px; }
+.word.missed { outline: var(--stroke) dashed var(--missed); border-radius: 14px; }
 .stars { font-size: 3rem; color: var(--glow); margin: 0; }
+.screen button:not([class]) {
+  min-height: var(--tap-min); min-width: var(--tap-min); padding: var(--s-3) var(--s-5);
+  border: var(--stroke) solid var(--line); border-radius: var(--r-pill); background: var(--surface);
+  font: 700 18px var(--font-display); cursor: pointer;
+}
 .mascot-placeholder { font-size: 4rem; }
 
 .offline-badge { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
 .offline-badge.ready { color: var(--correct); }
 .offline-badge progress { width: 16rem; height: 12px; }
+.privacy-meter { font-size: 0.9rem; color: var(--muted); align-self: center; }
+.privacy-meter.leak { color: var(--missed); }
+.privacy-meter ul { text-align: left; word-break: break-all; }

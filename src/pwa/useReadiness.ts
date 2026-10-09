@@ -17,9 +17,15 @@ export function useReadiness(): { state: Readiness; download: () => Promise<void
 
   useEffect(() => {
     let cancelled = false
-    isModelCached().then((modelCached) => {
-      if (!cancelled) dispatch({ type: 'checked', modelCached, online: navigator.onLine })
-    })
+    // A failed cache check must still offer the download, never leave the badge empty.
+    isModelCached()
+      .catch((err) => {
+        console.error('[offline] cache check failed', err)
+        return false
+      })
+      .then((modelCached) => {
+        if (!cancelled) dispatch({ type: 'checked', modelCached, online: navigator.onLine })
+      })
     const onOnline = () => dispatch({ type: 'online' })
     window.addEventListener('online', onOnline)
     return () => {
@@ -47,6 +53,7 @@ export function useReadiness(): { state: Readiness; download: () => Promise<void
       await warmUp()
       dispatch({ type: 'download-done' })
     } catch (err) {
+      console.error('[offline] model download failed', err)
       dispatch({ type: 'download-failed', message: (err as Error).message })
     }
   }, [])
