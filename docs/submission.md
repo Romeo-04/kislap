@@ -64,7 +64,8 @@ the most help.
 
 ## D3 Public GitHub repository
 
-https://github.com/Romeo-04/kislap · Live app: https://kislap.vercel.app
+https://github.com/Romeo-04/kislap · Live app: https://romeo-04.github.io/kislap/ (mirror:
+https://kislap.vercel.app)
 
 ## D4 / D5 Demo video and posts
 
@@ -77,7 +78,7 @@ https://github.com/Romeo-04/kislap · Live app: https://kislap.vercel.app
 > Kislap ✨ a Filipino-first reading game. A child reads aloud, and Whisper runs on the device
 > to mark each word. No account, no upload, works offline. Built at #AppBuildersPH by stochastic4
 > @cognition @DevinAI
-> https://kislap.vercel.app
+> https://romeo-04.github.io/kislap/
 
 **[confirm the X handles: the event page says "tag @cognition and Devin"; check Devin's exact
 handle before posting]**
@@ -95,7 +96,7 @@ handle before posting]**
 > first load Kislap works with no internet. You can check it yourself: the on-screen privacy
 > counter shows zero requests while a child reads.
 >
-> Try it: https://kislap.vercel.app · Code: https://github.com/Romeo-04/kislap
+> Try it: https://romeo-04.github.io/kislap/ · Code: https://github.com/Romeo-04/kislap
 >
 > Team stochastic4: Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, and Marcus Ceasar Austria. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
 
@@ -147,6 +148,7 @@ oxlint. **[add any library added after 18:00]**
 | Service | Used for |
 |---|---|
 | Vercel | Static hosting of the app (HTTPS). No server functions, no analytics. |
+| GitHub Pages | Static hosting of the same build (HTTPS), the main link while Vercel's daily deploy limit is reached. |
 | Hugging Face Hub (including its file CDN) | Hosting the model files, downloaded once |
 | GitHub | Source code |
 
