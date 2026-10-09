@@ -116,11 +116,16 @@
   "shell.tabHome": "Simula",
   "shell.tabNav": "Mga tab",
   "shell.tabStories": "Kuwento",
+  "wordpop.again": "Ulitin natin",
+  "wordpop.count": "{n} sa {total} ang pumutok",
+  "wordpop.doneTitle": "Napaputok mo lahat!",
   "wordpop.emptyBody": "Magbasa muna ng kuwento. Makikita rito ang mga salitang maaari mo pang sanayin.",
   "wordpop.emptyTitle": "Dito tutubo ang iyong galing!",
+  "wordpop.helped": "Pop! Medyo mahirap iyon. Babalikan natin ito sa kuwento.",
   "wordpop.hint": "Sabihin ang salita para pumutok ang bula!",
-  "wordpop.next": "Susunod na salita",
-  "wordpop.pick": "Pumili ng salita at basahin ito nang malakas.",
-  "wordpop.title": "Word Pop",
-  "wordpop.together": "Sabay nating sabihin: {word}."
+  "wordpop.missed": "Malapit na! Isa pang ulit.",
+  "wordpop.popped": "{word}, pumutok na",
+  "wordpop.said": "Pop! Nasabi mo!",
+  "wordpop.tap": "Pindutin ang bula para makita ang pantig.",
+  "wordpop.title": "Word Pop"
 }
