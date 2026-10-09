@@ -43,13 +43,13 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | # | Task | Gate | Status |
 |---|---|---|---|
 | #8 | Design tokens and UI kit | CP1 | 🔨 PR open (Claude Design tokens, Baloo 2 + Andika, kit in `src/ui/`) |
-| #9 | Ningning SVG, 6 moods, glow | CP1 | ⏳ |
+| #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | ⏳ |
 | #11 | Sounds and Sticker art | CP2 | ⏳ |
 | #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | ⏳ |
-| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ⏳ |
+| #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
 | D4 #28, D11 #35 | Deliverables | — | ⏳ |
 
 ### Model engineer (@acmrsu) — epic #43
@@ -87,10 +87,10 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
 - Q1–Q7 settled (see `docs/validation.md` grill log).
-- Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
 
+- **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
