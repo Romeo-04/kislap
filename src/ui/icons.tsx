@@ -86,16 +86,22 @@ export function ChevronIcon() {
   )
 }
 
-export function StarShape({ size, on, strokeWidth = 3 }: { size: number; on: boolean; strokeWidth?: number }) {
+// paper star (Claude Design part 2 Result): cream edge, a darker right half, a highlight;
+// an empty star is cream paper with a dashed cut line, never grey
+const STAR = '24,4 30,17 44,18.5 33.5,28 36.5,42 24,35 11.5,42 14.5,28 4,18.5 18,17'
+
+export function StarShape({ size, on }: { size: number; on: boolean }) {
   return (
     <svg className={on ? 'k-star k-star--on' : 'k-star k-star--off'} width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
-      <polygon
-        points="24,4 30,17 44,18.5 33.5,28 36.5,42 24,35 11.5,42 14.5,28 4,18.5 18,17"
-        fill={on ? 'var(--glow)' : '#FFFFFF'}
-        stroke="var(--ink)"
-        strokeWidth={strokeWidth}
-        strokeLinejoin="round"
-      />
+      <polygon points={STAR} fill={on ? 'var(--glow)' : 'var(--paper)'} stroke="var(--edge)" strokeWidth="3.5" strokeLinejoin="round" />
+      {on ? (
+        <>
+          <polygon className="k-star__shade" points="24,4 30,17 44,18.5 33.5,28 36.5,42 24,35 24,4" fill="var(--glow-shade)" />
+          <ellipse cx="18" cy="20" rx="4" ry="2.5" fill="var(--glow-soft)" transform="rotate(-30 18 20)" />
+        </>
+      ) : (
+        <polygon points="24,10 28.5,19.5 39,20.7 31.2,27.8 33.4,38.2 24,33 14.6,38.2 16.8,27.8 9,20.7 19.5,19.5" fill="none" stroke="var(--cut-dash)" strokeWidth="2" strokeDasharray="3 3" />
+      )}
     </svg>
   )
 }
