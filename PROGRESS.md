@@ -68,7 +68,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | # | Task | Gate | Status |
 |---|---|---|---|
 | #19 | Three original stories | CP1 | ⏳ |
-| #20 | Forgiving scorer + ≥ 10 tests | CP1 | ⏳ |
+| #20 | Forgiving scorer + ≥ 10 tests | CP1 | 🔨 Implemented and verified; awaiting PR review |
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
 | #22 | i18n copy fil + en | CP2 | ⏳ |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
@@ -89,6 +89,8 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 - Flutter spike (#48): decide at 17:00 / Checkpoint 1.
 
 ## Log
+
+- **2026-10-09 17:46** — #20: replaced the membership-only scorer with Unicode normalization and weighted word alignment. Number and spelling variants match, extra speech is ignored in accuracy, and unclear words earn half credit. Story spelling and punctuation remain visible. All 41 tests and the production build pass; lint exits successfully with the existing i18n Fast Refresh warning. Real-recording tuning remains #23. Awaiting teammate review.
 
 - **2026-10-09 16:30** — @Seedlign accepted the invite; all designer issues (#8–#13, #28, #35, #42, #45, #48) assigned.
 - **2026-10-09 16:20** — Scaffold up (#1): contract stubs for every module, fake reading loop works, live on Vercel. Every owner can branch from `main` once the PR merges.
