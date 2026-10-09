@@ -8,8 +8,12 @@ export const RATE = 16_000
 /** Decode an audio file or recording to 16 kHz mono Float32 (the contract format). */
 export async function toPcm(blob: Blob): Promise<Float32Array> {
   const ctx = new AudioContext()
-  const decoded = await ctx.decodeAudioData(await blob.arrayBuffer())
-  await ctx.close()
+  let decoded: AudioBuffer
+  try {
+    decoded = await ctx.decodeAudioData(await blob.arrayBuffer())
+  } finally {
+    await ctx.close() // also when a clip cannot be decoded, so a batch of bad files leaks no contexts
+  }
   const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * RATE), RATE) // mono + resample
   const src = offline.createBufferSource()
   src.buffer = decoded
