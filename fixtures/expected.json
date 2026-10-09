@@ -1,5 +1,5 @@
 {
-    "about":  "Golden clips for scorer tuning and model checks (#18). Text is from src/content/stories.json at commit 0b61d5c (17:55, PR #55). The stories were revised at 21:28 (74bac56), so this is the OLD text on purpose: the clips were recorded from it. Re-record and rebuild this file from the final stories before using it for final tuning.",
+    "about":  "Golden clips for scorer tuning and model checks (#18). Text is from src/content/stories.json at commit 0b61d5c (17:55, PR #53). Emyol revised the stories at 21:28 (74bac56) and that revision is now on main, so this file holds the OLD text on purpose: the clips were recorded from it. Re-record from the current src/content/stories.json and rebuild this file before final tuning (#23).",
     "naming":  "Name each file \u003cclip id\u003e.\u003cext\u003e (for example story-1-1.m4a). To tell readers apart, add the reader after two underscores: story-1-1__marcus.m4a. Audio files are gitignored.",
     "clips":  [
                   {

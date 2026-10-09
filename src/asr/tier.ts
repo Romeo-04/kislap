@@ -1,5 +1,7 @@
 // STUB — real tier choice: issue #16 (model engineer). Decided models: docs/validation.md (Q1).
 
+import type { DataType } from '@huggingface/transformers'
+
 export type ModelTier = 'large' | 'small'
 
 export interface TierInfo {
@@ -16,7 +18,7 @@ export const TIERS: Record<ModelTier, TierInfo> = {
 
 // Precision per tier. Small: whole model q8 (~77 MB). Large: fp32 encoder + q4 decoder (~586 MB).
 // Shared by the worker (what it loads) and isModelCached (what it looks for).
-export const DTYPE: Record<ModelTier, string | Record<string, string>> = {
+export const DTYPE: Record<ModelTier, DataType | Record<string, DataType>> = {
   small: 'q8',
   large: { encoder_model: 'fp32', decoder_model_merged: 'q4' },
 }

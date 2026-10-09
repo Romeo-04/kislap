@@ -2,9 +2,9 @@
 // Record the clips listed in fixtures/expected.json with any recorder, name them <clip id>__<reader>.<ext>,
 // load them here, pick setups, and see the heard text per clip. Copy the table for the scorer owner.
 // Audio stays on this device. The files are gitignored.
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import expected from '../../fixtures/expected.json'
-import { openSession, SETUPS, toPcm } from '../asr/devkit'
+import { closeAllSessions, openSession, parseName, SETUPS, toPcm, type Session } from '../asr/devkit'
 
 interface Clip {
   id: string
@@ -24,37 +24,48 @@ interface Row {
   ms: number | string
 }
 
-/** "s1-01-clean__marcus.webm" -> { clip: "s1-01-clean", reader: "marcus" } */
-function parseName(name: string): { clip: string; reader: string } {
-  const base = name.replace(/\.[^.]+$/, '')
-  const [clip, reader = 'unknown'] = base.split('__')
-  return { clip, reader }
-}
-
 export function Golden() {
   const [status, setStatus] = useState('Load your clip files, pick setups, then transcribe.')
   const [files, setFiles] = useState<File[]>([])
   const [picked, setPicked] = useState<boolean[]>(SETUPS.map((_, i) => i === 0))
   const [rows, setRows] = useState<Row[]>([])
   const [busy, setBusy] = useState(false)
+  const left = useRef(false)
+
+  useEffect(() => {
+    left.current = false
+    return () => {
+      // Leaving the page: stop the run and any worker still loading.
+      left.current = true
+      closeAllSessions()
+    }
+  }, [])
 
   const run = async () => {
     setBusy(true)
     setRows([])
     for (const [i, setup] of SETUPS.entries()) {
       if (!picked[i]) continue
+      let session: Session | undefined
       try {
         setStatus(`Loading ${setup.label}…`)
-        const session = await openSession(setup, setStatus)
+        session = await openSession(setup, setStatus)
         for (const file of files) {
+          if (left.current) return // the page was closed during the run
           const { clip, reader: who } = parseName(file.name)
           setStatus(`${setup.label}: ${file.name}`)
-          const out = await session.transcribe(await toPcm(file))
-          setRows((r) => [...r, { clip, reader: who, setup: setup.label, heard: out.text, ms: out.ms }])
+          try {
+            const out = await session.transcribe(await toPcm(file))
+            setRows((r) => [...r, { clip, reader: who, setup: setup.label, heard: out.text, ms: out.ms }])
+          } catch (err) {
+            // One bad file (for example one that cannot be decoded) must not stop the others.
+            setRows((r) => [...r, { clip, reader: who, setup: setup.label, heard: `ERROR: ${(err as Error).message}`, ms: '–' }])
+          }
         }
-        session.close()
       } catch (err) {
         setRows((r) => [...r, { clip: '–', reader: '–', setup: setup.label, heard: `ERROR: ${(err as Error).message}`, ms: '–' }])
+      } finally {
+        session?.close() // always, so a failure never leaves a loaded model behind
       }
     }
     setStatus('Done. Copy the table and send it to the scorer owner.')
