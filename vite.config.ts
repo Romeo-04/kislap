@@ -24,7 +24,18 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3,ogg,webm,m4a,json}'],
+        // Dev-only model folders under public/models are gitignored. Never precache them.
+        globIgnores: ['models/**'],
         navigateFallback: '/index.html',
+        // The ONNX Runtime files are 26 MB, too big to precache on install. Cache them the first
+        // time the worker loads them, so the app still runs offline after that (ADR-0007).
+        runtimeCaching: [
+          {
+            urlPattern: /\/assets\/ort-wasm-.*\.(wasm|mjs)$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'ort-runtime', expiration: { maxEntries: 4 } },
+          },
+        ],
       },
     }),
   ],

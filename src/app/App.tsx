@@ -8,6 +8,8 @@ import { WordPop } from './WordPop'
 import { Progress } from './Progress'
 import { MicCheck } from './MicCheck'
 import { MicTest } from './MicTest'
+import { AsrTest } from './AsrTest'
+import { Bench } from './Bench'
 import { GameShell } from '../ui/GameShell'
 
 export function App() {
@@ -23,6 +25,8 @@ export function App() {
         {route.name === 'progress' && <Progress />}
         {route.name === 'miccheck' && <MicCheck />}
         {route.name === 'mictest' && <MicTest />}
+        {route.name === 'asrtest' && <AsrTest />}
+        {route.name === 'bench' && <Bench />}
       </GameShell>
     </I18nProvider>
   )
