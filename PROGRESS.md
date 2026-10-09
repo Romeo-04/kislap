@@ -91,6 +91,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 - Q1–Q7 settled (see `docs/validation.md` grill log).
 
 ## Log
+- **2026-10-10 06:30** — D8 (#32, PR #81): README, `docs/submission.md` and `docs/assets.md` now say what ships after PR #75: whisper-base q8 on WebAssembly on every device. The fp16 WebGPU tier is listed only as a test option (`?tier=large`), not shipped by default.
 
 - **2026-10-10 05:30** — 05:00 sweep: main healthy (348 tests, build green), production reading loop verified offline with the real model (8/8 sentences, sticker). #84 (progress recovery, #68) conflicted with main's language rule: fix PR into its branch keeps langChosen and logs every recovered field.
 - **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
