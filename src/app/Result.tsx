@@ -8,6 +8,7 @@ import { playSound } from '../game/sound'
 import { Ningning } from '../ui/Ningning'
 import { StarRow } from '../ui/StarRow'
 import { Confetti } from '../ui/Confetti'
+import { haptic } from '../ui/haptics'
 
 export function Result({ storyId }: { storyId: string }) {
   const { t } = useI18n()
@@ -23,6 +24,7 @@ export function Result({ storyId }: { storyId: string }) {
     saveProgress(outcome.progress)
     clearResult(storyId)
     playSound(outcome.newSticker ? 'sticker' : 'star', loadSettings())
+    if (outcome.newSticker) haptic([18, 60, 28])
   }, [outcome, storyId])
 
   if (!result || !outcome) {

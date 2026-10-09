@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-09T00:00:00+08:00",
+  "title": "Design System: Kislap",
+  "extensions": {
+    "shadows": [
+      { "name": "candy", "value": "0 5px 0 var(--candy-deep), 0 9px 18px #aa286329", "purpose": "Tactile primary action and microphone depth." },
+      { "name": "panel", "value": "0 12px 36px #6b426b12", "purpose": "Quiet panels and settings in day mode." },
+      { "name": "panel-night", "value": "0 12px 36px #00000024", "purpose": "Quiet panels and settings in night mode." },
+      { "name": "toy", "value": "0 4px 0 #d7c6db, 0 8px 16px #5136530d", "purpose": "Inherited toy control depth." }
+    ],
+    "motion": [
+      { "name": "candy-transition", "value": "transform 160ms ease-out, box-shadow 160ms ease-out", "purpose": "Primary action hover and press." },
+      { "name": "marker-transition", "value": "transform 180ms cubic-bezier(.34, 1.56, .64, 1)", "purpose": "Story marker lift." },
+      { "name": "fast", "value": "120ms", "purpose": "Inherited fast interactions; 0ms with reduced motion." },
+      { "name": "base", "value": "240ms", "purpose": "Inherited base interactions; 0ms with reduced motion." },
+      { "name": "mood", "value": "2000ms", "purpose": "Mascot mood timing." }
+    ],
+    "breakpoints": [
+      { "name": "compact-max", "value": "420px" },
+      { "name": "stacked-max", "value": "900px" },
+      { "name": "desktop-compact-max", "value": "1050px" },
+      { "name": "wide-min", "value": "1500px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Candy action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The prominent action on a story or reading surface.",
+      "html": "<button class=\"ds-candy\">Maglaro</button>",
+      "css": ".ds-candy{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-4);min-height:64px;padding:var(--s-3) var(--s-6);color:var(--white);background:linear-gradient(var(--candy-light),var(--candy));border:2px solid var(--candy);border-radius:var(--r-pill);box-shadow:inset 0 2px 0 #ffffff70,var(--candy-shadow);font:800 24px/1.3 var(--font-display);cursor:pointer;transition:transform 160ms ease-out,box-shadow 160ms ease-out}.ds-candy:hover{transform:translateY(-2px)}.ds-candy:active{transform:translateY(3px);box-shadow:inset 0 2px 0 #ffffff70,0 2px 0 var(--candy-deep)}.ds-candy:focus-visible{outline:3px solid var(--candy);outline-offset:5px}.ds-candy:disabled{opacity:.55;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-candy{transition:none}}"
+    },
+    {
+      "name": "Language control",
+      "kind": "button",
+      "refersTo": "button-round",
+      "description": "Compact circular language switch in the header.",
+      "html": "<button class=\"ds-language\" aria-label=\"Switch language\">EN</button>",
+      "css": ".ds-language{min-width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:50%;font:700 16px var(--font-display);cursor:pointer}.ds-language:hover{background:var(--pink-soft)}.ds-language:active{transform:translateY(2px)}.ds-language:focus-visible{outline:3px solid var(--candy);outline-offset:5px}"
+    },
+    {
+      "name": "Adventure navigation",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "Rounded links with an explicit current-page state.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a href=\"#\" aria-current=\"page\">Home</a><a href=\"#stories\">Stories</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:var(--s-2)}.ds-nav a{display:flex;align-items:center;gap:var(--s-2);text-decoration:none;font:700 18px var(--font-display);padding:var(--s-3) var(--s-4);border-radius:var(--r-pill);color:var(--muted)}.ds-nav a[aria-current],.ds-nav a:hover{background:var(--pink-soft);color:var(--accent-text)}.ds-nav a:focus-visible{outline:3px solid var(--candy);outline-offset:5px}"
+    },
+    {
+      "name": "Practice word",
+      "kind": "chip",
+      "refersTo": "practice-word",
+      "description": "A saved practice word with a selected state.",
+      "html": "<button class=\"ds-word\" aria-pressed=\"false\">bata</button>",
+      "css": ".ds-word{background:var(--sky);border:1px solid var(--sky-deep);border-radius:var(--r-pill);padding:var(--s-4) var(--s-5);color:var(--map-ink);font:700 24px var(--font-display);cursor:pointer}.ds-word[aria-pressed=true]{background:var(--peach);border-color:var(--orange-ink)}.ds-word:focus-visible{outline:3px solid var(--candy);outline-offset:5px}"
+    },
+    {
+      "name": "Quiet reading panel",
+      "kind": "card",
+      "refersTo": "quiet-panel",
+      "description": "A calm surface that lets the reading sentence lead.",
+      "html": "<section class=\"ds-quiet\"><p class=\"ds-sentence\">Basa tayo!</p></section>",
+      "css": ".ds-quiet{max-width:860px;margin:var(--s-5) auto var(--s-7);padding:var(--s-7);background:var(--surface);color:var(--fg);border-radius:var(--r-lg);box-shadow:var(--panel-shadow)}.ds-sentence{margin:0;width:100%;padding:var(--s-6) 0;font-family:var(--font-read);font-size:clamp(28px,4vw,44px);line-height:1.75}@media(max-width:900px){.ds-quiet{padding:var(--s-6) var(--s-5);margin-block:var(--s-4)}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Candy Reading Adventure",
+    "overview": "Glossy raspberry controls, rounded type, and a pastel landscape make story selection playful. Reading surfaces give the sentence space, with Ningning and the original Filipino artwork maintaining continuity.\n\nThis captures the implemented system in src/styles/adventure.css, layered over tokens.css. The confirmed user brief takes priority over the older token-file comment saying its values are final. Surface composition and verification history live in docs/design/candy-adventure.md.",
+    "keyCharacteristics": [
+      "Tactile controls and numbered story markers.",
+      "Warm neutral reading surfaces and clear large text.",
+      "Local fonts, original artwork, and coordinated day/night themes."
+    ],
+    "rules": [],
+    "dos": [
+      "Do keep the reading sentence visually dominant on a quiet surface.",
+      "Do retain original Ningning and sticker artwork and self-hosted fonts.",
+      "Do preserve keyboard focus, selected-state semantics, and reduced motion."
+    ],
+    "donts": [
+      "Don't invent story locks, progress, or earned rewards for visual effect.",
+      "Don't apply map decoration behind reading text."
+    ]
+  }
+}
