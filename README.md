@@ -19,18 +19,19 @@ stickers. Missed words come back in a short practice game.
   follows how well the child reads.
 - **Stars and stickers.** 0 to 3 stars per story. Finishing a story always earns a sticker for
   the firefly jar.
-- **Word Pop.** Missed words float as bubbles; say a word to pop it.
-- **Syllable help.** Tap a word to see it split into syllables, such as "ba-ta".
-- **Echo reading.** Hear a sentence read aloud first, then read it yourself.
-- **Mic check.** Say "Kumusta, Ningning!" to test the microphone before reading.
+- **Practice words.** Missed and unclear words are saved on the device; the Word Pop screen lists
+  them to practise aloud.
+- **Mic check.** Say "Kumusta, Ningning!" to test the microphone and the room before reading.
 - **Daily streak.** It counts days played and never resets to zero.
-- **Progress QR.** Show a child's progress to a parent or teacher as a QR code, with no server.
 - **Privacy meter.** An on-screen counter shows that 0 network requests leave the device
   while the child reads.
 - **Filipino and English interface**, switchable at any time.
 - **Works offline** after the first load.
 - **Feels like a phone app.** Install it to the home screen: bottom tabs, a settings sheet, the mic
   in thumb reach, light vibration feedback, and a status bar that follows day and night mode.
+
+**Not in this build yet:** Word Pop listening to each word, syllable help ("ba-ta"), echo reading
+in a teammate's voice, a progress QR code for parents, and a Filipino fine-tuned model on laptops.
 
 ## Privacy and local AI
 
@@ -61,13 +62,15 @@ child reads.
 
 | Device | Speech model |
 |---|---|
-| Laptop with WebGPU | `internetoftim/whisper-small-pld-fil-ONNX` (Filipino fine-tune) |
-| Phone, or no WebGPU | `onnx-community/whisper-base` |
+| Every device (laptop and phone) | `onnx-community/whisper-base`, on WebAssembly, `language: tagalog` |
+
+A Filipino fine-tune for laptops (`internetoftim/whisper-small-pld-fil-ONNX`) was tested but is not
+used: it does not run in the current Transformers.js version.
 
 ## Tech stack
 
 Vite · TypeScript · React · Transformers.js (`@huggingface/transformers`) · ONNX Runtime Web ·
-WebGPU / WebAssembly · vite-plugin-pwa (Workbox) · Vitest · Vercel (static hosting).
+WebAssembly (WebGPU when enabled) · vite-plugin-pwa (Workbox) · Vitest · Vercel (static hosting).
 
 ## Getting started
 
@@ -100,13 +103,69 @@ docs/
   uml/              UML diagrams
 ```
 
-## Models, data, and credits
+## Disclosures
 
-- **Whisper** (OpenAI), through ONNX exports from `onnx-community`.
-- **`internetoftim/whisper-small-pld-fil-ONNX`**, an export of `sapinsapin/whisper-small-pld-fil`.
-  Its training data (UP-DSP PLD) is for research and non-commercial use. Kislap is free and
-  non-commercial.
-- Mascot, stories, and art are original. Sounds and fonts are listed with their licences in
-  `docs/assets.md`.
+**Team stochastic4** — @Romeo-04 (lead), @Seedlign (design), @acmrsu (speech model),
+@emyol (content, scoring, QA). Built during the AppBuildersPH Hackathon 2026 (Oct 9–10). No code
+from earlier projects.
 
-Built for the AppBuildersPH Hackathon 2026.
+### Where each AI function runs
+
+| Function | Where it runs | Needs internet? |
+|---|---|---|
+| Speech recognition (Whisper) | In the browser, in a Web Worker (Transformers.js + ONNX Runtime Web, WebGPU or WebAssembly) | Only to download the model once |
+| Silence check | In the browser (loudness of the recording) | No |
+| Word scoring and word marks | In the browser (word alignment with spelling similarity) | No |
+| Mascot, stars, stickers, Word Pop, sounds | In the browser | No |
+| Progress (stars, stickers, streak, practice words) | Browser `localStorage` on the device | No |
+
+No audio, transcript, or progress is sent anywhere. There is no server, account, analytics, or
+cloud AI.
+
+### Models
+
+| Model | Used on | Licence and data |
+|---|---|---|
+| Whisper base (OpenAI), ONNX export `onnx-community/whisper-base` | Every device | Apache-2.0 (`openai/whisper-base` card); the ONNX export card states no licence |
+
+Tested but not shipped: `internetoftim/whisper-small-pld-fil-ONNX`, a Filipino fine-tune (model
+cards MIT and Apache-2.0; its UP-DSP PLD training data is for research and non-commercial use).
+
+The model is downloaded from Hugging Face at run time. They are not part of this repository.
+
+### Services
+
+| Service | Used for |
+|---|---|
+| Vercel | Static hosting of the app (HTTPS). No server functions, no analytics. |
+| Hugging Face Hub (including its file CDN) | Model files, downloaded once |
+| GitHub | Source code |
+
+**No AI API and no cloud inference.**
+
+### Technologies
+
+Vite 8 · TypeScript 6 · React 19 · Transformers.js 4.3 (`@huggingface/transformers`) · ONNX Runtime
+Web 1.31 (dev build, via Transformers.js) · WebGPU / WebAssembly · vite-plugin-pwa 2 (Workbox 7) ·
+Vitest 5 · oxlint. Full list with versions and licences: `docs/assets.md`.
+
+### Existing assets
+
+Fonts (Baloo 2, Andika; SIL Open Font License, self-hosted), libraries, and every other item we
+did not make are listed with source and licence in `docs/assets.md`. The mascot, stories,
+stickers, and sounds were made during the event.
+
+### AI development tools
+
+| Tool | Used for |
+|---|---|
+| Claude Code (Anthropic) | Spec validation, architecture and ADRs, issue planning, code, tests, and PR reviews |
+| Claude Design (Anthropic) | Visual design handoff: tokens, UI kit, mascot and sticker art |
+| CodeRabbit | Automated PR summaries on GitHub |
+
+Each teammate confirms their own tools on issue #36.
+
+## Licence
+
+The code in this repository is MIT licensed (`LICENSE`). The speech models are not included and
+keep their own licences and data terms (see Models above).
