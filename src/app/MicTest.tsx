@@ -1,5 +1,8 @@
-// Device check page (/#/mictest): secure context, mic record + playback, WebGPU. Used for #1, #15, #48.
-import { useEffect, useRef, useState } from 'react'
+// Device check page (/#/mictest): secure context, WebGPU, and the real recorder (#2).
+// Plays back the exact 16 kHz clip Whisper will receive. Used for #1, #15, #48.
+import { useEffect, useMemo, useState } from 'react'
+import { createRecorder, MicError, SAMPLE_RATE, SPEECH_LEVEL } from '../asr/audio'
+import { isMostlySilence, rms } from '../asr/meter'
 import { useI18n } from '../i18n'
 
 interface GpuInfo {
@@ -25,33 +28,57 @@ async function probeGpu(): Promise<GpuInfo> {
   }
 }
 
+function play(pcm: Float32Array) {
+  const ctx = new AudioContext()
+  const buf = ctx.createBuffer(1, pcm.length, SAMPLE_RATE)
+  buf.copyToChannel(pcm as Float32Array<ArrayBuffer>, 0)
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+  src.connect(ctx.destination)
+  src.onended = () => ctx.close()
+  src.start()
+}
+
 export function MicTest() {
   const { t } = useI18n()
+  const recorder = useMemo(() => createRecorder(), [])
   const [gpu, setGpu] = useState<GpuInfo | null>(null)
-  const [status, setStatus] = useState<'idle' | 'recorded' | 'recording' | 'micProblem'>('idle')
-  const [audioUrl, setAudioUrl] = useState<string>()
-  const chunks = useRef<Blob[]>([])
+  const [recording, setRecording] = useState(false)
+  const [level, setLevel] = useState(0)
+  const [status, setStatus] = useState('idle')
+  const [clip, setClip] = useState<Float32Array>()
+
+  const stop = async () => {
+    const pcm = await recorder.stop()
+    setRecording(false)
+    setClip(pcm)
+    setStatus(
+      `${(pcm.length / SAMPLE_RATE).toFixed(2)} s at 16 kHz · RMS ${rms(pcm).toFixed(4)} · ` +
+        (isMostlySilence(pcm) ? 'SILENCE (would not be sent to Whisper)' : 'speech (would be sent to Whisper)'),
+    )
+  }
 
   useEffect(() => {
     probeGpu().then(setGpu)
-  }, [])
+    const offLevel = recorder.onLevel(setLevel)
+    const offAuto = recorder.onAutoStop(() => void stop())
+    return () => {
+      offLevel()
+      offAuto()
+      recorder.release()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recorder])
 
-  const record = async () => {
+  const toggle = async () => {
+    if (recording) return stop()
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const rec = new MediaRecorder(stream)
-      chunks.current = []
-      rec.ondataavailable = (e) => chunks.current.push(e.data)
-      rec.onstop = () => {
-        stream.getTracks().forEach((tr) => tr.stop())
-        setAudioUrl(URL.createObjectURL(new Blob(chunks.current, { type: rec.mimeType })))
-        setStatus('recorded')
-      }
-      rec.start()
-      setStatus('recording')
-      setTimeout(() => rec.stop(), 3000)
-    } catch {
-      setStatus('micProblem')
+      setClip(undefined)
+      await recorder.start()
+      setRecording(true)
+      setStatus('recording… stops after 1.5 s of silence')
+    } catch (err) {
+      setStatus(err instanceof MicError ? `mic ${err.kind}: ${err.message}` : String(err))
     }
   }
 
@@ -62,14 +89,15 @@ export function MicTest() {
         <li>{t('device.secure')}: {t(window.isSecureContext ? 'device.yes' : 'device.no')}</li>
         <li>{t('device.micAvailable')}: {t(typeof navigator.mediaDevices?.getUserMedia === 'function' ? 'device.yes' : 'device.no')}</li>
         <li>
-          WebGPU: {t(gpu ? gpu.available ? 'device.yes' : 'device.no' : 'device.checking')}
+          WebGPU: {t(gpu ? (gpu.available ? 'device.yes' : 'device.no') : 'device.checking')}
           {gpu?.available && ` · shader-f16: ${t(gpu.f16 ? 'device.yes' : 'device.no')} · ${gpu.vendor || t('device.unknownGpu')}`}
         </li>
         <li>{t('device.cores')}: {navigator.hardwareConcurrency} · {t('device.browser')}: {navigator.userAgent}</li>
       </ul>
-      <button className="big" onClick={record}>🎤 {t('device.record')}</button>
-      <p>{t(`device.${status}`)}</p>
-      {audioUrl && <audio controls src={audioUrl} />}
+      <button className="big" onClick={toggle}>{recording ? '⏹ Stop' : '🎤 Record'}</button>
+      <meter min={0} max={0.2} low={SPEECH_LEVEL} value={recording ? level : 0} style={{ width: '100%', height: 24 }} />
+      <p>{status}</p>
+      {clip && <button onClick={() => play(clip)}>▶ Play the 16 kHz clip</button>}
       <a href="#/">{t('nav.back')}</a>
     </section>
   )

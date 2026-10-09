@@ -61,6 +61,7 @@
   "progress.welcome": "You're back! Your reading days are still here.",
   "reading.listenFirst": "Listen first",
   "reading.listening": "Ningning is listening…",
+  "reading.modelRetry": "Ningning got a little tired. Let's try again!",
   "reading.next": "Next",
   "reading.notFound": "We couldn't find that story. Let's pick another.",
   "reading.retry": "Try again",
