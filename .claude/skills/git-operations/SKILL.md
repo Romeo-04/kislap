@@ -1,6 +1,6 @@
 ---
 name: git-operations
-description: Use when about to stage, commit, branch, rebase, amend, push, or open a pull request in this repo, when writing a commit message or PR body, or when a finished unit of work needs recording. Covers the standing push permission, proactive committing, conventional-commit prefixes, and the no-Co-Authored-By convention.
+description: Use when about to stage, commit, branch, rebase, amend, push, or open a pull request in this repo, when writing a commit message or PR body, or when a finished unit of work needs recording, or when reviewing a PR (runs the repo's pr-review-toolkit: /review-pr and its six agents). Covers the standing push permission, proactive committing, conventional-commit prefixes, and the no-Co-Authored-By convention.
 ---
 
 # Git Operations — Kislap
@@ -11,8 +11,10 @@ thresholds, the story content schema, on-device progress storage) instead of the
 
 **No Eden in this repo (decided 2026-10-09).** Eden Code Reviewer belongs to Creator Loans and
 does not apply to Kislap. The review step here is **one teammate approves the PR** (ADR-0009).
-The tools `pr-review-toolkit`, `pr-comment-loop`, and `pr-test-recording` named below are
-optional here: use them if they are installed, skip them if not.
+**`pr-review-toolkit` is part of this repo** (vendored 2026-10-09, see
+`.claude/pr-review-toolkit/README.md`) and is **required** before every PR — see "Review the whole
+change yourself" below. `pr-comment-loop` and `pr-test-recording` are not installed here: skip
+those steps.
 
 ## Every task gets a branch and a pull request
 
@@ -49,6 +51,37 @@ form.
 
 **Run `pr-review-toolkit` on the diff before the PR exists.** Not after the first comment,
 not when something feels risky — before.
+
+The toolkit lives in this repo, so every teammate's session has it:
+
+| How | What it runs |
+|---|---|
+| `/review-pr` (from `.claude/commands/review-pr.md`) | All applicable reviewers on the current branch's diff |
+| `/review-pr code errors tests` | Only the named aspects (`code`, `errors`, `tests`, `comments`, `types`, `simplify`, `all`) |
+| Agent `code-reviewer` | Project rules from `CLAUDE.md`, bugs, quality |
+| Agent `silent-failure-hunter` | Swallowed errors and silent fallbacks (mic, worker, storage) |
+| Agent `pr-test-analyzer` | Missing tests for the behaviour that changed |
+| Agent `comment-analyzer` | Comments that no longer match the code |
+| Agent `type-design-analyzer` | New types and their invariants (contracts in `docs/architecture.md` §3) |
+| Agent `code-simplifier` | Last pass, after the others are clean |
+
+**Kislap additions to every review:** the hard rules in `CLAUDE.md` (no third-party requests at
+runtime, kind tone, honest claims), contract drift against `docs/architecture.md` §3, and
+**conflicts with other open PRs** (`gh pr list`; shared files such as `PROGRESS.md`,
+`src/i18n/*.json`, `src/app/router.tsx`). Fix Critical and Important findings before you open
+the PR, and say in the PR body which reviewers ran and what they found.
+
+**Reviewing a teammate's PR** uses the same toolkit. Check the PR out in its own worktree, never
+in the shared clone, so you do not move another person's branch:
+
+```bash
+git fetch origin pull/<N>/head:review/pr-<N>
+git worktree add ../kislap-review/pr-<N> review/pr-<N>
+```
+
+Do **not** run `git pull` in a clone where someone else is fetching at the same time: `pull`
+merges `FETCH_HEAD`, and a concurrent `fetch` can replace it with another branch. Use
+`git fetch origin && git merge --ff-only origin/main` instead.
 
 Added 2026-09-09 in v1 after **thirteen review rounds on one PR** (#191, a development-only
 seed script). Every round found something real, and that is the problem: they were found one
