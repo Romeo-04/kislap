@@ -31,7 +31,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 |---|---|---|---|
 | #1 | Scaffold Vite + React + TS PWA, deploy to Vercel | CP1 | ✅ merged; phone mic check left |
 | #2 | Audio recorder, level meter, silence gate, auto-stop | CP1 | 🔨 PR open (verified in Chrome with fake mic) |
-| #3 | Reading loop integration | CP2 | ⏳ |
+| #3 | Reading loop integration | CP2 | 🔨 PR open (full loop E2E with fake hearing; real model waits on #59, scorer on #58) |
 | #4 | On-device progress | CP2 | 🔨 PR open (17 tests, verified in Chrome) |
 | #5 | Offline ready | Freeze | 🔨 PR open (offline story verified in Chrome; re-check with real model after #14) |
 | #6 | Privacy meter (Should) | Freeze | 🔨 PR open (verified in Chrome) |

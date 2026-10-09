@@ -107,14 +107,20 @@ export const SCORING = { correct: 0.85, unclear: 0.6, stars: [0.5, 0.7, 0.9] } a
 // ---------- src/content/syllables.ts (Content-QA) — "pantig" help ----------
 export function syllabify(word: string): string[];   // "bata" -> ["ba","ta"], "ngipin" -> ["ngi","pin"]
 
-// ---------- src/game/session.ts (Lead) ----------
+// ---------- src/game/session.ts (Lead, #3) ----------
 export interface SentenceAttempt { sentenceIndex: number; heard: string; words: WordResult[]; accuracy: number }
-export interface ReadingSession {
-  storyId: string;
-  attempts: SentenceAttempt[];        // best attempt per sentence counts
-  accuracy(): number;                 // mean over sentences of the best attempt
-  practiceWords(): string[];          // missed + unclear
-}
+export function createSession(storyId: string, sentenceCount: number): {
+  addAttempt(a: SentenceAttempt): void;   // keeps the best Attempt per Sentence (a retry never lowers the score)
+  accuracy(): number;                     // word-weighted over best Attempts: (correct + 0.5·unclear) / words
+  practiceWords(): string[];              // missed + unclear from best Attempts
+  isComplete(): boolean;
+};
+export function finishSession(s): { storyId; accuracy; stars; practiceWords };  // throws if incomplete
+export function resultFor(storyId: string): SessionResult | undefined;          // in memory; a direct link finds nothing
+
+// ---------- src/game/readingMachine.ts (Lead, #3) ----------
+// Pure reducer for docs/uml/state.md §1: ready → listening → thinking → revealing → reviewed.
+// silence / model failure / mic failure → ready with a kind notice, never a Missed mark.
 
 // ---------- src/game/mascot.ts (Designer) ----------
 export type MascotMood = 'idle' | 'listening' | 'thinking' | 'cheering' | 'encouraging' | 'celebrating';
