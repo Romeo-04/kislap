@@ -62,7 +62,7 @@ Added in PR #60 (#8).
 ## Art
 
 All art is original, made for Kislap during the hackathon with Claude Design (see D12). None of it
-copies an existing mascot, brand or character. The SVGs carry a C2PA provenance manifest.
+copies an existing mascot, brand or character. The icon and mascot art came with a C2PA provenance manifest; the stickers' manifests were stripped when they moved to the paper look.
 
 | File | What it is | Licence |
 |---|---|---|
@@ -71,7 +71,7 @@ copies an existing mascot, brand or character. The SVGs carry a C2PA provenance 
 | `public/stickers/sticker-{sampaguita,kubo,alitaptap,kalabaw,jeep,parol}.svg` | Six stickers | Own work |
 | `public/stickers/sticker-*-locked.svg` | The same six, not yet earned | Own work |
 
-Sticker art total: 128,506 bytes (about 126 KiB).
+Sticker art total: 33392 bytes, in the Claude Design part 2 paper look (cream die-cut edge, half the handoff's width; details in soft brown). `art/convert_stickers.py` made them from the v1 art.
 
 ## Sounds
 
