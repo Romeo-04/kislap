@@ -1,22 +1,21 @@
-/* Ningning motion (Claude Design handoff, "Ningning" table). Only transform and opacity move.
-   Reduced motion shows the static pose: every rule below sits inside no-preference. */
+/* Ningning motion (Claude Design part 2): idle bobs 4px over 3s and the wings flutter ±4° on their
+   pins; on a stick the puppet sways ±2.5° around the hand. Reduced motion: the static pose only. */
 .ningning { display: block; overflow: visible; }
-.ningning [data-part], .ningning .nn-thought { transform-box: fill-box; transform-origin: center; }
 .ningning [data-part='glow'] circle { transition: opacity 80ms ease-out; }
+.ningning [data-part='figure'] { transform-box: view-box; transform-origin: var(--nn-pivot, 100px 150px); }
+/* a wing turns around its own pin: (0, 0) of the pinned group */
+.ningning .nn-wing { transform-box: view-box; transform-origin: 0 0; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .ningning[data-mood='idle'] [data-part='figure'] { animation: nn-bob 3s ease-in-out infinite; }
-  .ningning[data-mood='idle'] [data-part='antennae'] { transform-origin: 50% 100%; animation: nn-sway 3s ease-in-out infinite; }
-  .ningning[data-mood='thinking'] .nn-thought { animation: nn-appear 300ms ease-out both; }
-  .ningning[data-mood='thinking'] .nn-thought:nth-child(2) { animation-delay: 300ms; }
-  .ningning[data-mood='thinking'] .nn-thought:nth-child(3) { animation-delay: 600ms; }
-  .ningning[data-mood='cheering'] [data-part='figure'] { animation: nn-hop 240ms var(--ease-pop, cubic-bezier(.34, 1.56, .64, 1)) 1; }
-  .ningning[data-mood='encouraging'] [data-part='figure'] { transform-origin: 50% 100%; animation: nn-lean 480ms ease-out 1; }
-  .ningning[data-mood='celebrating'] [data-part='figure'] { animation: nn-hop 600ms var(--ease-pop, cubic-bezier(.34, 1.56, .64, 1)) infinite; }
+  .ningning:not([data-stick])[data-mood='idle'] [data-part='figure'] { animation: nn-bob 3s ease-in-out infinite; }
+  .ningning[data-stick] [data-part='figure'] { animation: nn-sway 3s ease-in-out infinite alternate; }
+  .ningning .nn-wing { animation: nn-flutter 1.6s ease-in-out infinite alternate; }
+  .ningning .nn-wing--lo { animation-delay: -0.8s; }
+  /* the whole puppet hops, so wings and pins stay with the body */
+  .ningning:not([data-stick])[data-mood='cheering'] [data-part='figure'] { animation: nn-hop 240ms var(--ease-pop, cubic-bezier(.34, 1.56, .64, 1)) 1; }
 }
 
 @keyframes nn-bob { 50% { transform: translateY(-4px); } }
-@keyframes nn-sway { 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
-@keyframes nn-appear { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
-@keyframes nn-hop { 50% { transform: translateY(-14px); } }
-@keyframes nn-lean { 50% { transform: rotate(6deg) translateX(4px); } }
+@keyframes nn-sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+@keyframes nn-flutter { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+@keyframes nn-hop { 50% { transform: translateY(-8px); } }
