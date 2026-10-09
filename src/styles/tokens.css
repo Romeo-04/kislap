@@ -1,0 +1,33 @@
+/* Design tokens from the Claude Design handoff (issue #8). Values are final: match, do not tune. */
+:root {
+  --bg: #FFFBEF; --surface: #FFFFFF; --fg: #1E2B1F; --line: #1E2B1F; --muted: #56634F;
+  --glow: #FFC62E; --glow-soft: #FFE27A; --glow-hover: #FFD65C; --cream-hover: #FFF3C4; --pale-yellow: #FFF3B8;
+  --leaf: #7CC35A; --cap: #F07F2A;
+  --correct: #2F9E57; --unclear: #E9AE14; --missed: #F07F2A;
+  --ink: #1E2B1F; /* text on yellow and white stays tinta in both themes */
+  --ground: #7CC35A; --ground-deep: #2F9E57;
+  --font-display: "Baloo 2", "Andika", sans-serif;
+  --font-read: "Andika", sans-serif;
+  --text-xs: 14px; --text-sm: 18px; --text-md: 24px; --text-lg: 32px; --text-xl: 48px; --text-2xl: 64px; --text-3xl: 80px;
+  --text-sentence: 36px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+  --r-sm: 12px; --r-md: 20px; --r-lg: 32px; --r-pill: 999px;
+  --stroke: 3px; --toy: 0 6px 0 var(--line); --toy-pressed: 0 2px 0 var(--line);
+  --tap-min: 48px; --mic-size: 112px;
+  --t-fast: 120ms; --t-base: 240ms; --t-mood: 2000ms; --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+}
+
+@media (min-width: 900px) {
+  :root { --text-sentence: 52px; }
+}
+
+/* night mode: cards keep a cream outline, the toy shadow goes darker */
+[data-theme="gabi"] {
+  --bg: #0F2A21; --surface: #173A2E; --fg: #FFF6DC; --muted: #BFD3BC; --line: #06150F;
+  --card-line: #FFF6DC;
+  --ground: #1F5A3A; --ground-deep: #173A2E;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 0ms; --t-base: 0ms; }
+}
