@@ -92,6 +92,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-10 05:30** — 05:00 sweep: main healthy (348 tests, build green), production reading loop verified offline with the real model (8/8 sentences, sticker). #84 (progress recovery, #68) conflicted with main's language rule: fix PR into its branch keeps langChosen and logs every recovered field.
 - **2026-10-10 02:20** — #45: Mic check (energy only, real recorder, room baseline, heard / noisy / denied / no mic) and a full Settings screen at `#/settings`, both on the paper scene with desktop layouts. `GameShell` skips its candy chrome for paper routes (`PAPER_ROUTES`) and re-reads settings on each screen change.
 - **2026-10-10 01:45** — #11: the 12 stickers move to the part 2 paper look: a cream die-cut edge (half the handoff's width, per the team), printed lines in the cut line colour, every colour from the paper tokens, no dark outlines. Locked stickers are cream paper with a dashed cut line instead of a grey silhouette. Same art and mapping; 128 KB to about 35 KB without the provenance blocks.
 - **2026-10-10 01:25** — #9: Ningning is the part 2 paper puppet in `src/ui/Ningning.tsx`: four wings turn on brass pins per mood, an optional puppet stick sways ±3°, the die-cut edge is half the handoff's. The v1 mood motion stays (idle bob, cheering and celebrating hops, encouraging lean, thought bubbles popping in); the halo screen-blends only on the paper sky. New app icon; the v1 mood SVGs are gone.

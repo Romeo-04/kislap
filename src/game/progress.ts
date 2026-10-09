@@ -77,9 +77,15 @@ export function loadProgress(): Progress {
     const dropped = {
       stars: isRecord(parsed.stars) ? Object.keys(parsed.stars).length - Object.keys(stars).length : parsed.stars === undefined ? 0 : 1,
       stickers: Array.isArray(parsed.stickers) ? parsed.stickers.length - recovered.stickers.length : parsed.stickers === undefined ? 0 : 1,
-      streakReset: streak.days !== undefined && streak.days !== recovered.streak.days,
+      practiceWords: Array.isArray(parsed.practiceWords)
+        ? parsed.practiceWords.length - recovered.practiceWords.length
+        : parsed.practiceWords === undefined ? 0 : 1,
+      streakReset:
+        (parsed.streak !== undefined && !isRecord(parsed.streak)) ||
+        (streak.days !== undefined && streak.days !== recovered.streak.days) ||
+        (streak.lastPlayed !== undefined && streak.lastPlayed !== recovered.streak.lastPlayed),
     }
-    if (dropped.stars || dropped.stickers || dropped.streakReset) console.warn('[progress] recovered a damaged save', dropped)
+    if (dropped.stars || dropped.stickers || dropped.practiceWords || dropped.streakReset) console.warn('[progress] recovered a damaged save', dropped)
     return recovered
   } catch (err) {
     console.warn('[progress] could not load saved progress; starting fresh', err)

@@ -87,6 +87,27 @@ describe('saved progress recovery (#68)', () => {
     expect(loaded.langChosen).toBe(true)
   })
 
+  it('does not warn on a clean save, including a real Filipino pick', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const clean = { ...defaultProgress(), lang: 'fil' as const, langChosen: true as const, stars: { 'story-1': 3 as const }, stickers: ['sticker-story-1'], practiceWords: ['bata'], streak: { days: 2, lastPlayed: '2026-10-09' } }
+    store.set(PROGRESS_KEY, JSON.stringify(clean))
+    expect(loadProgress()).toEqual(clean)
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
+  it('warns when it repairs damaged practice words or a broken streak', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, practiceWords: 'bata', streak: null }))
+    loadProgress()
+    expect(warn).toHaveBeenCalledWith('[progress] recovered a damaged save', expect.objectContaining({ practiceWords: 1, streakReset: true }))
+    warn.mockClear()
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days: 3, lastPlayed: 'garbage' } }))
+    expect(loadProgress().streak).toEqual({ days: 3, lastPlayed: '' })
+    expect(warn).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
+  })
+
   it('warns when a save from an unknown version is replaced', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     store.set(PROGRESS_KEY, JSON.stringify({ version: 2, stickers: ['sticker-story-1'] }))
