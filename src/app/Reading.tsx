@@ -10,6 +10,11 @@ import { createSession } from '../game/session'
 import { moodFor, type MascotMood } from '../game/mascot'
 import { go } from './router'
 
+const moodCopy = {
+  idle: 'mascot.idle', listening: 'reading.listening', thinking: 'reading.thinking',
+  cheering: 'mascot.cheer', encouraging: 'mascot.encourage', celebrating: 'result.title',
+} as const
+
 type Phase = 'ready' | 'listening' | 'thinking' | 'reviewed'
 
 export function Reading({ storyId }: { storyId: string }) {
@@ -22,7 +27,7 @@ export function Reading({ storyId }: { storyId: string }) {
   const [words, setWords] = useState<WordResult[]>([])
   const [mood, setMood] = useState<MascotMood>('idle')
 
-  if (!story) return <p>Story not found.</p>
+  if (!story) return <p>{t('reading.notFound')}</p>
   const sentence = story.sentences[index]
 
   const onMic = async () => {
@@ -60,14 +65,14 @@ export function Reading({ storyId }: { storyId: string }) {
   return (
     <section className="stack">
       <p className="muted">
-        {index + 1} / {story.sentences.length} · Ningning: {mood}
+        {index + 1} / {story.sentences.length} · {t(moodCopy[mood])}
       </p>
       <p className="sentence">
         {words.length
           ? words.map((w, i) => <span key={i} className={`word ${w.status}`}>{w.word} </span>)
           : sentence.text}
       </p>
-      <button className="big mic" onClick={onMic} disabled={phase === 'thinking'}>
+      <button className="big mic" onClick={onMic} disabled={phase === 'thinking'} aria-label={t(phase === 'listening' ? 'reading.stop' : 'reading.tapMic')}>
         {phase === 'listening' ? '⏹' : '🎤'}
       </button>
       <p className="muted">

@@ -71,7 +71,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #19 | Three original stories | CP1 | 🔨 Implemented and verified; awaiting PR review |
 | #20 | Forgiving scorer + ≥ 10 tests | CP1 | ⏳ |
 | #21 | Syllable help (pantig) (Should) | Freeze | ⏳ |
-| #22 | i18n copy fil + en | CP2 | ⏳ |
+| #22 | i18n copy fil + en | CP2 | 🔨 Copy and scaffold wiring verified; open for suggestions and integrated UI review |
 | #23 | Tune scoring on golden recordings | Freeze | ⏳ |
 | #24 | Device QA, offline + network checks | Freeze | ⏳ |
 | #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
@@ -91,6 +91,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 ## Log
 
 - **2026-10-09 21:27** — #19 / PR #53: revised the stories for a clearer reading progression. The easy story uses short, familiar words and a complete cat-and-firefly plot; the medium story has a garden problem and resolution; the hard story uses longer clauses and Taglish. Each has eight sentences of four to ten words. Content checks, the existing test, typecheck, and build pass. Awaiting teammate review.
+- **2026-10-09 21:18** — #22: expanded both language dictionaries with incoming UI/offline keys and four cheering/encouraging variants each. Localized scaffold screen labels, mascot states, and accessible controls. Eight tests and build pass; lint has only the existing i18n Fast Refresh warning. Independent diff review found no blockers. The user approved the wording while asking to keep the issue open for suggestions. Final integrated UI and confirmed native-speaker review remain in `docs/i18n-review.md`.
 - **2026-10-09 19:30** — #11: sticker art mapped to stories by level (`src/content/stickers.ts`), soft Web Audio sounds (`src/game/sound.ts`), sound/night setting under `kislap.settings.v1`, D11 draft `docs/assets.md`.
 - **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).
 - **2026-10-09 19:05** — #8: Claude Design tokens (`src/styles/tokens.css`), self-hosted Baloo 2 + Andika, all handoff copy in i18n, UI kit in `src/ui/`. Placeholder screens keep working through a legacy block in `base.css` until #10.

@@ -1,5 +1,6 @@
 // Device check page (/#/mictest): secure context, mic record + playback, WebGPU. Used for #1, #15, #48.
 import { useEffect, useRef, useState } from 'react'
+import { useI18n } from '../i18n'
 
 interface GpuInfo {
   available: boolean
@@ -25,8 +26,9 @@ async function probeGpu(): Promise<GpuInfo> {
 }
 
 export function MicTest() {
+  const { t } = useI18n()
   const [gpu, setGpu] = useState<GpuInfo | null>(null)
-  const [status, setStatus] = useState('idle')
+  const [status, setStatus] = useState<'idle' | 'recorded' | 'recording' | 'micProblem'>('idle')
   const [audioUrl, setAudioUrl] = useState<string>()
   const chunks = useRef<Blob[]>([])
 
@@ -43,32 +45,32 @@ export function MicTest() {
       rec.onstop = () => {
         stream.getTracks().forEach((tr) => tr.stop())
         setAudioUrl(URL.createObjectURL(new Blob(chunks.current, { type: rec.mimeType })))
-        setStatus('recorded — press play')
+        setStatus('recorded')
       }
       rec.start()
-      setStatus('recording 3 s…')
+      setStatus('recording')
       setTimeout(() => rec.stop(), 3000)
-    } catch (err) {
-      setStatus(`mic error: ${(err as Error).message}`)
+    } catch {
+      setStatus('micProblem')
     }
   }
 
   return (
     <section className="stack">
-      <h1>Device check</h1>
+      <h1>{t('device.title')}</h1>
       <ul>
-        <li>Secure context (HTTPS): {String(window.isSecureContext)}</li>
-        <li>getUserMedia: {String(!!navigator.mediaDevices?.getUserMedia)}</li>
+        <li>{t('device.secure')}: {t(window.isSecureContext ? 'device.yes' : 'device.no')}</li>
+        <li>{t('device.micAvailable')}: {t(typeof navigator.mediaDevices?.getUserMedia === 'function' ? 'device.yes' : 'device.no')}</li>
         <li>
-          WebGPU: {gpu ? String(gpu.available) : '…'}
-          {gpu?.available && ` · shader-f16: ${gpu.f16} · ${gpu.vendor || 'unknown GPU'}`}
+          WebGPU: {t(gpu ? gpu.available ? 'device.yes' : 'device.no' : 'device.checking')}
+          {gpu?.available && ` · shader-f16: ${t(gpu.f16 ? 'device.yes' : 'device.no')} · ${gpu.vendor || t('device.unknownGpu')}`}
         </li>
-        <li>Cores: {navigator.hardwareConcurrency} · UA: {navigator.userAgent}</li>
+        <li>{t('device.cores')}: {navigator.hardwareConcurrency} · {t('device.browser')}: {navigator.userAgent}</li>
       </ul>
-      <button className="big" onClick={record}>🎤 Record 3 s</button>
-      <p>{status}</p>
+      <button className="big" onClick={record}>🎤 {t('device.record')}</button>
+      <p>{t(`device.${status}`)}</p>
       {audioUrl && <audio controls src={audioUrl} />}
-      <a href="#/">Back</a>
+      <a href="#/">{t('nav.back')}</a>
     </section>
   )
 }
