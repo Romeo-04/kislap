@@ -8,7 +8,7 @@ export function Progress() {
   return (
     <section className="stack center">
       <h1>{t('progress.title')}</h1>
-      <p>Stickers: {p.stickers.length} · Streak: {p.streak.days}</p>
+      <p>{t('progress.stickers')}: {p.stickers.length} · {p.streak.days} {t('progress.days')}</p>
       <a href="#/">{t('nav.back')}</a>
     </section>
   )

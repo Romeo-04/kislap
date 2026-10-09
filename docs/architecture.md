@@ -49,13 +49,18 @@ one (fake first, real later).
 export interface Recorder {
   start(): Promise<void>;                 // asks for the mic once, then reuses the stream
   stop(): Promise<Float32Array>;          // 16 kHz mono PCM
-  onLevel(cb: (rms: number) => void): () => void;  // drives the mic glow + auto-stop
+  onLevel(cb: (rms: number) => void): () => void;  // drives the mic glow
+  onAutoStop(cb: () => void): () => void;           // 1.5 s quiet after speech, or 15 s max → call stop()
+  release(): void;                                  // free the mic when leaving the screen
 }
-export function createRecorder(opts?: { autoStopSilenceMs?: number /* 1500 */ }): Recorder;
+export function createRecorder(opts?: { autoStopSilenceMs?: number /* 1500 */; maxMs?: number /* 15000 */ }): Recorder;
+// throws MicError { kind: 'denied' | 'unavailable' } from start()
 
 // ---------- src/asr/meter.ts (Lead) ----------
 export function rms(pcm: Float32Array): number;
 export function isMostlySilence(pcm: Float32Array, threshold?: number): boolean;  // ADR-0006
+export function createSilenceDetector(o: { threshold: number; silenceMs: number; maxMs: number }): { push(level: number, tMs: number): 'continue' | 'stop' };
+// src/asr/resample.ts: resample(pcm, fromRate, toRate), concatChunks(chunks)
 
 // ---------- src/asr/tier.ts (Model) ----------
 export type ModelTier = 'large' | 'small';
@@ -125,6 +130,11 @@ export function loadProgress(): Progress;     // key 'kislap.progress.v1', safe 
 export function saveProgress(p: Progress): void;
 export function recordStory(p: Progress, storyId: string, stars: 0|1|2|3): { progress: Progress; newSticker?: string };
 export function touchStreak(p: Progress, today: string): { progress: Progress; welcomeBack: boolean };
+export function addPracticeWords(p: Progress, words: string[]): Progress;   // normalized, deduped, newest 20
+export function localDate(d?: Date): string;   // local YYYY-MM-DD; the one "today" helper for streak and goals
+export function defaultProgress(): Progress;
+// recordStory: sticker-<storyId> on every first finish (ADR-0010), sticker-<storyId>-gold at 3 stars.
+// saveProgress never throws (logs on quota or blocked storage).
 
 // ---------- src/privacy/meter.ts (Lead) ----------
 export function summarize(entries: { name: string; transferSize: number }[], origin: string): { requests: number; bytes: number; urls: string[] };
