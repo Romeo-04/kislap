@@ -1,4 +1,5 @@
-// Model tiers (issue #16). Both tiers run Whisper base, so the child-facing quality is the same:
+// Model tiers (issue #16). Both tiers run Whisper base, but q4 reads a little worse than q8 (72% against 77%
+// mean accuracy on 24 clean golden clips), so the GPU tier trades some accuracy for speed. See PROGRESS.md:
 //   large = WebGPU, q4 (about 136 MB). Laptops with a GPU. 1.3 s per sentence in our tests.
 //   small = WebAssembly, q8 (about 73 MB). Phones and anything without WebGPU.
 // The names stay 'large' and 'small' because on-device progress already stores them (ADR-0008).
@@ -26,22 +27,37 @@ export const DTYPE: Record<ModelTier, DataType | Record<string, DataType>> = {
   large: 'q4',
 }
 
-export async function hasWebGPU(): Promise<boolean> {
+/** requestAdapter can hang on a broken driver, so give it a few seconds and then say no. */
+export async function hasWebGPU(timeoutMs = 3000): Promise<boolean> {
   const gpu = (navigator as Navigator & { gpu?: { requestAdapter(): Promise<unknown> } }).gpu
   if (!gpu) return false
+  let timer: ReturnType<typeof setTimeout> | undefined
   try {
-    return (await gpu.requestAdapter()) != null
+    const adapter = await Promise.race([
+      gpu.requestAdapter(),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), timeoutMs)
+      }),
+    ])
+    return adapter != null
   } catch {
     return false
+  } finally {
+    clearTimeout(timer)
   }
 }
-
-/** Phones have WebGPU but it was unusable on one we tested (97 s per sentence), so they use WASM. */
+/**
+ * Phones have WebGPU but it was unusable on one we tested (97 s per sentence), so they use WASM.
+ * iPadOS Safari and Chrome's "desktop site" mode hide the phone from the user agent, so a touch Mac
+ * or a coarse primary pointer counts too.
+ */
 export function isMobile(): boolean {
   const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } }
-  return nav.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+  const byAgent = nav.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|Mobile/i.test(nav.userAgent)
+  const touchMac = /Macintosh/i.test(nav.userAgent) && (nav.maxTouchPoints ?? 0) > 1
+  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
+  return byAgent || touchMac || coarse
 }
-
 /** The order of the rules, kept pure so it can be tested: ?tier= override, then the saved tier, then the probe. */
 export function chooseTier(input: { forced?: string | null; saved?: ModelTier; gpu: boolean; mobile: boolean }): TierInfo {
   if (input.forced === 'large' || input.forced === 'small') return TIERS[input.forced]

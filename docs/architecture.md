@@ -67,7 +67,9 @@ export type ModelTier = 'large' | 'small';
 export interface TierInfo { tier: ModelTier; modelId: string; device: 'webgpu' | 'wasm'; approxMB: number }
 export function pickTier(saved?: ModelTier): Promise<TierInfo>;   // URL ?tier= override > saved tier > WebGPU probe (a phone always gets 'small')
 // 'large' = whisper-base q4 on WebGPU (~136 MB). 'small' = whisper-base q8 on WASM (~73 MB). If 'large' fails to load,
-// the client starts a fresh worker with 'small' and saves tier: 'small' in progress. Decided from the benchmarks in PROGRESS.md.
+// the client starts a fresh worker with 'small' and saves tier: 'small' in progress. The same happens if the GPU tier
+// fails on its first run, a warm-up, or later after a device loss (the request is retried once). A network error is
+// never blamed on the GPU and never saved. forgetSavedTier() undoes a saved fallback. Decided from PROGRESS.md.
 
 // ---------- src/asr/transcribe.ts (Model) — main-thread API to the worker ----------
 export interface TranscribeResult {

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { chooseTier, DTYPE, TIERS } from './tier'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { chooseTier, DTYPE, hasWebGPU, isMobile, TIERS } from './tier'
 
 const desktopGpu = { gpu: true, mobile: false }
 
@@ -42,5 +42,67 @@ describe('tier definitions', () => {
   it('keeps both tiers under the download targets (300 MB laptop, 150 MB phone)', () => {
     expect(TIERS.large.approxMB).toBeLessThanOrEqual(300)
     expect(TIERS.small.approxMB).toBeLessThanOrEqual(150)
+  })
+})
+
+describe('hasWebGPU', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
+
+  it('says no when requestAdapter never answers', async () => {
+    vi.useFakeTimers()
+    vi.stubGlobal('navigator', { gpu: { requestAdapter: () => new Promise(() => {}) } })
+    const answer = hasWebGPU(3000)
+    await vi.advanceTimersByTimeAsync(3000)
+    await expect(answer).resolves.toBe(false)
+  })
+
+  it('says yes when an adapter comes back', async () => {
+    vi.stubGlobal('navigator', { gpu: { requestAdapter: async () => ({}) } })
+    await expect(hasWebGPU()).resolves.toBe(true)
+  })
+
+  it('says no when requestAdapter throws or returns nothing', async () => {
+    vi.stubGlobal('navigator', { gpu: { requestAdapter: async () => { throw new Error('no driver') } } })
+    await expect(hasWebGPU()).resolves.toBe(false)
+    vi.stubGlobal('navigator', { gpu: { requestAdapter: async () => null } })
+    await expect(hasWebGPU()).resolves.toBe(false)
+  })
+})
+
+describe('isMobile', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('is false on a plain desktop', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', maxTouchPoints: 0 })
+    expect(isMobile()).toBe(false)
+  })
+
+  it('is true for an Android phone', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Linux; Android 15) Mobile Safari/537.36', maxTouchPoints: 5 })
+    expect(isMobile()).toBe(true)
+  })
+
+  it('is true for iPadOS Safari, which says it is a Mac', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', maxTouchPoints: 5 })
+    expect(isMobile()).toBe(true)
+  })
+
+  it('is false for a real Mac without touch', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', maxTouchPoints: 0 })
+    expect(isMobile()).toBe(false)
+  })
+
+  it('is true when the primary pointer is coarse, as in Chrome\'s desktop-site mode on a phone', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (X11; Linux x86_64)', maxTouchPoints: 5 })
+    vi.stubGlobal('matchMedia', () => ({ matches: true }))
+    expect(isMobile()).toBe(true)
+  })
+
+  it('trusts userAgentData.mobile when the browser gives it', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (X11; Linux x86_64)', maxTouchPoints: 0, userAgentData: { mobile: true } })
+    expect(isMobile()).toBe(true)
   })
 })

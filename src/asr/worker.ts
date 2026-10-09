@@ -72,7 +72,9 @@ ctx.onmessage = (e) => {
       }
     } catch (err) {
       const id = msg.type === 'transcribe' ? msg.id : undefined
-      ctx.postMessage({ type: 'error', id, message: err instanceof Error ? err.message : String(err) })
+      // Keep the error name (TypeError, RuntimeError...) so a log says more than the bare message.
+      const message = err instanceof Error ? (err.name !== 'Error' ? `${err.name}: ${err.message}` : err.message) : String(err)
+      ctx.postMessage({ type: 'error', id, message })
     }
   })
 }
