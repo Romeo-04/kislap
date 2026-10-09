@@ -62,14 +62,15 @@ Added in PR #60 (#8).
 ## Art
 
 All art is original, made for Kislap during the hackathon with Claude Design (see D12). None of it
-copies an existing mascot, brand or character. The icon and mascot SVGs carry a C2PA provenance manifest.
-The stickers' manifests were stripped when they moved to the paper look, since editing the art
+copies an existing mascot, brand or character. No SVG carries a provenance manifest: Ningning (drawn
+in code) and the app icon were redrawn from the Claude Design part 2 handoff without one, and the
+stickers' manifests were stripped when they moved to the paper look, since editing the art
 invalidates them.
 
 | File | What it is | Licence |
 |---|---|---|
-| `public/icons/kislap.svg` | App icon: Ningning on night green | Own work |
-| `public/mascot/ningning-{idle,listening,thinking,cheering,encouraging,celebrating}.svg` | Ningning, six moods (source for `src/ui/Ningning.tsx`) | Own work |
+| `public/icons/kislap.svg` | App icon: Ningning the paper puppet on the day sky (Claude Design part 2) | Own work |
+| `src/ui/Ningning.tsx` | Ningning the paper puppet, six moods, drawn in code from the Claude Design part 2 `Ningning.dc.html` | Own work |
 | `public/stickers/sticker-{sampaguita,kubo,alitaptap,kalabaw,jeep,parol}.svg` | Six stickers | Own work |
 | `public/stickers/sticker-*-locked.svg` | The same six, not yet earned | Own work |
 
