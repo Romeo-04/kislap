@@ -183,7 +183,7 @@ kislap/
   CLAUDE.md  CONTEXT.md  PROGRESS.md  README.md  kislap-spec.md
   .claude/skills/git-operations/SKILL.md
   docs/  architecture.md  validation.md  adr/  uml/
-  public/  manifest.webmanifest  icons/  sounds/  fonts/  mascot/
+  public/  manifest.webmanifest  icons/  sounds/  fonts/  stickers/
   src/
     main.tsx
     app/        Home, StoryMap, Reading, Result, WordPop, Progress, MicCheck, router.tsx
