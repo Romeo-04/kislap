@@ -18,12 +18,49 @@ export function defaultProgress(): Progress {
   return { version: 1, lang: 'fil', stars: {}, stickers: [], practiceWords: [], streak: { days: 0, lastPlayed: '' } }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function stringList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? [...new Set(value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0))]
+    : []
+}
+
+function isStars(value: unknown): value is Stars {
+  return value === 0 || value === 1 || value === 2 || value === 3
+}
+
+function isCalendarDate(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  const date = new Date(`${value}T00:00:00Z`)
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+}
+
 export function loadProgress(): Progress {
   try {
     const raw = globalThis.localStorage?.getItem(PROGRESS_KEY)
     if (!raw) return defaultProgress()
-    const parsed = JSON.parse(raw) as Partial<Progress>
-    return parsed.version === 1 ? { ...defaultProgress(), ...parsed } : defaultProgress()
+    const parsed: unknown = JSON.parse(raw)
+    if (!isRecord(parsed) || parsed.version !== 1) return defaultProgress()
+    // Recover each field independently so one damaged value does not erase earned rewards.
+    const stars = isRecord(parsed.stars)
+      ? Object.fromEntries(Object.entries(parsed.stars).filter((entry): entry is [string, Stars] => isStars(entry[1])))
+      : {}
+    const streak = isRecord(parsed.streak) ? parsed.streak : {}
+    return {
+      version: 1,
+      lang: parsed.lang === 'en' ? 'en' : 'fil',
+      ...(parsed.tier === 'small' || parsed.tier === 'large' ? { tier: parsed.tier } : {}),
+      stars,
+      stickers: stringList(parsed.stickers),
+      practiceWords: stringList(parsed.practiceWords).slice(-MAX_PRACTICE_WORDS),
+      streak: {
+        days: typeof streak.days === 'number' && Number.isSafeInteger(streak.days) && streak.days >= 0 ? streak.days : 0,
+        lastPlayed: isCalendarDate(streak.lastPlayed) ? streak.lastPlayed : '',
+      },
+    }
   } catch {
     return defaultProgress() // bad JSON never blocks the child
   }

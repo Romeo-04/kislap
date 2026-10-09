@@ -43,6 +43,70 @@ describe('load and save', () => {
   })
 })
 
+describe('saved progress recovery (#68)', () => {
+  it('recovers null containers before gameplay consumers use them', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, stars: null, stickers: null, streak: null }))
+    const loaded = loadProgress()
+    expect(touchStreak(loaded, '2026-10-10').progress.streak.days).toBe(1)
+    expect(recordStory(loaded, 'story-1', 2).progress.stars['story-1']).toBe(2)
+  })
+
+  it('recovers invalid practice words without blocking new words', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, practiceWords: 'bata' }))
+    expect(addPracticeWords(loadProgress(), ['pusa']).practiceWords).toEqual(['pusa'])
+  })
+
+  it('rejects unsupported language and tier while retaining earned rewards', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'xx', tier: 'cloud', stars: { 'story-1': 3 } }))
+    const loaded = loadProgress()
+    expect(loaded.lang).toBe('fil')
+    expect(loaded.tier).toBeUndefined()
+    expect(loaded.stars).toEqual({ 'story-1': 3 })
+  })
+
+  it('retains valid entries from partially damaged collections', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({
+      version: 1, lang: 'en', tier: 'small',
+      stars: { 'story-1': 3, 'story-2': 0, tooHigh: 4, negative: -1, fraction: 1.5, string: '2', empty: null },
+      stickers: ['sticker-story-1', null, 7, '', 'sticker-story-1'],
+      practiceWords: ['bata', {}, false, ' ', 'pusa'],
+    }))
+    const loaded = loadProgress()
+    expect(loaded.lang).toBe('en')
+    expect(loaded.tier).toBe('small')
+    expect(loaded.stars).toEqual({ 'story-1': 3, 'story-2': 0 })
+    expect(loaded.stickers).toEqual(['sticker-story-1'])
+    expect(loaded.practiceWords).toEqual(['bata', 'pusa'])
+  })
+
+  it('preserves the earned streak count when its date is damaged', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days: 7, lastPlayed: '2026-02-30' } }))
+    const loaded = loadProgress()
+    expect(loaded.streak).toEqual({ days: 7, lastPlayed: '' })
+    expect(touchStreak(loaded, '2026-10-10').progress.streak.days).toBe(8)
+  })
+
+  it.each([-1, 1.5, '7', null])('recovers an invalid streak count: %s', (days) => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, streak: { days, lastPlayed: '2026-10-09' } }))
+    expect(touchStreak(loadProgress(), '2026-10-10').progress.streak.days).toBe(1)
+  })
+
+  it('does not treat arrays as records', () => {
+    store.set(PROGRESS_KEY, JSON.stringify({ version: 1, stars: [3], streak: [] }))
+    expect(loadProgress()).toEqual(defaultProgress())
+  })
+
+  it('round-trips all valid fields without losing earned progress', () => {
+    const progress = {
+      version: 1 as const, lang: 'en' as const, tier: 'large' as const,
+      stars: { 'story-1': 3 as const }, stickers: ['sticker-story-1'], practiceWords: ['bata'],
+      streak: { days: 9, lastPlayed: '2024-02-29' },
+    }
+    saveProgress(progress)
+    expect(loadProgress()).toEqual(progress)
+  })
+})
+
 describe('saveProgress', () => {
   it('does not throw when storage is full or blocked', () => {
     const original = globalThis.localStorage.setItem
