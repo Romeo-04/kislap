@@ -105,9 +105,16 @@ docs/
 
 ## Disclosures
 
-**Team stochastic4** — @Romeo-04 (lead), @Seedlign (design), @acmrsu (speech model),
-@emyol (content, scoring, QA). Built during the AppBuildersPH Hackathon 2026 (Oct 9–10). No code
-from earlier projects.
+**Team stochastic4**
+
+| Member | Role | GitHub |
+|---|---|---|
+| Jhezra Tolentino | Lead: app shell, integration, offline, deploy | @Romeo-04 |
+| Ric Ian Barrios | Design: screens, Ningning, art | @Seedlign |
+| Amiel Josiah Acuna | Speech model on the device | @acmrsu |
+| Marcus Ceasar Austria | Content, scoring, and QA | @emyol |
+
+Built during the AppBuildersPH Hackathon 2026 (Oct 9–10). No code from earlier projects.
 
 ### Where each AI function runs
 
@@ -159,11 +166,12 @@ stickers, and sounds were made during the event.
 
 | Tool | Used for |
 |---|---|
+| ChatGPT (OpenAI) | Brainstorming |
+| Claude (Anthropic) | Brainstorming |
 | Claude Code (Anthropic) | Spec validation, architecture and ADRs, issue planning, code, tests, and PR reviews |
+| Claude Code skills | Engineering and implementation practices: test-driven development, design (impeccable), PR review (pr-review-toolkit), planning and domain modelling |
 | Claude Design (Anthropic) | Visual design handoff: tokens, UI kit, mascot and sticker art |
 | CodeRabbit | Automated PR summaries on GitHub |
-
-Each teammate confirms their own tools on issue #36.
 
 ## Licence
 
