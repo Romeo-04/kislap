@@ -7,6 +7,10 @@ import { GearIcon, SpeakerIcon } from './icons'
 import { GameIcon } from './GameIcon'
 import { OfflineBadge } from './OfflineBadge'
 
+/** Screens already drawn in the paper puppet look (Claude Design part 2): they bring their own
+ * paper scene and top bar, so the older candy header, tab bar and footer stay off. */
+export const PAPER_ROUTES = new Set(['settings', 'miccheck'])
+
 export function GameShell({ children, route }: { children: ReactNode; route: string }) {
   const { t, lang, setLang } = useI18n()
   // Remember the screen the sheet was opened on: going anywhere else closes it.
@@ -16,6 +20,12 @@ export function GameShell({ children, route }: { children: ReactNode; route: str
   const settingsOpen = openedOn === route
   const setSettingsOpen = (open: boolean) => setOpenedOn(open ? route : null)
   const [settings, setSettings] = useState(loadSettings)
+  // the Settings screen saves on its own; pick its changes up when the child moves on
+  const [syncedRoute, setSyncedRoute] = useState(route)
+  if (syncedRoute !== route) {
+    setSyncedRoute(route)
+    setSettings(loadSettings())
+  }
   const progress = loadProgress()
   const stars = Object.values(progress.stars).reduce<number>((sum, n) => sum + n, 0)
   const fil = lang === 'fil'
@@ -48,6 +58,7 @@ export function GameShell({ children, route }: { children: ReactNode; route: str
   }, [settingsOpen])
   // On phones the sheet is modal: the page behind it is inert.
   const sheetModal = settingsOpen && typeof matchMedia !== 'undefined' && matchMedia('(max-width: 768px)').matches
+  if (PAPER_ROUTES.has(route)) return <main id="main-content" className="paper-main" tabIndex={-1}>{children}</main>
   return <div className={`game-shell ${adventure ? 'game-shell--adventure' : 'game-shell--quiet'} ${tabRoute ? 'game-shell--tabs' : 'game-shell--task'}`}>
     <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById('main-content')?.focus() }}>{t('shell.skip')}</a>
     <header className="game-header" onClick={(event) => { if ((event.target as Element).closest('a')) setSettingsOpen(false) }}>

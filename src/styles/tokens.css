@@ -27,7 +27,7 @@
   --t-fast: 120ms; --t-base: 240ms; --t-mood: 2000ms; --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
   /* page base: the day sky, text in chocolate ink */
   --bg: var(--sky); --fg: var(--ink); --surface: var(--paper);
-  --on-sky: var(--ink); /* text that sits straight on the sky (titles) */
+  --on-sky: #3B2412; /* text that sits straight on the sky (titles); light at night */
 }
 
 @media (min-width: 900px) {
@@ -44,12 +44,14 @@
 /* paper scope: every paper piece reads the paper values of the names adventure.css also defines,
    so a paper button looks right on an older screen, day and night. Drop this once adventure.css is gone.
    These repeat the :root values above: change both together (scene.test.tsx checks they match). */
-.k-btn, .k-icon-btn, .k-mic, .k-word, .k-stars, .k-lang, .k-offline, .k-confetti, .wordmark, .ningning {
+.k-btn, .k-icon-btn, .k-mic, .k-word, .k-stars, .k-lang, .k-offline, .k-confetti, .wordmark, .ningning,
+.paper-stage {
   --ink: #3B2412; --fg: #3B2412; --muted: #5E4329; --surface: #FFFDF6;
   --glow: #FFC93C; --glow-hover: #FFD65C; --cream-hover: #FFF3C4;
   --r-sm: 12px; --r-md: 20px; --r-lg: 28px;
 }
-/* the stage and scene only take the paper sky: text on a stage keeps whatever its screen sets */
+/* a paper stage is a whole screen in the paper look: no candy-look class renders inside it, so it
+   takes the full paper scope; text straight on the sky uses --on-sky, which turns light at night */
 .paper-stage, .paper-scene { --sky: #84CEF0; --sky-far: #6AAFD3; }
 [data-theme="gabi"] :is(.paper-stage, .paper-scene) { --sky: #1F3B5C; --sky-far: #2B4E70; }
 
