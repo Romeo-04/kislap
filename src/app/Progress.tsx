@@ -6,7 +6,7 @@ import { stickerArt } from '../content/stickers'
 import { GameIcon } from '../ui/GameIcon'
 
 export function Progress() {
-  const { t, lang } = useI18n()
+  const { t } = useI18n()
   const p = loadProgress()
   return (
     <section className="stack center collection-page">
@@ -19,7 +19,7 @@ export function Progress() {
         const earned = p.stickers.includes(id)
         return <figure className={`sticker-slot ${earned ? 'sticker-slot--earned' : ''}`} key={id}>
           <img src={earned ? art.src : art.lockedSrc} alt={art.name} />
-          <figcaption><strong>{art.name}</strong><span>{earned ? (lang === 'fil' ? 'Nakolekta na!' : 'Collected!') : gold ? (lang === 'fil' ? 'Kumita ng 3 bituin' : 'Earn 3 stars') : (lang === 'fil' ? 'Tapusin ang kuwento' : 'Finish the story')}</span></figcaption>
+          <figcaption><strong>{art.name}</strong><span>{earned ? (t('progress.collected')) : gold ? (t('progress.needGold')) : (t('progress.needFinish'))}</span></figcaption>
         </figure>
       }))}</div>
       <a className="candy-button" href="#/map"><GameIcon name="book" />{t('result.more')}</a>

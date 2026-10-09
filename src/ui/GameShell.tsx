@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { STORIES } from '../content/stories'
 import { useI18n } from '../i18n'
 import { loadProgress } from '../game/progress'
 import { loadSettings, saveSettings } from '../game/settings'
@@ -8,7 +9,12 @@ import { OfflineBadge } from './OfflineBadge'
 
 export function GameShell({ children, route }: { children: ReactNode; route: string }) {
   const { t, lang, setLang } = useI18n()
-  const [settingsOpen, setSettingsOpen] = useState(false)
+  // Remember the screen the sheet was opened on: going anywhere else closes it.
+  const [openedOn, setOpenedOn] = useState<string | null>(null)
+  // Leaving the screen forgets the sheet, so coming back does not reopen it.
+  if (openedOn !== null && openedOn !== route) setOpenedOn(null)
+  const settingsOpen = openedOn === route
+  const setSettingsOpen = (open: boolean) => setOpenedOn(open ? route : null)
   const [settings, setSettings] = useState(loadSettings)
   const progress = loadProgress()
   const stars = Object.values(progress.stars).reduce<number>((sum, n) => sum + n, 0)
@@ -26,36 +32,52 @@ export function GameShell({ children, route }: { children: ReactNode; route: str
     if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
   }, [settings])
   useEffect(() => { document.documentElement.lang = lang }, [lang])
+  // While open: focus moves into the sheet, Escape closes it from anywhere, focus returns to the gear.
+  const gearRef = useRef<HTMLButtonElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (!settingsOpen) return
+    closeRef.current?.focus()
+    const gear = gearRef.current
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpenedOn(null) }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      gear?.focus()
+    }
+  }, [settingsOpen])
+  // On phones the sheet is modal: the page behind it is inert.
+  const sheetModal = settingsOpen && typeof matchMedia !== 'undefined' && matchMedia('(max-width: 768px)').matches
   return <div className={`game-shell ${adventure ? 'game-shell--adventure' : 'game-shell--quiet'} ${tabRoute ? 'game-shell--tabs' : 'game-shell--task'}`}>
-    <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById('main-content')?.focus() }}>{fil ? 'Pumunta sa nilalaman' : 'Skip to content'}</a>
+    <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById('main-content')?.focus() }}>{t('shell.skip')}</a>
     <header className="game-header" onClick={(event) => { if ((event.target as Element).closest('a')) setSettingsOpen(false) }}>
       {!tabRoute && <a className="app-back round-button" href={backHref} aria-label={t('nav.back')}><GameIcon name="back" /></a>}
       <a className="brand" href="#/" aria-label="Kislap"><span className="brand-spark"><GameIcon name="sparkle" size={30} /></span><span>kislap<span className="brand-dot">.</span></span></a>
-      <nav className="main-nav" aria-label={fil ? 'Pangunahing menu' : 'Main navigation'}>
-        <a href="#/map" aria-current={adventure ? 'page' : undefined}><GameIcon name="map" />{fil ? 'Mga kuwento' : 'Story map'}</a>
+      <nav className="main-nav" aria-label={t('shell.headerNav')}>
+        <a href="#/map" aria-current={route === 'map' ? 'page' : undefined}><GameIcon name="map" />{t('shell.storyMap')}</a>
         <a href="#/progress" aria-current={route === 'progress' ? 'page' : undefined}><GameIcon name="star" />{t('progress.stickers')}</a>
       </nav>
       <div className="header-tools">
-        <span className="stat-pill" title={t('result.stars')}><GameIcon name="star" /><b>{stars}</b><span className="stat-total">/ 9</span></span>
+        <span className="stat-pill" title={t('result.stars')}><GameIcon name="star" /><b>{stars}</b><span className="stat-total">{t('shell.starsTotal').replace('{n}', String(STORIES.length * 3))}</span></span>
         <button className="language-button" onClick={() => setLang(fil ? 'en' : 'fil')} aria-label={t('settings.language')}>{fil ? 'EN' : 'FIL'}</button>
-        <button className="round-button" aria-label={t('settings.title')} aria-expanded={settingsOpen} aria-controls="game-settings" onClick={() => setSettingsOpen(!settingsOpen)}><GearIcon /></button>
+        <button ref={gearRef} className="round-button" aria-label={t('settings.title')} aria-expanded={settingsOpen} aria-controls="game-settings" onClick={() => setSettingsOpen(!settingsOpen)}><GearIcon /></button>
       </div>
     </header>
-    {settingsOpen && <button className="sheet-scrim" aria-label={fil ? 'Isara' : 'Close'} tabIndex={-1} onClick={() => setSettingsOpen(false)} />}
-    {settingsOpen && <section id="game-settings" className="settings-panel" aria-label={t('settings.title')} onKeyDown={(event) => { if (event.key === 'Escape') setSettingsOpen(false) }}>
-      <div className="section-heading"><h2>{t('settings.title')}</h2><button className="round-button" aria-label={fil ? 'Isara' : 'Close'} onClick={() => setSettingsOpen(false)}><GameIcon name="close" /></button></div>
+    {settingsOpen && <button className="sheet-scrim" aria-label={t('shell.close')} tabIndex={-1} onClick={() => setSettingsOpen(false)} />}
+    {settingsOpen && <section id="game-settings" className="settings-panel" aria-label={t('settings.title')} {...(sheetModal ? { role: 'dialog', 'aria-modal': true } : {})}>
+      <div className="section-heading"><h2>{t('settings.title')}</h2><button ref={closeRef} className="round-button" aria-label={t('shell.close')} onClick={() => setSettingsOpen(false)}><GameIcon name="close" /></button></div>
       <button className="setting-row" aria-pressed={settings.sound} onClick={() => setSettings({ ...settings, sound: !settings.sound })}><SpeakerIcon />{t('settings.sound')}<b>{t(settings.sound ? 'settings.on' : 'settings.off')}</b></button>
       <button className="setting-row" aria-pressed={settings.theme === 'gabi'} onClick={() => setSettings({ ...settings, theme: settings.theme === 'day' ? 'gabi' : 'day' })}><GameIcon name="moon" />{t('settings.night')}<b>{t(settings.theme === 'gabi' ? 'settings.on' : 'settings.off')}</b></button>
       <a className="setting-row" href="#/miccheck" onClick={() => setSettingsOpen(false)}>{t('miccheck.title')}<GameIcon name="arrow" /></a>
       <OfflineBadge />
-      <p className="sheet-privacy"><GameIcon name="shield" size={18} />{fil ? 'Ang boses mo, sa device mo lang.' : 'Your voice stays on your device.'}</p>
+      <p className="sheet-privacy"><GameIcon name="shield" size={18} />{t('shell.privacy')}</p>
     </section>}
-    <main id="main-content" className={`screen ${adventure ? 'screen--adventure' : 'screen--quiet'}`} tabIndex={-1}>{children}</main>
-    {tabRoute && <nav className="tab-bar" aria-label={fil ? 'Pangunahing menu' : 'Main navigation'}>
-      <a href="#/" aria-current={route === 'home' ? 'page' : undefined}><span className="tab-icon"><GameIcon name="home" /></span>{fil ? 'Simula' : 'Home'}</a>
-      <a href="#/map" aria-current={route === 'map' ? 'page' : undefined}><span className="tab-icon"><GameIcon name="map" /></span>{fil ? 'Kuwento' : 'Stories'}</a>
+    <main inert={sheetModal || undefined} id="main-content" className={`screen ${adventure ? 'screen--adventure' : 'screen--quiet'}`} tabIndex={-1}>{children}</main>
+    {tabRoute && <nav inert={sheetModal || undefined} className="tab-bar" aria-label={t('shell.tabNav')}>
+      <a href="#/" aria-current={route === 'home' ? 'page' : undefined}><span className="tab-icon"><GameIcon name="home" /></span>{t('shell.tabHome')}</a>
+      <a href="#/map" aria-current={route === 'map' ? 'page' : undefined}><span className="tab-icon"><GameIcon name="map" /></span>{t('shell.tabStories')}</a>
       <a href="#/progress" aria-current={route === 'progress' ? 'page' : undefined}><span className="tab-icon"><GameIcon name="star" /></span>{t('progress.stickers')}</a>
     </nav>}
-    <footer className="game-footer"><span><GameIcon name="shield" size={18} />{fil ? 'Ang boses mo, sa device mo lang.' : 'Your voice stays on your device.'}</span><span>{t('app.tagline')}</span></footer>
+    <footer className="game-footer"><span><GameIcon name="shield" size={18} />{t('shell.privacy')}</span><span>{t('app.tagline')}</span></footer>
   </div>
 }

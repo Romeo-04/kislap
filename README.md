@@ -29,6 +29,8 @@ stickers. Missed words come back in a short practice game.
   while the child reads.
 - **Filipino and English interface**, switchable at any time.
 - **Works offline** after the first load.
+- **Feels like a phone app.** Install it to the home screen: bottom tabs, a settings sheet, the mic
+  in thumb reach, light vibration feedback, and a status bar that follows day and night mode.
 
 ## Privacy and local AI
 
