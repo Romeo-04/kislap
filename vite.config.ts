@@ -18,19 +18,30 @@ export default defineConfig({
         start_url: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#14122b',
-        theme_color: '#14122b',
+        background_color: '#FFFBEF',
+        theme_color: '#FFFBEF',
         icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3,ogg,webm,m4a,json}'],
+        // Dev-only model folders under public/models are gitignored. Never precache them.
+        globIgnores: ['models/**'],
         navigateFallback: '/index.html',
+        // The ONNX Runtime files are 26 MB, too big to precache on install. Cache them the first
+        // time the worker loads them, so the app still runs offline after that (ADR-0007).
+        runtimeCaching: [
+          {
+            urlPattern: /\/assets\/ort-wasm-.*\.(wasm|mjs)$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'ort-runtime', expiration: { maxEntries: 4 } },
+          },
+        ],
       },
     }),
   ],
   worker: { format: 'es' },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 })
