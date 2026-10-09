@@ -53,7 +53,7 @@ the bottom and grows as the team answers.
 | I28 | Sentence-level loop over streaming | §3 | Decision | Holds (ADR-0003) | — |
 | I29 | Stack: Vite + TS + React, PWA, Vercel | §2, §5 | Decision | Holds (ADR-0002) | — |
 | I30 | Progress on device only | §2 #12 | Decision | Holds (ADR-0008) | — |
-| I31 | Star thresholds 50/70/90; unclear = half | §2, §8 | Decision | Holds (ADR-0005) | Tune after Checkpoint 2 with real recordings. |
+| I31 | Star thresholds 50/70/90; unclear = half | §2, §8 | Decision | Holds (ADR-0005) | Word mark cut-offs tuned to 0.80 / 0.50 on 32 golden clips (ADR-0011). Star thresholds unchanged. |
 | I32 | Under 50 % → 0 stars + kind retry | §15 | Decision | **Settled** | Q4: 0 Stars, but a Sticker for finishing (ADR-0010). |
 | I33 | Owner of D6/D7 is the model engineer, but README is content-QA's | §16 vs §21 | Inconsistent (minor) | **Inconsistent** | Resolved: model engineer drafts the facts, content-QA owns the README text. |
 | I34 | Git skill requires Eden review per PR | skill §1 | Decision | **Settled** | Q6: Eden does not apply to Kislap. Removed from the skill; one teammate approves (ADR-0009 accepted). |

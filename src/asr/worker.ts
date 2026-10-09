@@ -10,7 +10,7 @@ const ctx = self as unknown as {
 }
 
 // Model files come from the Hugging Face Hub once, then from the Cache API (ADR-0007).
-env.allowLocalModels = false
+// allowLocalModels is set per load below: off for the app, on only for the dev pages (local models).
 env.useBrowserCache = true
 
 // ONNX Runtime must load its WASM runtime from our own site. Left unset, Transformers.js points it
@@ -27,6 +27,7 @@ let queue: Promise<void> = Promise.resolve()
 
 async function load(msg: Extract<ToWorker, { type: 'load' }>): Promise<void> {
   const { tier } = msg
+  env.allowLocalModels = msg.local ?? false // the app never reads /models/ (ADR-0007)
   asr = (await pipeline('automatic-speech-recognition', tier.modelId, {
     device: tier.device,
     dtype: msg.dtype ?? DTYPE[tier.tier],

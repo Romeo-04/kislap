@@ -2,27 +2,7 @@
 // in its own worker and times it. Copy the table into PROGRESS.md.
 // Load time includes the download on the first run. Run twice to see cached load time.
 import { useEffect, useRef, useState } from 'react'
-import type { DataType } from '@huggingface/transformers'
-import type { FromWorker, ToWorker } from '../asr/messages'
-import { TIERS, type TierInfo } from '../asr/tier'
-
-const RATE = 16_000
-
-interface Setup {
-  label: string
-  tier: TierInfo
-  dtype: DataType | Record<string, DataType>
-}
-
-// Not listed on purpose: internetoftim/whisper-small-pld-fil-ONNX. It downloads 586 MB and then
-// fails at inference ("Missing the following inputs: cache_position"). See PROGRESS.md.
-const SETUPS: Setup[] = [
-  { label: 'base q8 (WASM)', tier: { ...TIERS.small, device: 'wasm' }, dtype: 'q8' },
-  { label: 'base q4 (WebGPU)', tier: { ...TIERS.small, device: 'webgpu' }, dtype: 'q4' },
-]
-
-// Workers that are running now, so leaving the page can stop them (a download would carry on otherwise).
-const active = new Set<Worker>()
+import { checkedByDefault, closeAllSessions, openSession, RATE, SETUPS, toPcm, type Session, type Setup } from '../asr/devkit'
 
 interface Row {
   label: string
@@ -56,68 +36,27 @@ async function probeGpu(): Promise<GpuInfo> {
   }
 }
 
-/** Decode a recorded blob to 16 kHz mono Float32 (the contract format). */
-async function toPcm(blob: Blob): Promise<Float32Array> {
-  const ctx = new AudioContext()
-  const decoded = await ctx.decodeAudioData(await blob.arrayBuffer())
-  await ctx.close()
-  const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * RATE), RATE)
-  const src = offline.createBufferSource()
-  src.buffer = decoded
-  src.connect(offline.destination)
-  src.start()
-  return (await offline.startRendering()).getChannelData(0)
-}
-
-/** Ask one fresh worker to load a setup, then time the first and the second inference. */
-function runSetup(setup: Setup, pcm: Float32Array, onProgress: (s: string) => void): Promise<Row> {
-  return new Promise((resolve) => {
-    const worker = new Worker(new URL('../asr/worker.ts', import.meta.url), { type: 'module' })
-    active.add(worker)
-    const row: Row = { label: setup.label }
+/** Load one setup in a fresh worker, then time the first and the second inference. */
+async function runSetup(setup: Setup, pcm: Float32Array, onProgress: (s: string) => void): Promise<Row> {
+  const row: Row = { label: setup.label }
+  let session: Session | undefined
+  try {
     const t0 = performance.now()
-    let tInfer = 0
-    let step: 'load' | 'first' | 'second' = 'load'
-    const post = (msg: ToWorker) => worker.postMessage(msg)
-    const send = (id: number) => {
-      tInfer = performance.now()
-      post({ type: 'transcribe', id, audio: pcm.slice() }) // copy: the clip is reused
-    }
-    const done = () => {
-      worker.terminate()
-      active.delete(worker)
-      resolve(row)
-    }
-    worker.onerror = (e) => {
-      row.error = e.message || 'worker crashed'
-      done()
-    }
-    worker.onmessageerror = () => {
-      row.error = 'worker sent an unreadable message'
-      done()
-    }
-    worker.onmessage = (e: MessageEvent<FromWorker>) => {
-      const m = e.data
-      if (m.type === 'progress') onProgress(`${setup.label}: ${m.file} ${(m.loaded / 1e6).toFixed(0)}/${(m.total / 1e6).toFixed(0)} MB`)
-      else if (m.type === 'error') {
-        row.error = m.message
-        done()
-      } else if (m.type === 'ready') {
-        row.loadS = (performance.now() - t0) / 1000
-        step = 'first'
-        send(1)
-      } else if (m.type === 'result' && step === 'first') {
-        row.firstMs = Math.round(performance.now() - tInfer)
-        step = 'second'
-        send(2)
-      } else if (m.type === 'result' && step === 'second') {
-        row.sentenceMs = Math.round(performance.now() - tInfer)
-        row.text = m.text
-        done()
-      }
-    }
-    post({ type: 'load', tier: setup.tier, dtype: setup.dtype })
-  })
+    session = await openSession(setup, onProgress)
+    row.loadS = (performance.now() - t0) / 1000
+    const t1 = performance.now()
+    await session.transcribe(pcm)
+    row.firstMs = Math.round(performance.now() - t1)
+    const t2 = performance.now()
+    const out = await session.transcribe(pcm)
+    row.sentenceMs = Math.round(performance.now() - t2)
+    row.text = out.text
+  } catch (err) {
+    row.error = err instanceof Error ? err.message : String(err)
+  } finally {
+    session?.close()
+  }
+  return row
 }
 
 export function Bench() {
@@ -126,8 +65,9 @@ export function Bench() {
   const [status, setStatus] = useState('Step 1: record a 4 s sentence.')
   const [rows, setRows] = useState<Row[]>([])
   const [busy, setBusy] = useState(false)
+  // Local setups need dev-only files, and known failures waste a download, so both start unchecked.
+  const [picked, setPicked] = useState<boolean[]>(SETUPS.map(checkedByDefault))
   const chunks = useRef<Blob[]>([])
-
   const left = useRef(false)
 
   useEffect(() => {
@@ -136,8 +76,7 @@ export function Bench() {
     return () => {
       // Leaving the page: stop the run and any worker still downloading.
       left.current = true
-      active.forEach((w) => w.terminate())
-      active.clear()
+      closeAllSessions()
     }
   }, [])
 
@@ -169,7 +108,8 @@ export function Bench() {
     if (!pcm) return
     setBusy(true)
     setRows([])
-    for (const setup of SETUPS) {
+    for (const [i, setup] of SETUPS.entries()) {
+      if (!picked[i]) continue
       if (setup.tier.device === 'webgpu' && !gpu?.available) {
         setRows((r) => [...r, { label: setup.label, error: 'no WebGPU on this device' }])
         continue
@@ -206,6 +146,20 @@ export function Bench() {
         <li>JS heap now: {mem ? `${(mem.usedJSHeapSize / 1e6).toFixed(0)} MB` : 'not available'} (main thread only)</li>
         <li>UA: {navigator.userAgent}</li>
       </ul>
+      {SETUPS.map((s, i) => (
+        <label key={s.label} style={{ display: 'block' }}>
+          <input
+            type="checkbox"
+            checked={picked[i]}
+            disabled={busy}
+            onChange={() => setPicked((p) => p.map((v, j) => (j === i ? !v : v)))}
+          />{' '}
+          {s.label}
+          {s.local && ' (needs the local model folder)'}
+          {s.fails && ` (known to fail: ${s.fails})`}
+          {s.warning && <em> ({s.warning})</em>}
+        </label>
+      ))}
       <button className="big" onClick={record} disabled={busy}>🎤 Record 4 s</button>
       <button className="big" onClick={run} disabled={!pcm || busy}>Run benchmark</button>
       <p>{status}</p>

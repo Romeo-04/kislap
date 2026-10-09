@@ -84,7 +84,43 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | Laptop (Chrome) | small / whisper-base / q8 | wasm | ~77 | 32.2 | 2.8 | Bench page `/#/bench`. First inference 3.4 s. Load includes download. |
 | Laptop (Chrome) | small / whisper-base / q4 | webgpu | | 53.3 | 1.3 | First inference 4.4 s. 2x faster than WASM, but the text was worse: "Simimi ay nasak inanin ng nangong lamesak ah." |
 | Laptop (Chrome) | large / whisper-small-pld-fil-ONNX / enc fp32 + dec q4 | webgpu | ~586 | 219.7 | – | **Fails at inference:** `Missing the following inputs: cache_position`. Transformers.js 4.3.1 never sends `cache_position`; the model's merged decoder asks for it. Blocks Q1 option A until fixed. |
-| Poco X6 Pro (Chrome) | | | | | | |
+| Laptop (Chrome) | own export of whisper-small-fsc, int8 (`--arm64` recipe) | wasm | ~278 | 2.8 | 11.0 | **Research-use data: may not be viable for the App Builders Challenge.** Works: no `cache_position` input. Heard "si Mimi ay nasa ilalim ng lamesa". Too slow for the 2 s target. |
+| Laptop (Chrome) | same, int8 | webgpu | ~278 | 4.3 | 26.2 | Same research-data warning. Slower than WASM: int8 ops are not GPU friendly. |
+| Laptop (Chrome) | same export, unquantized fp32 | webgpu | ~1070 | 11.6 | 5.9 | Same research-data warning. Heard "Simimi ay nasa ilalim ng lamesa." Still above 2 s, and far too big to ship. |
+| Phone, not a Poco (Chrome) | small / whisper-base / q8 | wasm | ~77 | 3.3 | 10.5 | Above the 4 s target. First inference 8.3 s. Heard "Simimi ay nasa ilalim ng lamesa." |
+| Phone, not a Poco (Chrome) | small / whisper-base / q4 | webgpu | | 4.5 | 97.5 | Unusable. Never use WebGPU on this phone. |
+| Phone, not a Poco (Chrome) | large / whisper-small-pld-fil-ONNX | webgpu | ~586 | – | – | Download failed: network error. |
+| Phone, not a Poco (Chrome) | small / whisper-tiny / q8 | wasm | ~39 | 20.5 | 4.0 | Meets the 4 s target. Text is rougher: "Simimi, ay na sa ilalim na laversa." |
+| Poco X6 Pro (Chrome) | | | | | | Still open: the lead runs `/#/bench` on it. |
+
+All rows used the same sentence, "si Mimi ay nasa ilalim ng lamesa", but each run used a new recording, so the transcripts compare only roughly. The golden recordings (#18) are the fair test.
+
+**What the speed numbers suggest (for #16, the lead decides; PR #75 implements it):** laptop = `whisper-base` q4 on WebGPU (1.3 s). Phone = `whisper-base` q8 on WASM (10.5 s on the Realme; `tiny` is 4.0 s but misses far more words). Phone WebGPU: never. The Filipino models are the most accurate but too slow and too large for the speed targets. See the golden-clip results below.
+
+### Golden clips, 32 clips on four setups (2026-10-10)
+
+One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the scorer on `main`. 24 clean reads and 8 reads with one deliberate mistake each. Details: `fixtures/expected.json`. The second adult voice is still missing.
+
+| Setup | Clean reads, mean accuracy | 3-star clean clips (of 24) | Median time per clip |
+|---|---|---|---|
+| base q8 (WASM) | 77% | 8 | 3.0 s |
+| base q4 (WebGPU) | 72% | 7 | 1.2 s |
+| base enc fp32 + dec q4 (WebGPU) | 76% | 10 | 1.5 s |
+| **base fp16 (WebGPU)** | **79%** | **10** | **1.0 s** |
+| Filipino int8 (own export), WASM | 93% | 19 | 11.1 s |
+| Filipino int8 (own export), WebGPU | 92% | 19 | 24.4 s |
+
+- **Scorer cut-offs.** An earlier note here recommended 0.75 / 0.45. That was wrong: at 0.75 the scorer's join and split check also loosened, so a skipped short word ("ay") was marked correct. Tested with the real scorer, the right choice is **0.80 / 0.50** with a separate `spacing` setting at 0.85 (PR #79, ADR-0011): clean reads 83% for both base q8 and base fp16, skipped words still missed, a wrong sentence earns a star 1% of the time.
+- **Laptop precision.** q4 on WebGPU read worse than q8 (72% against 77%). fp16 on WebGPU is better than both (79%) and the fastest (1.0 s), at about the same download as q4 (139 MB against 136 MB). It needs the `shader-f16` GPU feature. PR #75 uses it for the laptop tier.
+- **Skipped words** were marked "missed" in every setup. A repeated word and a hesitation are not penalised, by design.
+- **A more accurate model lets the scorer separate good from bad reads better.** With the Filipino model, flawed reads score about 20 points below clean ones. With the base models the gap is only 10 to 12 points.
+- One reader and 32 clips: treat these as a guide. The earlier first set of clips (old story text) scored the base models about 54%, much lower. The sets differ in sentences and mic distance, so do not compare them directly.
+
+### Model notes for the team
+- **The Filipino int8 model** (own Optimum export of `sapinsapin/whisper-small-fsc`, int8) downloads about **278 MB** (encoder 88 + merged decoder 186 + tokenizer and config 4). It sits in the public Hugging Face repo `acmrsu/kislap-whisper-small`. That repo still lacks `tokenizer.json`, `tokenizer_config.json`, `generation_config.json` and a model card, so the app cannot load it from there yet. The folder on disk is larger (636 MB) because it also holds two decoder files the app does not load.
+- **Research-data warning.** This model was trained on the Filipino Speech Corpus, which is for research and non-commercial use only (`docs/validation.md` I8), and a model trained on it carries those terms. **It may not be viable for the App Builders Challenge.** Check the challenge rules before shipping it. If it ships, D8 and D11 must say so.
+- **Can the model be swapped later?** Models are not part of our repo or deploy. The app downloads them from Hugging Face by repo id, and the id and precision per tier live in `src/asr/tier.ts`. Changing a model is a small edit and a redeploy, with no rebuild of the model. It is not swappable at runtime today (`?tier=` only picks between two fixed tiers). A swap needs the same Whisper layout (`encoder_model` and `decoder_model_merged`, 80 mel bins, no `cache_position` input). Every user downloads the new files again, and offline users do not get them until they reconnect. Pre-cache the demo devices.
+- **Not done:** a faster export of the Filipino model (fp16 or a 4-bit decoder on WebGPU). It might keep the accuracy at a few seconds per sentence, but it would be about 390 MB, over the 300 MB target, and it has the research-data problem above.
 
 ## Open decisions (grill round 1 — see `docs/validation.md`)
 
