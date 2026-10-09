@@ -33,7 +33,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #3 | Reading loop integration | CP2 | ⏳ |
 | #4 | On-device progress | CP2 | ⏳ |
 | #5 | Offline ready | Freeze | ⏳ |
-| #6 | Privacy meter (Should) | Freeze | ⏳ |
+| #6 | Privacy meter (Should) | Freeze | 🔨 PR open (verified in Chrome) |
 | #7 | Demo Day kit | Demo | ⏳ |
 | D1 #25, D2 #26, D3 #27, D5 #29, D9 #33, D10 #34, D12 #36, D13 #37, D15 #39 | Deliverables | — | ⏳ |
 

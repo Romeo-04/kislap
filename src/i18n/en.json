@@ -23,5 +23,8 @@
   "progress.title": "My firefly jar",
   "miccheck.say": "Say: \"Kumusta, Ningning!\"",
   "nav.back": "Back",
-  "mic.denied": "Ningning needs the microphone to listen."
+  "mic.denied": "Ningning needs the microphone to listen.",
+  "privacy.clean": "0 requests left this device",
+  "privacy.leak": "{n} requests left this device",
+  "privacy.explain": "Your voice stays on this device. Nothing is sent to the internet while you read."
 }

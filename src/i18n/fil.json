@@ -23,5 +23,8 @@
   "progress.title": "Ang aking garapon",
   "miccheck.say": "Sabihin: \"Kumusta, Ningning!\"",
   "nav.back": "Bumalik",
-  "mic.denied": "Kailangan ni Ningning ang mikropono para makinig."
+  "mic.denied": "Kailangan ni Ningning ang mikropono para makinig.",
+  "privacy.clean": "0 na kahilingan ang lumabas sa device na ito",
+  "privacy.leak": "{n} na kahilingan ang lumabas sa device",
+  "privacy.explain": "Ang boses mo ay nananatili sa device na ito. Walang ipinapadala sa internet habang nagbabasa."
 }

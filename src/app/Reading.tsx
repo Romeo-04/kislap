@@ -9,6 +9,7 @@ import { scoreReading, type WordResult } from '../scoring/score'
 import { createSession } from '../game/session'
 import { moodFor, type MascotMood } from '../game/mascot'
 import { go } from './router'
+import { PrivacyMeter } from '../ui/PrivacyMeter'
 
 type Phase = 'ready' | 'listening' | 'thinking' | 'reviewed'
 
@@ -79,6 +80,7 @@ export function Reading({ storyId }: { storyId: string }) {
           <button className="big" onClick={onNext}>{t('reading.next')}</button>
         </div>
       )}
+      <PrivacyMeter />
     </section>
   )
 }
