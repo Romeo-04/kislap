@@ -46,7 +46,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #9 | Ningning SVG, 6 moods, glow | CP1 | 🔨 PR open (Claude Design art, stacked on #8) |
 | #10 | Core screens: Home, Story map, Reading, Result | CP1 | ⏳ |
 | #11 | Sounds and Sticker art | CP2 | 🔨 PR open (12 sticker SVGs, Web Audio tones, `docs/assets.md`) |
-| #12 | Sticker jar + progress screen (Should) | Freeze | ⏳ |
+| #12 | Sticker jar + progress screen (Should) | Freeze | 🔨 PR open (firefly jar, streak, daily goal ring) |
 | #13 | Word Pop (Should) | Freeze | ⏳ |
 | #45 | Mic-check screen (Should) | Freeze | 🔨 PR open (Mic check + Settings, `#/settings`) |
 | #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
@@ -90,6 +90,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 ## Log
 
+- **2026-10-09 19:55** — #12: firefly jar (`src/app/Progress.tsx`) with earned and waiting stickers, days of reading, a daily goal ring (`kislap.today.v1`, 2 stories) and a one-time welcome back. Home and Result still need to set the welcome flag and count the story (#10).
 - **2026-10-09 19:40** — #45: Mic check (energy only: baseline noise check, heard after 0.5 s over the line, denied guide) and Settings (language, Sound, Gabi night mode, mic check) from Claude Design layers 5 and 6.
 - **2026-10-09 19:30** — #11: sticker art mapped to stories by level (`src/content/stickers.ts`), soft Web Audio sounds (`src/game/sound.ts`), sound/night setting under `kislap.settings.v1`, D11 draft `docs/assets.md`.
 - **2026-10-09 19:15** — #9: `src/ui/Ningning.tsx` draws the Claude Design firefly (6 moods, glow 0.3 to 1, named groups), motion in CSS with a still pose under reduced motion. App icon replaced. #48 closed, not run (Android toolchain not ready).

@@ -198,3 +198,66 @@
 
 /* designed screens set their own 24px margins; drop the shell padding under them */
 .screen:has(> .st-screen, > .mc-screen) { padding: 0; }
+
+/* ---------- Firefly jar (layer 5) ---------- */
+.screen:has(> .jar-screen) { padding: 0; }
+.jar-screen { min-height: 100dvh; padding-bottom: var(--s-6); }
+.jar-screen .k-topbar__title { font-size: 30px; }
+.jar-welcome {
+  margin: var(--s-4) var(--s-5) 0;
+  padding: var(--s-3) 18px;
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--s-5);
+  background: var(--surface);
+  font: 700 17px / 1.3 var(--font-display);
+}
+.jar { position: relative; height: 330px; margin-top: var(--s-2); max-width: 390px; margin-inline: auto; }
+.jar-glass { position: absolute; inset: 0; width: 100%; height: 100%; }
+.jar-sticker { position: absolute; display: block; padding: 0; border: 0; background: none; transform: rotate(var(--tilt)); }
+.jar-sticker--on { cursor: pointer; }
+.jar-sticker img { display: block; }
+@media (prefers-reduced-motion: no-preference) {
+  .jar-sticker--on { animation: jar-drift 4s ease-in-out infinite; }
+}
+@keyframes jar-drift { 50% { transform: rotate(var(--tilt)) translateY(-5px); } }
+.jar-stats { margin: var(--s-3) var(--s-5) 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.jar-card {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--s-5);
+  background: var(--surface);
+}
+.jar-card--goal { gap: 10px; padding: 10px 14px; }
+.jar-days { font: 800 56px / 0.9 var(--font-display); }
+.jar-label { font: 700 17px / 1.15 var(--font-display); }
+.jar-label--small { font-size: 15px; }
+.jar-ring { flex: none; }
+.jar-stars { list-style: none; margin: 14px var(--s-5) 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.jar-stars li { display: flex; justify-content: space-between; align-items: center; font: 700 17px var(--font-display); }
+.jar-stars .k-stars { gap: 1px; }
+.jar-big {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  background: rgb(15 42 33 / 0.55);
+  cursor: pointer;
+}
+.jar-big__close { display: flex; flex-direction: column; align-items: center; gap: var(--s-4); padding: var(--s-4); border: 0; background: none; cursor: pointer; }
+.jar-big p {
+  margin: 0;
+  padding: var(--s-2) var(--s-5);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--r-pill);
+  background: #FFFFFF;
+  color: var(--ink);
+  font: 800 28px var(--font-display);
+  text-transform: capitalize;
+}
