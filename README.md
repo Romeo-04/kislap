@@ -7,6 +7,8 @@ story aloud, one sentence at a time. A speech model runs **in the browser, on th
 device**, and checks each word. Ningning the firefly reacts, and the child earns stars and
 stickers. Missed words come back in a short practice game.
 
+**Try it:** https://kislap.vercel.app (Chrome on a laptop or an Android phone)
+
 ## Features
 
 - **Read aloud, sentence by sentence.** Three original stories (easy, medium, hard) in Filipino
