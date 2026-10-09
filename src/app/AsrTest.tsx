@@ -2,24 +2,9 @@
 // Add ?tier=large or ?tier=small to force a tier.
 import { useRef, useState } from 'react'
 import { isModelCached, loadModel, transcribe, warmUp } from '../asr/transcribe'
+import { RATE, toPcm } from '../asr/devkit'
 import { rms, SILENCE_RMS } from '../asr/meter'
 import type { TierInfo } from '../asr/tier'
-
-const RATE = 16_000
-
-/** Decode a recorded blob to 16 kHz mono Float32 (the contract format). */
-async function toPcm(blob: Blob): Promise<Float32Array> {
-  const ctx = new AudioContext()
-  const decoded = await ctx.decodeAudioData(await blob.arrayBuffer())
-  await ctx.close()
-  const frames = Math.ceil(decoded.duration * RATE)
-  const offline = new OfflineAudioContext(1, frames, RATE) // mixes down to mono and resamples
-  const src = offline.createBufferSource()
-  src.buffer = decoded
-  src.connect(offline.destination)
-  src.start()
-  return (await offline.startRendering()).getChannelData(0)
-}
 
 export function AsrTest() {
   const [tier, setTier] = useState<TierInfo>()

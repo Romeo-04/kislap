@@ -3,8 +3,9 @@ import type { TierInfo } from './tier'
 
 // Messages between transcribe.ts (UI thread) and worker.ts (Web Worker). Contract: architecture §3.
 export type ToWorker =
-  // dtype overrides the tier default. Only the benchmark page (#15) sets it.
-  | { type: 'load'; tier: TierInfo; dtype?: DataType | Record<string, DataType> }
+  // dtype overrides the tier default. Only the dev pages (bench, golden) set it.
+  // local reads the model from /models/<modelId>/ on this site (dev and test only; those files are gitignored).
+  | { type: 'load'; tier: TierInfo; dtype?: DataType | Record<string, DataType>; local?: boolean }
   | { type: 'transcribe'; id: number; audio: Float32Array }
   | { type: 'warmup' }
   | { type: 'iscached'; tier: TierInfo }
