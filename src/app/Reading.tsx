@@ -1,131 +1,161 @@
-// PLACEHOLDER screen — design: issue #10 (designer); real wiring: issue #3 (lead).
-// Real mic (#2) + fake model: the fake "hears" the sentence minus its last word until #14 lands.
-import { useEffect, useMemo, useRef, useState } from 'react'
+// Reading screen: the Must loop (issue #3). Visual design: issue #10 (designer).
+// mic (#2) → silence gate (ADR-0006) → Whisper in the worker (#14) → scorer (#20) → words light up → Ningning.
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import { getStory } from '../content/stories'
 import { createRecorder, MicError } from '../asr/audio'
 import { isMostlySilence } from '../asr/meter'
-import { setFakeHeard, transcribe } from '../asr/transcribe'
+import { loadModel, setFakeHeard, transcribe } from '../asr/transcribe'
 import { scoreReading, type WordResult } from '../scoring/score'
-import { createSession } from '../game/session'
-import { addPracticeWords, loadProgress, saveProgress } from '../game/progress'
-import { moodFor, type MascotMood } from '../game/mascot'
-import { go } from './router'
+import { createSession, finishSession } from '../game/session'
+import { initialReading, readingReducer } from '../game/readingMachine'
+import { glowFor, moodFor } from '../game/mascot'
+import { loadSettings } from '../game/settings'
+import { playSound } from '../game/sound'
+import { useMascotMood } from '../ui/useMascotMood'
+import { Ningning } from '../ui/Ningning'
+import { WordChip } from '../ui/WordChip'
+import { MicButton } from '../ui/MicButton'
 import { PrivacyMeter } from '../ui/PrivacyMeter'
+import { go } from './router'
+
+const REVEAL_MS = 120
+
+/** Dev/demo only: `?fake=1` makes the stub model "hear" the sentence minus its last word. Never the default. */
+const FAKE = typeof location !== 'undefined' && new URLSearchParams(location.search).has('fake')
 
 const moodCopy = {
   idle: 'mascot.idle', listening: 'reading.listening', thinking: 'reading.thinking',
   cheering: 'mascot.cheer', encouraging: 'mascot.encourage', celebrating: 'result.title',
 } as const
 
-type Phase = 'ready' | 'listening' | 'thinking' | 'reviewed'
-
 export function Reading({ storyId }: { storyId: string }) {
   const { t } = useI18n()
   const story = getStory(storyId)
   const recorder = useMemo(() => createRecorder(), [])
-  const session = useMemo(() => createSession(storyId), [storyId])
+  const session = useMemo(() => createSession(storyId, story?.sentences.length ?? 0), [storyId, story])
   const [index, setIndex] = useState(0)
-  const [phase, setPhase] = useState<Phase>('ready')
+  const [state, dispatch] = useReducer(readingReducer, initialReading)
   const [words, setWords] = useState<WordResult[]>([])
-  const [mood, setMood] = useState<MascotMood>('idle')
-  const [notice, setNotice] = useState('')
+  const [glow, setGlow] = useState<number>()
+  const [level, setLevel] = useState(0)
+  const [mood, setMood, beat] = useMascotMood('idle')
   const finishRef = useRef<() => void>(() => {})
-  const finishing = useRef(false) // auto-stop and a stop tap can land in the same frame
+  const finishing = useRef(false) // auto-stop and a tap can both fire before React re-renders
+  const sentence = story?.sentences[index]
+
+  // Load the model as soon as the child opens a story (from the cache when Offline ready).
+  useEffect(() => {
+    loadModel().catch((err) => console.error('[reading] model load failed', err))
+  }, [])
 
   useEffect(() => {
-    const off = recorder.onAutoStop(() => finishRef.current())
+    const offStop = recorder.onAutoStop(() => finishRef.current())
+    const offLevel = recorder.onLevel((rms) => setLevel(Math.min(1, rms * 8)))
     return () => {
-      off()
-      recorder.release()
+      offStop()
+      offLevel()
+      recorder.release() // the mic light goes off when the child leaves
     }
   }, [recorder])
 
-  const sentence = story?.sentences[index]
-
-  // A kind retry that never marks a word: used for silence and for any model failure.
-  const retryKindly = (key: 'reading.silence' | 'reading.modelRetry') => {
-    setNotice(t(key))
-    setMood(moodFor('silence'))
-    setPhase('ready')
-  }
+  // Words light up one by one.
+  useEffect(() => {
+    if (state.phase !== 'revealing') return
+    const timer = setTimeout(() => dispatch({ type: 'reveal-tick' }), REVEAL_MS)
+    return () => clearTimeout(timer)
+  }, [state])
 
   const finish = async () => {
-    if (!sentence || finishing.current) return
+    if (!sentence || state.phase !== 'listening' || finishing.current) return
     finishing.current = true
-    setPhase('thinking')
+    dispatch({ type: 'stopped' })
     setMood(moodFor('mic-off'))
     try {
       const pcm = await recorder.stop()
-      // Silence gate (ADR-0006): never send silence to Whisper, never mark words for it.
-      if (isMostlySilence(pcm)) return retryKindly('reading.silence')
-      setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
+      if (isMostlySilence(pcm)) {
+        setMood(moodFor('silence'))
+        return dispatch({ type: 'silence' })
+      }
+      if (FAKE) setFakeHeard(sentence.text.split(' ').slice(0, -1).join(' '))
       const { text } = await transcribe(pcm)
       const scored = scoreReading(sentence.text, text)
-      session.attempts.push({ sentenceIndex: index, heard: text, ...scored })
+      session.addAttempt({ sentenceIndex: index, heard: text, ...scored })
       setWords(scored.words)
+      setGlow(glowFor(scored.accuracy))
       setMood(moodFor('scored', scored.accuracy))
-      setPhase('reviewed')
+      playSound('reveal', loadSettings())
+      dispatch({ type: 'scored', words: scored.words.length })
     } catch (err) {
       console.error('[reading] transcription failed', err)
-      retryKindly('reading.modelRetry') // a model error never costs the child
+      setMood(moodFor('silence'))
+      dispatch({ type: 'failed' }) // a model error never costs the child
     } finally {
       finishing.current = false
     }
   }
 
-  const onMic = async () => {
-    if (phase === 'listening') return finish()
-    try {
-      setNotice('')
-      await recorder.start()
-      setWords([])
-      setMood(moodFor('mic-on'))
-      setPhase('listening')
-    } catch (err) {
-      console.error('[reading] mic start failed', err)
-      setNotice(t(err instanceof MicError && err.kind === 'denied' ? 'mic.denied' : 'mic.unavailable'))
-    }
-  }
-
-  // Auto-stop calls the latest finish() (it closes over the current sentence).
   useEffect(() => {
     finishRef.current = () => void finish()
   })
 
-  if (!story || !sentence) return <p>{t('reading.notFound')}</p>
+  const onMic = async () => {
+    if (state.phase === 'listening') return finish()
+    if (state.phase !== 'ready' && state.phase !== 'reviewed') return
+    try {
+      await recorder.start()
+      setWords([])
+      setMood(moodFor('mic-on'))
+      dispatch({ type: 'mic-started' })
+    } catch (err) {
+      console.error('[reading] mic start failed', err)
+      dispatch({ type: 'mic-failed', denied: err instanceof MicError && err.kind === 'denied' })
+    }
+  }
+
+  if (!story || !sentence) {
+    return (
+      <section className="stack center">
+        <p>{t('reading.notFound')}</p>
+        <a className="big" href="#/map">{t('result.more')}</a>
+      </section>
+    )
+  }
 
   const onNext = () => {
     if (index + 1 < story.sentences.length) {
       setIndex(index + 1)
       setWords([])
-      setPhase('ready')
+      setGlow(undefined)
       setMood('idle')
+      dispatch({ type: 'next' })
     } else {
-      saveProgress(addPracticeWords(loadProgress(), session.practiceWords()))
-      sessionStorage.setItem(`kislap.result.${storyId}`, String(session.accuracy()))
+      finishSession(session)
       go(`result/${storyId}`)
     }
   }
 
+  const micState = state.phase === 'listening' ? 'recording' : state.phase === 'thinking' ? 'thinking' : 'idle'
+  const busy = state.phase === 'thinking' || state.phase === 'revealing'
+
   return (
-    <section className="stack">
-      <p className="muted">
-        {index + 1} / {story.sentences.length} · {t(moodCopy[mood])}
-      </p>
-      <p className="sentence">
+    <section className="stack center">
+      <p className="muted">{index + 1} / {story.sentences.length}</p>
+      <Ningning key={beat} mood={mood} glow={glow} size={140} label={t(moodCopy[mood])} />
+      <p aria-live="polite">{t(moodCopy[mood])}</p>
+      <p className="sentence" lang="fil">
         {words.length
-          ? words.map((w, i) => <span key={i} className={`word ${w.status}`}>{w.word} </span>)
+          ? words.map((w, i) => <WordChip key={i} word={w.word} status={i < state.shown || state.phase === 'reviewed' ? w.status : 'pending'} popping={i === state.shown - 1} />)
           : sentence.text}
       </p>
-      <button className="big mic" onClick={onMic} disabled={phase === 'thinking'} aria-label={t(phase === 'listening' ? 'reading.stop' : 'reading.tapMic')}>
-        {phase === 'listening' ? '⏹' : '🎤'}
-      </button>
-      <p className="muted">
-        {phase === 'listening' ? t('reading.listening') : phase === 'thinking' ? t('reading.thinking') : t('reading.tapMic')}
-      </p>
-      {notice && <p role="status">{notice}</p>}
-      {phase === 'reviewed' && (
+      <MicButton
+        state={micState}
+        level={state.phase === 'listening' ? level : 0}
+        label={t(state.phase === 'listening' ? 'reading.stop' : 'reading.tapMic')}
+        onPress={busy ? undefined : onMic}
+      />
+      {state.notice && <p role="status">{t(state.notice)}</p>}
+      {state.phase === 'reviewed' && (
         <div className="row">
           <button onClick={onMic}>{t('reading.retry')}</button>
           <button className="big" onClick={onNext}>{t('reading.next')}</button>
