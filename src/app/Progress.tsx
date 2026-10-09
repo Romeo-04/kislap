@@ -1,5 +1,5 @@
 // Firefly jar (issue #12, Claude Design part 2 "Ang aking garapon"): the jar is the hero. Earned
-// stickers float inside on their own glow; the ones still to come wait as soft shadows. Tap one to
+// stickers float inside on their own glow; the ones still to come wait as cream paper outlines. Tap one to
 // see it big. Below: days of reading (never "in a row"), today's goal ring, stars per story.
 // Progress QR export: issue #47 (model engineer).
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -47,35 +47,47 @@ function GoalRing({ done }: { done: number }) {
       )}
       <circle cx="28" cy="28" r="27" fill="none" stroke="var(--ink)" strokeWidth="2" />
       <circle cx="28" cy="28" r="17" fill="none" stroke="var(--ink)" strokeWidth="2" />
-      <text x="28" y="33" textAnchor="middle" fontFamily="Baloo 2" fontWeight="800" fontSize="15" fill="var(--ink)">{shown}/{DAILY_GOAL}</text>
+      <text x="28" y="33" textAnchor="middle" fill="var(--ink)">{shown}/{DAILY_GOAL}</text>
     </svg>
   )
 }
 
-/** The sticker seen big, with its name and, if it is still to come, what earns it. */
+/** The sticker seen big, with its name and its status: collected, or what earns it. */
 export function StickerZoom({ slot, onClose }: { slot: Slot; onClose: () => void }) {
   const { t } = useI18n()
-  const close = useRef<HTMLButtonElement>(null)
+  const dialog = useRef<HTMLDialogElement>(null)
+  // a native modal: the page behind is inert, Tab stays inside, Escape closes it
   useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null
-    close.current?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    document.addEventListener('keydown', onKey)
+    const box = dialog.current
+    if (!box?.showModal) return
+    box.showModal()
+    // Escape fires cancel first: close the zoom there, right away
+    const onCancel = (e: Event) => {
+      e.preventDefault()
+      onClose()
+    }
+    // the close event is queued: one left over from StrictMode's cleanup arrives after the reopen,
+    // so only a dialog that is really shut closes the zoom
+    const onClosed = () => !box.open && onClose()
+    box.addEventListener('cancel', onCancel)
+    box.addEventListener('close', onClosed)
     return () => {
-      document.removeEventListener('keydown', onKey)
-      opener?.focus() // back to the sticker that was tapped
+      box.removeEventListener('cancel', onCancel)
+      box.removeEventListener('close', onClosed)
+      if (box.open) box.close()
     }
   }, [onClose])
   const status = slot.earned ? 'progress.collected' : slot.gold ? 'progress.needGold' : 'progress.needFinish'
   return (
-    <div className="jr-zoom" role="dialog" aria-modal="true" aria-labelledby="jr-zoom-name" onClick={onClose}>
-      <div className="jr-zoom__card" onClick={(e) => e.stopPropagation()}>
+    // a tap on the dim backdrop lands on the dialog itself, not on the card
+    <dialog ref={dialog} className="jr-zoom" aria-labelledby="jr-zoom-name" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="jr-zoom__card">
         <img src={slot.src} alt="" width={200} height={200} />
         <h2 id="jr-zoom-name" className="jr-zoom__name">{title(slot.name)}</h2>
         <p className="jr-zoom__status">{t(status)}</p>
-        <button ref={close} type="button" className="k-btn k-btn--secondary" onClick={onClose}>{t('shell.close')}</button>
+        <button type="button" className="k-btn k-btn--secondary" autoFocus onClick={onClose}>{t('shell.close')}</button>
       </div>
-    </div>
+    </dialog>
   )
 }
 
@@ -87,7 +99,13 @@ export function Progress() {
   const [welcome] = useState(hasWelcomeBack)
   useEffect(() => clearWelcomeBack(), [])
   const [zoom, setZoom] = useState<Slot>()
+  // the tapped sticker, kept from the click: Safari does not focus a button on tap
+  const opener = useRef<HTMLButtonElement | null>(null)
   const closeZoom = useCallback(() => setZoom(undefined), [])
+  // back to that sticker once the dialog is gone (while it is modal the page behind refuses focus)
+  useEffect(() => {
+    if (!zoom) opener.current?.focus()
+  }, [zoom])
 
   const slots: Slot[] = STORIES.flatMap((story) =>
     [false, true].map((gold) => {
@@ -121,7 +139,10 @@ export function Progress() {
                   type="button"
                   className={slot.earned ? 'jr-sticker jr-sticker--earned' : 'jr-sticker'}
                   aria-label={`${title(slot.name)}, ${t(slot.earned ? 'progress.collected' : slot.gold ? 'progress.needGold' : 'progress.needFinish')}`}
-                  onClick={() => setZoom(slot)}
+                  onClick={(e) => {
+                    opener.current = e.currentTarget
+                    setZoom(slot)
+                  }}
                 >
                   <img src={slot.src} alt="" />
                 </button>

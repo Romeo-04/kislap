@@ -31,7 +31,7 @@
   transform: rotate(var(--tilt));
 }
 .jr-sticker img { position: relative; display: block; width: 100%; height: 100%; }
-/* each earned sticker floats on its own glow (the frame's 46px light behind a 76px sticker) */
+/* each earned sticker floats on its own glow (the frame's r=46 circle behind a 76px sticker, so inset -11%) */
 .jr-sticker--earned::before {
   content: '';
   position: absolute;
@@ -40,11 +40,10 @@
   background: var(--glow-soft);
   opacity: 0.8;
 }
-.jr-sticker:focus-visible { outline: 4px solid var(--ink); outline-offset: 4px; }
 
 @media (prefers-reduced-motion: no-preference) {
   /* a few pixels up and down, each on its own slow loop (3 to 5s), so the jar feels alive */
-  .jr-sticker--earned { animation: jr-float calc(3s + var(--i) * 0.4s) ease-in-out calc(var(--i) * -0.7s) infinite alternate; }
+  .jr-sticker--earned { animation: jr-float calc(1.5s + var(--i) * 0.2s) ease-in-out calc(var(--i) * -0.35s) infinite alternate; }
 }
 @keyframes jr-float { from { transform: rotate(var(--tilt)) translateY(-3px); } to { transform: rotate(var(--tilt)) translateY(3px); } }
 
@@ -55,13 +54,15 @@
 .jr-days__label { font: 700 17px / 1.15 var(--font-display); }
 .jr-goal { gap: 10px; padding: 10px 14px; }
 .jr-ring { flex: none; }
+.jr-ring text { font: 800 15px var(--font-display); }
 .jr-goal__label { font: 700 15px / 1.15 var(--font-display); }
 .jr-stars { list-style: none; margin: 14px var(--s-5) 0; padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
 .jr-story { display: flex; justify-content: space-between; align-items: center; gap: var(--s-3); font: 700 17px / 1.2 var(--font-display); }
 .jr-story .k-stars { flex: none; gap: 1px; }
 
 /* ---------- the sticker seen big ---------- */
-.jr-zoom { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; padding: var(--s-5); background: rgba(27, 58, 82, .45); }
+.jr-zoom[open] { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; display: flex; align-items: center; justify-content: center; padding: var(--s-5); border: 0; background: transparent; }
+.jr-zoom::backdrop { background: rgba(27, 58, 82, .45); }
 .jr-zoom__card {
   display: flex;
   flex-direction: column;
@@ -90,7 +91,7 @@
     display: grid;
     grid-template-columns: minmax(0, 560px) minmax(0, 420px);
     grid-template-rows: auto auto auto 1fr;
-    grid-template-areas: "top top" "jar welcome" "jar stats" "jar stars";
+    grid-template-areas: "top top" "welcome ." "jar stats" "jar stars";
     justify-content: center;
     align-content: start;
     column-gap: var(--s-8);
@@ -98,8 +99,8 @@
   }
   .jr-screen > .k-topbar { grid-area: top; padding-left: 0; }
   .jr-jar { grid-area: jar; max-width: 560px; margin: var(--s-6) 0 0; }
-  .jr-welcome { grid-area: welcome; margin: var(--s-7) 0 0; }
-  .jr-stats { grid-area: stats; margin: var(--s-5) 0 0; }
+  .jr-welcome { grid-area: welcome; margin: var(--s-4) 0 0; }
+  .jr-stats { grid-area: stats; margin: var(--s-8) 0 0; }
   .jr-stars { grid-area: stars; align-self: start; margin: var(--s-4) 0 0; padding: 14px 20px; gap: 10px; }
   .jr-story { font-size: 19px; }
 }

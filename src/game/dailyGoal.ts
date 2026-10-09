@@ -1,4 +1,4 @@
-// Daily goal ring (Claude Design jar screen): stories finished today, 2 a day by default.
+// Daily goal ring (Claude Design jar screen): stories finished today, goal 2 a day.
 // Its own key, so the progress schema (ADR-0008) does not change.
 import { localDate } from './progress'
 import type { SessionResult } from './session'
@@ -29,7 +29,7 @@ export function storiesToday(today: string): number {
   return t && t.date === today && Number.isFinite(t.stories) ? t.stories : 0
 }
 
-/** Call once per finished story (Result screen). */
+/** Adds one story to today's count. Screens call countFinishOnce, which never counts one result twice. */
 export function countStoryToday(today: string): number {
   const stories = storiesToday(today) + 1
   try {
@@ -53,7 +53,7 @@ export function countFinishOnce(result: SessionResult, today: string): void {
 /** One-time "welcome back" note: Home sets it after a gap (#4), the jar shows it once. */
 export const WELCOME_KEY = 'kislap.welcomeBack'
 
-// read in render, cleared in an effect: StrictMode runs render twice, effects clean up
+/** True while a welcome-back note is waiting for the jar. */
 export function hasWelcomeBack(): boolean {
   try {
     return globalThis.sessionStorage?.getItem(WELCOME_KEY) === '1'

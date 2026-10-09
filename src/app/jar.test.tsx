@@ -32,7 +32,7 @@ describe('daily goal wiring', () => {
     expect(storiesToday(today)).toBe(2)
   })
 
-  it('Home marks the welcome back for the jar', () => {
+  it('a marked welcome back waits for the jar', () => {
     expect(hasWelcomeBack()).toBe(false)
     markWelcomeBack()
     expect(hasWelcomeBack()).toBe(true)
@@ -76,10 +76,45 @@ describe('firefly jar', () => {
 
   it('shows a tapped sticker big, with its name and what earns it', () => {
     const locked = wrap(<StickerZoom slot={{ id: 'sticker-story-1-gold', name: 'kubo', src: '/stickers/sticker-kubo-locked.svg', earned: false, gold: true }} onClose={() => {}} />)
-    expect(locked).toContain('role="dialog"')
+    expect(locked).toContain('<dialog')
     expect(locked).toContain('>Kubo<')
     expect(locked).toContain(fil['progress.needGold'])
     const earned = wrap(<StickerZoom slot={{ id: 'sticker-story-1', name: 'sampaguita', src: '/stickers/sticker-sampaguita.svg', earned: true, gold: false }} onClose={() => {}} />)
     expect(earned).toContain(fil['progress.collected'])
+  })
+
+  it('caps the ring at the goal and starts a new day empty', () => {
+    localStorage.setItem(TODAY_KEY, JSON.stringify({ date: today, stories: 3 }))
+    const full = wrap(<Progress />)
+    expect(full).toContain('>2/2<')
+    expect(full).not.toContain('>3/2<')
+    localStorage.setItem(TODAY_KEY, JSON.stringify({ date: '2000-01-01', stories: 2 }))
+    const fresh = wrap(<Progress />)
+    expect(fresh).toContain('>0/2<')
+    expect(fresh).not.toContain('stroke="var(--correct)"')
+  })
+
+  it('puts each story’s stars on its own row', () => {
+    save({ stars: { 'story-1': 2 } })
+    const rows = [...wrap(<Progress />).matchAll(/class="jr-story"><span>[^<]*<\/span><span class="k-stars" role="img" aria-label="([^"]*)"/g)].map((m) => m[1])
+    expect(rows).toEqual(['2 / 3', '0 / 3', '0 / 3'])
+  })
+
+  it('lights the gold sticker and says what each locked one needs', () => {
+    save({ stickers: ['sticker-story-1-gold'] })
+    const out = wrap(<Progress />)
+    expect(count(out, 'jr-sticker--earned')).toBe(1)
+    expect(out).toContain('src="/stickers/sticker-kubo.svg"')
+    expect(out).toContain(`aria-label="Sampaguita, ${fil['progress.needFinish']}"`)
+    expect(out).toContain(`aria-label="Parol, ${fil['progress.needGold']}"`)
+    expect(out).toContain(`aria-label="Kubo, ${fil['progress.collected']}"`)
+  })
+
+  it('says collected for an earned gold sticker, and finish for a locked story sticker', () => {
+    const gold = wrap(<StickerZoom slot={{ id: 'sticker-story-1-gold', name: 'kubo', src: '', earned: true, gold: true }} onClose={() => {}} />)
+    expect(gold).toContain(fil['progress.collected'])
+    expect(gold).not.toContain(fil['progress.needGold'])
+    const story = wrap(<StickerZoom slot={{ id: 'sticker-story-2', name: 'alitaptap', src: '', earned: false, gold: false }} onClose={() => {}} />)
+    expect(story).toContain(fil['progress.needFinish'])
   })
 })
