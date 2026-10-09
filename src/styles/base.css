@@ -1,0 +1,43 @@
+/* Minimal base styles so placeholders are usable. Design tokens and the real UI kit: issue #8. */
+:root {
+  --bg: #14122b;
+  --fg: #fdf8e8;
+  --muted: #b9b4d6;
+  --glow: #ffd84d;
+  --correct: #3ccf7a;
+  --unclear: #f2c94c;
+  --missed: #f2994a;
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100dvh; }
+a { color: var(--glow); }
+
+.screen { max-width: 40rem; margin: 0 auto; padding: 1.5rem; }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.center { align-items: center; text-align: center; }
+.row { display: flex; gap: 1rem; justify-content: center; }
+.muted { color: var(--muted); }
+
+button, a.big {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0.75rem 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+}
+button.big, a.big { background: var(--glow); color: var(--bg); font-weight: 700; text-decoration: none; }
+button.mic { width: 96px; height: 96px; font-size: 2.5rem; align-self: center; }
+
+.sentence { font-size: 1.9rem; line-height: 1.5; }
+.word.correct { color: var(--correct); }
+.word.unclear { color: var(--unclear); text-decoration: underline dotted; }
+.word.missed { color: var(--missed); text-decoration: underline wavy; }
+.stars { font-size: 3rem; color: var(--glow); margin: 0; }
+.mascot-placeholder { font-size: 4rem; }
