@@ -66,8 +66,8 @@ copies an existing mascot, brand or character. The SVGs carry a C2PA provenance 
 
 | File | What it is | Licence |
 |---|---|---|
-| `public/icons/kislap.svg` | App icon: Ningning on night green | Own work |
-| `public/mascot/ningning-{idle,listening,thinking,cheering,encouraging,celebrating}.svg` | Ningning, six moods (source for `src/ui/Ningning.tsx`) | Own work |
+| `public/icons/kislap.svg` | App icon: Ningning the paper puppet on the day sky (Claude Design part 2) | Own work |
+| `src/ui/Ningning.tsx` | Ningning the paper puppet, six moods, drawn in code from the Claude Design part 2 `Ningning.dc.html` | Own work |
 | `public/stickers/sticker-{sampaguita,kubo,alitaptap,kalabaw,jeep,parol}.svg` | Six stickers | Own work |
 | `public/stickers/sticker-*-locked.svg` | The same six, not yet earned | Own work |
 

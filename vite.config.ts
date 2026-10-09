@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/*.svg', 'sounds/*', 'fonts/*', 'mascot/*', 'stickers/*', 'audio/**/*'],
+      includeAssets: ['favicon.svg', 'icons/*.svg', 'sounds/*', 'fonts/*', 'stickers/*', 'audio/**/*'],
       manifest: {
         name: 'Kislap',
         short_name: 'Kislap',
@@ -22,7 +22,7 @@ export default defineConfig({
         orientation: 'portrait',
         background_color: '#fff9f4',
         theme_color: '#fff9f4',
-        icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+        icons: [{ src: '/icons/kislap.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }] /* rounded art with wings near the edge: not safe for maskable crops */,
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,mp3,ogg,webm,m4a,json}'],
