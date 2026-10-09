@@ -176,3 +176,7 @@
   .k-confetti__bit { animation: none; transform: translate(var(--x), var(--y)) rotate(var(--r)); }
   .k-stars--arch .k-stars__slot { animation: none; }
 }
+
+/* ---------- top bar: back + title ---------- */
+.k-topbar { display: flex; align-items: center; gap: 14px; padding: var(--s-7) var(--s-5) 0; }
+.k-topbar__title { font: 800 32px / 1 var(--font-display); }

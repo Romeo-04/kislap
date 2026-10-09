@@ -18,6 +18,7 @@
   "mic.step1": "Tap the little icon next to the web address.",
   "mic.step2": "Turn on Microphone.",
   "mic.step3": "Come back here and tap Try again.",
+  "mic.unavailable": "Ningning can't find a microphone. Plug one in, then tap Try again.",
   "miccheck.clear": "Loud and clear",
   "miccheck.done": "Let's read!",
   "miccheck.enough": "loud enough",

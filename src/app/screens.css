@@ -1,0 +1,200 @@
+/* Screen layouts from the Claude Design handoff. Phone first: 24px margins, top bar 48px down. */
+
+/* ---------- Settings (layer 6) ---------- */
+.st-screen { position: relative; min-height: 100dvh; padding-bottom: 180px; }
+.st-list { display: flex; flex-direction: column; gap: var(--s-4); padding: 28px var(--s-5) 0; }
+.st-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: 28px;
+  background: var(--surface);
+  color: var(--fg);
+  text-align: left;
+}
+.st-label { font: 800 22px var(--font-display); }
+.st-pills { display: flex; gap: var(--s-3); }
+.st-pill {
+  flex: 1;
+  height: 64px;
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: var(--toy);
+  font: 800 24px var(--font-display);
+  cursor: pointer;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
+}
+.st-pill:hover { background: var(--cream-hover); color: var(--ink); }
+.st-pill[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--glow);
+  color: var(--ink);
+  box-shadow: 0 2px 0 var(--ink);
+  transform: translateY(4px);
+}
+.st-row { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--s-3); min-height: 72px; cursor: pointer; font: inherit; }
+.st-row:hover { background: var(--cream-hover); color: var(--ink); }
+.st-state { display: flex; align-items: center; gap: 10px; flex: none; }
+.st-word { font: 700 17px var(--font-display); }
+.st-track {
+  position: relative;
+  width: 60px;
+  height: 36px;
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  transition: background-color var(--t-base);
+}
+.st-track--on { background: var(--correct); }
+.st-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  background: #FFFFFF;
+  transition: transform var(--t-base) var(--ease-pop);
+}
+.st-track--on .st-knob { transform: translateX(24px); }
+.st-track--small { width: 48px; height: 28px; }
+.st-track--small .st-knob { top: 2px; left: 2px; width: 18px; height: 18px; }
+.st-track--small.st-track--on .st-knob { transform: translateX(20px); }
+.st-mic {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  height: 64px;
+  margin-top: var(--s-2);
+  padding: 0 20px;
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: var(--toy);
+  color: var(--fg);
+  text-decoration: none;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
+}
+.st-mic span { flex: 1; font: 700 21px / 1.1 var(--font-display); }
+.st-mic:hover { background: var(--cream-hover); color: var(--ink); }
+.st-mic:active { transform: translateY(4px); box-shadow: var(--toy-pressed); }
+.st-mascot { position: absolute; right: 20px; bottom: 28px; }
+
+/* ---------- Mic check (layer 5) ---------- */
+.mc-screen { display: flex; flex-direction: column; min-height: 100dvh; }
+.mc-screen .k-topbar__title { font-size: 26px; line-height: 1.05; }
+.mc-stage { position: relative; height: 250px; flex: none; display: flex; justify-content: center; padding-top: var(--s-5); }
+.mc-stage--talk { justify-content: flex-start; padding: 30px 0 0 var(--s-5); }
+.mc-bubble {
+  position: absolute;
+  left: 196px;
+  right: 20px;
+  top: 28px;
+  margin: 0;
+  padding: 12px 16px;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--s-5);
+  background: #FFFFFF;
+  color: var(--ink);
+  font: 700 19px / 1.25 var(--font-display);
+  text-wrap: pretty;
+  animation: mc-pop var(--t-base) var(--ease-pop) both;
+}
+.mc-bubble--big { left: 200px; top: 40px; font: 800 22px / 1.15 var(--font-display); }
+@keyframes mc-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.mc-say {
+  margin: 0 var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: 22px var(--s-5);
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.mc-say--wait { min-height: 117px; border-style: dashed; border-color: var(--muted); background: none; }
+.mc-say-label { font: 700 18px var(--font-display); color: var(--muted); }
+.mc-phrase { font: 800 40px / 1.05 var(--font-display); }
+.mc-meter { margin: var(--s-6) var(--s-5) 0; display: flex; flex-direction: column; gap: 10px; }
+.mc-bar {
+  position: relative;
+  display: flex;
+  gap: 5px;
+  height: 36px;
+  padding: 5px;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--r-pill);
+  background: #FFFFFF;
+}
+.mc-seg { flex: 1; border-radius: 4px; background: var(--bg); transition: background-color 80ms ease-out; }
+.mc-seg:first-child { border-radius: var(--r-pill) 4px 4px var(--r-pill); }
+.mc-seg:nth-last-child(2) { border-radius: 4px var(--r-pill) var(--r-pill) 4px; }
+.mc-bar--voice .mc-seg--on { background: var(--glow); }
+.mc-bar--clear .mc-seg--on { background: var(--correct); }
+.mc-bar--noise .mc-seg--on { background: var(--missed); }
+.mc-line { position: absolute; left: 62%; top: -10px; bottom: -10px; width: 4px; border-radius: 2px; background: var(--fg); }
+.mc-labels { margin: 0; display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+.mc-enough { padding-right: 24%; }
+.mc-clear { margin: 0; display: flex; align-items: center; gap: var(--s-2); font: 700 16px var(--font-read); }
+.mc-note { margin: 0; font-size: 15px; color: var(--muted); }
+.mc-bottom { margin-top: auto; padding: var(--s-5) var(--s-5) 44px; display: flex; flex-direction: column; }
+.mc-status { margin: 0; text-align: center; font-size: 19px; }
+.mc-action { width: 100%; font-size: 26px; }
+.mc-action--done { min-height: 72px; font-size: 30px; }
+.mc-pictures {
+  margin: 0 var(--s-5);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border: var(--stroke) solid var(--card-line, var(--line));
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.mc-picture { width: 100%; height: 110px; border: var(--stroke) solid var(--line); border-radius: var(--r-md); }
+.mc-picture--loud { background: var(--glow-soft); }
+.mc-picture--quiet { background: #BFD3BC; }
+.mc-arrow { color: var(--fg); }
+.mc-denied { display: flex; align-items: center; gap: var(--s-2); padding: var(--s-3) var(--s-5) 0; }
+.mc-denied-text { margin: 0; font: 700 21px / 1.25 var(--font-display); text-wrap: pretty; }
+.mc-steps { list-style: none; margin: var(--s-3) var(--s-5) 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.mc-step { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--s-3); align-items: start; }
+.mc-num { font: 800 32px / 1 var(--font-display); }
+.mc-step-body { display: flex; flex-direction: column; gap: var(--s-2); font-size: 17px; line-height: 1.3; padding-top: var(--s-1); }
+.mc-address {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 var(--s-3);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--r-pill);
+  background: #FFFFFF;
+  color: var(--ink);
+  font: 15px ui-monospace, Menlo, monospace;
+}
+.mc-tune { flex: none; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: var(--r-pill); box-shadow: 0 0 0 4px var(--glow); }
+.mc-permission {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--s-4);
+  background: #FFFFFF;
+  color: var(--ink);
+  font: 700 17px var(--font-read);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-bubble { animation: none; }
+}
+
+/* designed screens set their own 24px margins; drop the shell padding under them */
+.screen:has(> .st-screen, > .mc-screen) { padding: 0; }
