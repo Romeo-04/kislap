@@ -92,7 +92,7 @@ export function StickerZoom({ slot, onClose }: { slot: Slot; onClose: () => void
 }
 
 export function Progress() {
-  const { t, lang } = useI18n()
+  const { t } = useI18n()
   const p = loadProgress()
   const today = storiesToday(localDay())
   // read in render, cleared in an effect: the note shows once, and StrictMode's second render still sees it
@@ -164,7 +164,8 @@ export function Progress() {
       <ul className="jr-stars">
         {STORIES.map((story) => (
           <li key={story.id} className="jr-story">
-            <span>{story.title[lang]}</span>
+            {/* story titles are content: Filipino in every UI language */}
+            <span lang="fil">{story.title.fil}</span>
             <StarRow stars={p.stars[story.id] ?? 0} size={22} />
           </li>
         ))}

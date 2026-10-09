@@ -14,11 +14,13 @@ const mem = () => {
   return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) }
 }
 const today = localDate()
-const save = (p: object) => localStorage.setItem(PROGRESS_KEY, JSON.stringify({ version: 1, ...p }))
+// these tests read the Filipino copy, so Filipino is saved as the UI language (English is the default)
+const save = (p: object) => localStorage.setItem(PROGRESS_KEY, JSON.stringify({ version: 1, lang: 'fil', ...p }))
 
 beforeEach(() => {
   vi.stubGlobal('localStorage', mem())
   vi.stubGlobal('sessionStorage', mem())
+  save({})
 })
 afterEach(() => vi.unstubAllGlobals())
 
@@ -96,7 +98,7 @@ describe('firefly jar', () => {
 
   it('puts each story’s stars on its own row', () => {
     save({ stars: { 'story-1': 2 } })
-    const rows = [...wrap(<Progress />).matchAll(/class="jr-story"><span>[^<]*<\/span><span class="k-stars" role="img" aria-label="([^"]*)"/g)].map((m) => m[1])
+    const rows = [...wrap(<Progress />).matchAll(/class="jr-story"><span lang="fil">[^<]*<\/span><span class="k-stars" role="img" aria-label="([^"]*)"/g)].map((m) => m[1])
     expect(rows).toEqual(['2 / 3', '0 / 3', '0 / 3'])
   })
 
