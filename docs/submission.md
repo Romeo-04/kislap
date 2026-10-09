@@ -19,12 +19,12 @@ internet. The child's voice never leaves the device.
 
 **Team name: stochastic4**
 
-| Name **[confirm spelling]** | Role | GitHub |
+| Name | Role | GitHub |
 |---|---|---|
-| | Lead: app shell, integration, offline, deploy | @Romeo-04 |
-| | Designer: screens, Ningning, art, demo video | @Seedlign |
-| | Model engineer: on-device speech model | @acmrsu |
-| | Content, scoring, and QA | @emyol |
+| Jhezra Tolentino | Lead: app shell, integration, offline, deploy | @Romeo-04 |
+| Ric Ian Barrios | Designer: screens, Ningning, art, demo video | @Seedlign |
+| Amiel Josiah Acuna | Model engineer: on-device speech model | @acmrsu |
+| Marcus Ceasar Austria | Content, scoring, and QA | @emyol |
 
 ## D3 Public GitHub repository
 
@@ -61,7 +61,7 @@ handle before posting]**
 >
 > Try it: https://kislap.vercel.app · Code: https://github.com/Romeo-04/kislap
 >
-> Team stochastic4: [names]. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
+> Team stochastic4: Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, and Marcus Ceasar Austria. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
 
 Rules for both posts: the video plays inline, the post is public, no accuracy or "first" claims
 (spec §19). Save both URLs here and in the README.
@@ -128,7 +128,10 @@ oxlint. **[add any library added after 18:00]**
   tests, and PR reviews with the pr-review-toolkit agents.
 - **Claude Design (Anthropic)**: the visual design handoff (tokens, UI kit, mascot, sticker art).
 - **CodeRabbit**: automated PR summaries on GitHub.
-- **[each teammate adds any other tool in a comment on #36, e.g. Blender MCP if the 3D mascot ships]**
+- **ChatGPT (OpenAI)** and **Claude (Anthropic)**: brainstorming.
+- **Claude Code skills**: engineering and implementation practices (test-driven development, the
+  impeccable design skill, pr-review-toolkit, planning and domain modelling).
+- **[add Blender MCP only if the 3D mascot (#69) ships]**
 
 ## D13 Why does this product benefit from running AI locally?
 
