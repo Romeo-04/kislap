@@ -19,7 +19,11 @@ export function Home() {
   useEffect(() => saveProgress({ ...loadProgress(), streak: streak.progress.streak }), [streak])
   return (
     <section className="hm-screen paper-stage">
-      <PaperScene hills="high" />
+      {/* the bushes grow on the hills, so a page that scrolls never pulls them off the ground */}
+      <PaperScene hills="high">
+        <Bush className="hm-bush hm-bush--left" />
+        <Bush className="hm-bush hm-bush--right" flip />
+      </PaperScene>
       <div className="hm-top">
         <LangToggle />
         <a className="k-icon-btn k-icon-btn--settings" href="#/settings" aria-label={t('settings.title')}>
@@ -27,13 +31,12 @@ export function Home() {
         </a>
       </div>
       <div className="hm-title">
-        <Wordmark width={320} />
+        {/* the twine runs up past the top of the screen: the sign hangs from above */}
+        <Wordmark width={320} rope={300} className="hm-sign" />
         {streak.welcomeBack && <p className="hm-welcome" role="status">{t('home.welcomeBack')}</p>}
       </div>
       <div className="hm-friend">
-        <Bush className="hm-bush hm-bush--left" />
         <Ningning mood="idle" glow={0.7} stick={150} size={210} label={t('mascot.idle')} />
-        <Bush className="hm-bush hm-bush--right" flip />
       </div>
       <div className="hm-actions">
         <a className="k-btn k-btn--primary hm-play" href="#/map">

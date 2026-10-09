@@ -25,7 +25,22 @@ describe('PaperScene', () => {
   })
 })
 
+describe('PaperScene scenery', () => {
+  it('sets things on the hill line, so they stay with the hills when the page scrolls', () => {
+    const out = html(<PaperScene hills="high"><i className="tree" /></PaperScene>)
+    expect(out).toMatch(/class="ps-land"[^>]*>[\s\S]*class="ps-decor"><i class="tree"><\/i><\/div>/)
+  })
+})
+
 describe('Wordmark', () => {
+  it('can hang from a longer rope, which starts at the top of the drawing', () => {
+    const out = html(<Wordmark width={320} rope={300} />)
+    expect(out).toContain('viewBox="0 -360 320 560"')
+    expect(out).toContain('height="560"')
+    expect(out).toContain('d="M160 -360 L160 4"')
+  })
+
+
   it('is an inline image named Kislap, so it uses the page font', () => {
     const out = html(<Wordmark />)
     expect(out).toContain('role="img"')

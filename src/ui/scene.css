@@ -38,10 +38,11 @@
   background-size: 160px 160px;
 }
 
-/* ---------- wordmark tag: hangs on twine, tilted, and swings a little ---------- */
-.wordmark { display: block; overflow: visible; transform-origin: 50% 0; transform: rotate(-4deg); }
+/* ---------- wordmark tag: hangs on twine (the tag tilted on its knot) and swings a little ---------- */
+/* the pivot is the top of the twine, so a long rope swings as one piece with its tag */
+.wordmark { display: block; overflow: visible; transform-origin: 50% 0; }
 @media (prefers-reduced-motion: no-preference) {
   .wordmark { animation: wm-drop 400ms var(--ease-pop) both, wm-swing 4s ease-in-out 400ms infinite; }
 }
-@keyframes wm-drop { from { transform: translateY(-60px) rotate(-4deg); opacity: 0; } to { transform: rotate(-4deg); opacity: 1; } }
-@keyframes wm-swing { 0%, 100% { transform: rotate(-4deg); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(-2deg); } }
+@keyframes wm-drop { from { transform: translateY(-60px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes wm-swing { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-1.5deg); } 75% { transform: rotate(1.5deg); } }
