@@ -89,6 +89,11 @@ No audio files. `src/game/sound.ts` makes four short, quiet tones (reveal, star,
 with the browser's Web Audio API on the device. Own work, 0 bytes to download. They follow the
 Sound setting (on by default).
 
+Background music: `src/game/music.ts` makes a slow, quiet loop in C major (bass plus a pentatonic tune)
+with Web Audio on the device. Own work, 0 bytes to download. Its volume is the Music slider in
+Settings (40% by default, 0 = off). It is always silent on screens that use the microphone
+(reading, Word Pop, mic check), so the speech model only hears the child.
+
 ## AI tools used to make code, copy, or art
 
 Listed in D12 (#36). Visual design, Ningning, stickers and the reworded copy came from Claude Design;

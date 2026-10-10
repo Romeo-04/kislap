@@ -1,15 +1,17 @@
-// Device settings: sound and night theme (Claude Design layer 6). Kept apart from progress
+// Device settings: sound, music volume and night theme (Claude Design layer 6). Kept apart from progress
 // (ADR-0008) so a settings change never risks a child's stars or stickers.
 export const SETTINGS_KEY = 'kislap.settings.v1'
 
 export interface Settings {
   version: 1
   sound: boolean
+  /** background music volume, 0..1 (0 = off) */
+  music: number
   theme: 'day' | 'gabi'
 }
 
 export function defaultSettings(): Settings {
-  return { version: 1, sound: true, theme: 'day' }
+  return { version: 1, sound: true, music: 0.4, theme: 'day' }
 }
 
 export function loadSettings(): Settings {
@@ -17,7 +19,11 @@ export function loadSettings(): Settings {
     const raw = globalThis.localStorage?.getItem(SETTINGS_KEY)
     if (!raw) return defaultSettings()
     const parsed = JSON.parse(raw) as Partial<Settings>
-    return parsed.version === 1 ? { ...defaultSettings(), ...parsed } : defaultSettings()
+    if (parsed.version !== 1) return defaultSettings()
+    const s = { ...defaultSettings(), ...parsed }
+    // older saves have no music field; a damaged value falls back to the default
+    s.music = typeof s.music === 'number' && Number.isFinite(s.music) ? Math.min(1, Math.max(0, s.music)) : defaultSettings().music
+    return s
   } catch {
     return defaultSettings()
   }

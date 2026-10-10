@@ -1,7 +1,8 @@
-// Settings (Claude Design layer 6): language, Sound, Gabi (night), and the way to the mic check.
+// Settings (Claude Design layer 6): language, Sound, Music volume, Gabi (night), and the way to the mic check.
 import { useState } from 'react'
 import { useI18n, type Lang } from '../i18n'
 import { loadSettings, saveSettings, type Settings as SettingsData } from '../game/settings'
+import { syncMusic } from '../game/music'
 import { Ningning } from '../ui/Ningning'
 import { TopBar } from '../ui/TopBar'
 import { ChevronIcon, MicIcon } from '../ui/icons'
@@ -62,6 +63,25 @@ export function Settings() {
           onWord={t('settings.on')}
           offWord={t('settings.off')}
         />
+        <label className="st-card st-volume">
+          <span className="st-label">{t('settings.music')}</span>
+          <span className="st-state">
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={10}
+              value={Math.round(settings.music * 100)}
+              aria-valuetext={settings.music === 0 ? t('settings.off') : `${Math.round(settings.music * 100)}%`}
+              onChange={(e) => {
+                const music = Number(e.target.value) / 100
+                update({ ...settings, music })
+                syncMusic('settings', music)
+              }}
+            />
+            <span className="st-word st-volume__value">{settings.music === 0 ? t('settings.off') : `${Math.round(settings.music * 100)}%`}</span>
+          </span>
+        </label>
         <SwitchRow
           label={t('settings.night')}
           on={settings.theme === 'gabi'}
