@@ -1,0 +1,44 @@
+/* Entrances (Home, Story map, Reading). Pieces bounce up from below, overshoot, and settle; the
+   sentence card pops from small. Only `translate`, `scale` and `opacity` move, so the transforms
+   already on these pieces stay: the right bush's flip (Bush.tsx) and the desktop map's centring of
+   `.sm-friend` (core.css). A `transform` keyframe would wipe both out.
+   Backwards fill: once an entrance ends nothing of it stays applied. `data-enter` is set by the
+   screen: Home and the map only on their first visit per app open, Reading on every story. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Home: the bushes grow first, then Ningning, Play and the bottom row, about 80ms apart */
+  [data-enter] .hm-bush { animation: enter-bounce 560ms ease-out backwards; }
+  [data-enter] .hm-bush--right { animation-delay: 60ms; }
+  [data-enter] .hm-friend { animation: enter-bounce 620ms ease-out 140ms backwards; }
+  [data-enter] .hm-actions { animation: enter-bounce 560ms ease-out 220ms backwards; }
+  [data-enter] .hm-bottom { animation: enter-bounce 560ms ease-out 300ms backwards; }
+
+  /* Story map: the stops from the bottom up, where the path starts (the list runs hardest first),
+     then the own stories, then the Ningning by the next card */
+  [data-enter] .sm-stop { animation: enter-bounce 560ms ease-out 180ms backwards; }
+  [data-enter] .sm-stop:nth-last-child(2) { animation-delay: 90ms; }
+  [data-enter] .sm-stop:nth-last-child(1) { animation-delay: 0ms; }
+  [data-enter] .sm-friend { animation: enter-bounce 560ms ease-out 360ms backwards; }
+  [data-enter] .sm-own { animation: enter-bounce 560ms ease-out 300ms backwards; }
+
+  /* Reading: Ningning rises in from below the stage, fading in, and the card pops */
+  [data-enter] .rd-friend { animation: enter-rise 720ms ease-out backwards; }
+  [data-enter] .rd-card { animation: enter-pop 380ms var(--ease-pop) 120ms backwards; }
+}
+
+@keyframes enter-bounce {
+  0% { translate: 0 48px; opacity: 0; }
+  55% { translate: 0 -10px; opacity: 1; }
+  78% { translate: 0 4px; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes enter-rise {
+  0% { translate: 0 140px; opacity: 0; }
+  60% { translate: 0 -12px; opacity: 1; }
+  82% { translate: 0 4px; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes enter-pop {
+  0% { scale: 0.6; opacity: 0; }
+  100% { scale: 1; opacity: 1; }
+}

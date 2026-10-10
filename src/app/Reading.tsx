@@ -31,6 +31,7 @@ import { goUp } from '../ui/goBack'
 import { haptic } from '../ui/haptics'
 import './screens.css'
 import './core.css'
+import './entrance.css'
 
 const REVEAL_MS = 120
 
@@ -241,7 +242,7 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
   const say = state.notice ?? (state.phase === 'reviewed' && mood === 'idle' ? 'reading.reviewed' : moodCopy[mood])
 
   return (
-    <section className="rd-screen paper-stage">
+    <section className="rd-screen paper-stage" data-enter>
       <PaperScene hills="low" />
       <header className="rd-top">
         <button type="button" className="k-icon-btn" aria-label={t('nav.back')} onClick={() => goUp('#/map')}>
@@ -259,7 +260,10 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
         <span className="rd-count">{index + 1}/{total}</span>
       </header>
       <div className="rd-stage">
-        <Ningning key={beat} mood={mood} glow={glow} size={180} label={t(moodCopy[mood])} />
+        {/* the wrapper carries the entrance: Ningning itself remounts on every mood (key={beat}) */}
+        <div className="rd-friend">
+          <Ningning key={beat} mood={mood} glow={glow} size={180} label={t(moodCopy[mood])} />
+        </div>
         {/* the live region stays mounted for the whole story, so screen readers hear each new line; only the bubble re-pops */}
         <div className="rd-say" aria-live="polite" role={state.notice ? 'status' : undefined}>
           <p className="rd-bubble" key={say}>

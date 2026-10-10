@@ -11,8 +11,10 @@ import { Ningning } from '../ui/Ningning'
 import { StarRow } from '../ui/StarRow'
 import { TopBar } from '../ui/TopBar'
 import { PaperScene } from '../ui/PaperScene'
+import { useFirstVisit } from '../ui/entrance'
 import './screens.css'
 import './core.css'
+import './entrance.css'
 
 const TALL = 'M150 860 C 90 780, 70 720, 140 660 S 330 540, 270 460 S 60 350, 120 270 S 250 170, 210 120'
 const WIDE = 'M-20 330 C 120 400, 230 160, 420 230 S 760 400, 880 220 S 1100 90, 1220 150'
@@ -30,13 +32,14 @@ function Path({ d, viewBox, className }: { d: string; viewBox: string; className
 
 export function StoryMap() {
   const { t } = useI18n()
+  const enter = useFirstVisit('map')
   const progress = loadProgress()
   const found = STORIES.findIndex((story) => !(story.id in progress.stars))
   const next = STORIES[found < 0 ? 0 : found].id
   // hardest first in the page, so the path climbs from the bottom
   const stops = [...STORIES].reverse()
   return (
-    <section className="sm-screen paper-stage">
+    <section className="sm-screen paper-stage" data-enter={enter || undefined}>
       <PaperScene hills="map" />
       <TopBar title={t('map.title')} />
       <div className="sm-map">
