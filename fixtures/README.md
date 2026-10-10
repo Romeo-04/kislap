@@ -1,7 +1,7 @@
 # Golden recordings (#18)
 
 Local test clips for tuning the scorer and comparing models. **The audio files are gitignored.**
-Only `expected.json` is committed. Never commit a recording of someone who did not agree to it.
+Only `expected.json` is committed. The golden reads (`*_marcus` clips) were recorded by Marcus Ceasar Austria; the same reads drive the word marks in the launch video. Never commit a recording of someone who did not agree to it.
 
 ## Record
 

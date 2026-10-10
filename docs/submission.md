@@ -70,6 +70,10 @@ https://kislap.vercel.app)
 ## D4 / D5 Demo video and posts
 
 - Video file: **[link after recording]**
+- Reading in the demo video: the sentence reads that the app scores on screen were recorded by
+  **Marcus Ceasar Austria** (content, scoring and QA). They were played into the browser's
+  microphone input, and the word marks shown are the real on-device model's output. His voice is
+  not heard in the video.
 - X post (tags @cognition and Devin): **[URL]**
 - LinkedIn post (tags @cognition and Devin): **[URL]**
 
