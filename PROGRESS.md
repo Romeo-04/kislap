@@ -127,6 +127,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 - Q1–Q7 settled (see `docs/validation.md` grill log).
 
 ## Log
+- **2026-10-10 09:40** — Credits: Marcus Ceasar Austria recorded the proper sentence reads used for the golden clips and for the word marks in the launch video (`docs/submission.md` D4, `docs/assets.md`, `fixtures/README.md`).
 - **2026-10-10 09:05** — Firefly jar: the "For parents and teachers" panel no longer touches the stars card (14 px gap on phones; on desktop it has its own grid row under the stars).
 - **2026-10-10 08:45** — Word clips (#46 follow-up): the lead's own recordings of all 85 story words are in `public/audio/words/` (mono MP3, 472 KB total, precached for offline). Listen now plays the lead's voice first, and the device voice only as a fallback.
 - **2026-10-10 06:30** — D8 (#32, PR #81): README, `docs/submission.md` and `docs/assets.md` now say what ships after PR #75: whisper-base q8 on WebAssembly on every device. The fp16 WebGPU tier is listed only as a test option (`?tier=large`), not shipped by default.
