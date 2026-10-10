@@ -25,3 +25,8 @@ fixtures/*
 
 # Python bytecode from art/ scripts
 __pycache__/
+
+# demo recorder (scripts/demo/record.mjs): browser profile with the cached model, scratch files
+scripts/demo/.profile/
+scripts/demo/.tmp/
+docs/demo/raw/

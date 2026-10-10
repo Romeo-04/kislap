@@ -3,7 +3,7 @@
 Everything in Kislap that the team did not make during the hackathon, with its source and licence.
 Add a row in the same PR as any new library, font, sound, image, model, or dataset.
 
-Last checked: 2026-10-09, against `package.json` and `node_modules` on `main` plus the open design PRs (#60, #61).
+Last checked: 2026-10-10, against `package.json` and `node_modules` on `main` plus PR #93 (Word Pop) and the demo recorder.
 
 ## No pre-existing project code
 
@@ -34,6 +34,10 @@ application code.
 | `typescript` | 6.0.3 | Apache-2.0 | https://www.typescriptlang.org |
 | `oxlint` | 1.87.0 | MIT | https://oxc.rs |
 | `@types/node`, `@types/react`, `@types/react-dom` | 24.19.1, 19.3.0, 19.3.0 | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
+| `playwright` | 1.64.0 | Apache-2.0 | https://playwright.dev | Records the demo video (`scripts/demo/record.mjs`) |
+
+Outside `package.json`: **FFmpeg** (LGPL/GPL, https://ffmpeg.org) encodes the demo video. It is a
+tool on the recording machine; nothing from it ships in the app.
 
 ## Models and datasets
 
@@ -87,6 +91,11 @@ the v1 art, which is only in git history (commit 4121890); the script header say
 No audio files. `src/game/sound.ts` makes four short, quiet tones (reveal, star, sticker, pop)
 with the browser's Web Audio API on the device. Own work, 0 bytes to download. They follow the
 Sound setting (on by default).
+
+## Demo video
+
+`docs/demo/kislap-demo-backup.mp4` is own work: a screen recording of the app with captions, made
+by `scripts/demo/record.mjs` (docs/demo-video.md). No music, stock footage or third-party images.
 
 ## AI tools used to make code, copy, or art
 
