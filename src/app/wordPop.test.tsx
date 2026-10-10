@@ -70,9 +70,10 @@ describe('Word Pop screen', () => {
     expect(view(run(['bata'], { type: 'mic-started' }, { type: 'model-unavailable' }))).toContain('k-mic')
   })
 
-  it('offers Listen for the current word only when the device has a local voice', () => {
-    expect(view(run(['bata']), { canListen: true })).toContain(fil['reading.listen'])
-    expect(view(run(['bata']))).not.toContain(fil['reading.listen'])
+  it('offers Listen when the current word has a teammate recording or the device has a voice', () => {
+    expect(view(run(['bata']))).toContain(fil['reading.listen']) // bata has a recording
+    expect(view(run(['aso']))).not.toContain(fil['reading.listen'])
+    expect(view(run(['aso']), { canListen: true })).toContain(fil['reading.listen'])
     expect(view(run(['bata'], ...said('bata')), { canListen: true })).not.toContain(fil['reading.listen'])
   })
 

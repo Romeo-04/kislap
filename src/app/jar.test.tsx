@@ -26,7 +26,7 @@ afterEach(() => vi.unstubAllGlobals())
 
 describe('daily goal wiring', () => {
   it('counts one finish once, even when the effect runs twice', () => {
-    const result = { storyId: 'story-1', accuracy: 1, stars: 3 as const, practiceWords: [] }
+    const result = { storyId: 'story-1', accuracy: 1, stars: 3 as const, practiceWords: [], wcpm: 0, correctWords: [] }
     countFinishOnce(result, today)
     countFinishOnce(result, today)
     expect(storiesToday(today)).toBe(1)

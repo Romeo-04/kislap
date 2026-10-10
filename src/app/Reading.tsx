@@ -24,7 +24,8 @@ import { PaperScene } from '../ui/PaperScene'
 import { Button } from '../ui/Button'
 import { BackIcon, RetryIcon } from '../ui/icons'
 import { syllabify } from '../content/syllables'
-import { localVoice, onVoicesChanged, sayWord } from '../ui/speak'
+import { speechSeconds } from '../game/fluency'
+import { canHear, listenWord, localVoice, onVoicesChanged } from '../ui/speak'
 import { go } from './router'
 import { goUp } from '../ui/goBack'
 import { haptic } from '../ui/haptics'
@@ -42,7 +43,8 @@ const moodCopy = {
 } as const
 
 export function Reading({ storyId }: { storyId: string }) {
-  const story = getStory(storyId)
+  // Once per story id: a teacher's story is read from storage and would be a new object every render.
+  const story = useMemo(() => getStory(storyId), [storyId])
   const recorder = useMemo(() => createRecorder(), [])
   const session = useMemo(() => createSession(storyId, story?.sentences.length ?? 0), [storyId, story])
   const [index, setIndex] = useState(0)
@@ -113,7 +115,7 @@ export function Reading({ storyId }: { storyId: string }) {
         return dispatch({ type: 'failed' })
       }
       const scored = scoreReading(sentence.text, text)
-      session.addAttempt({ sentenceIndex: index, heard: text, ...scored })
+      session.addAttempt({ sentenceIndex: index, heard: text, ...scored, seconds: speechSeconds(pcm) })
       setWords(scored.words)
       setGlow(glowFor(scored.accuracy))
       setMood(moodFor('scored', scored.accuracy))
@@ -332,8 +334,8 @@ function WordHelp({ word, canListen }: { word: WordResult; canListen: boolean })
           {word.heard ? t('reading.heard').replace('{heard}', word.heard) : t('reading.notHeard')}
         </p>
       )}
-      {canListen && (
-        <Button variant="secondary" onClick={() => sayWord(word.word)}>
+      {canHear(word.word, canListen) && (
+        <Button variant="secondary" onClick={() => listenWord(word.word)}>
           {t('reading.listen')}
         </Button>
       )}

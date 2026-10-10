@@ -48,7 +48,7 @@ export function Home() {
           <PlayIcon />
           <span>{t('home.play')}</span>
         </a>
-        <OfflineBadge />
+        <OfflineBadge hideWhenReady />
       </div>
       <nav className="hm-bottom" aria-label={t('home.activities')}>
         <a className="hm-jar" href="#/progress">

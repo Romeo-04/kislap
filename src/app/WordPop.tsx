@@ -19,7 +19,7 @@ import { PaperScene } from '../ui/PaperScene'
 import { Button } from '../ui/Button'
 import { BackIcon, CheckIcon, RetryIcon, SpeakerIcon } from '../ui/icons'
 import { goUp } from '../ui/goBack'
-import { localVoice, onVoicesChanged, sayWord } from '../ui/speak'
+import { canHear, listenWord, localVoice, onVoicesChanged } from '../ui/speak'
 import { haptic } from '../ui/haptics'
 import './screens.css'
 import './core.css'
@@ -150,7 +150,7 @@ function WordPopRound({ onAgain }: { onAgain: () => void }) {
       level={level}
       open={open}
       canListen={canListen}
-      onListen={sayWord}
+      onListen={listenWord}
       onPick={onPick}
       onMic={onMic}
       onSkip={() => dispatch({ type: 'skip' })}
@@ -166,7 +166,7 @@ interface ViewProps {
   level: number
   /** the bubble whose syllables show */
   open?: number
-  /** an on-device voice can read the word aloud (ui/speak) */
+  /** the device has a voice; a word with a teammate recording plays even without one (ui/speak) */
   canListen: boolean
   onListen: (word: string) => void
   onPick: (index: number) => void
@@ -191,6 +191,7 @@ export function WordPopView({ state, mood, beat, level, open, canListen, onListe
     : done ? 'wordpop.doneTitle'
     : state.notice ?? (state.last ? LAST_COPY[state.last] : state.phase === 'thinking' ? 'reading.thinking' : 'wordpop.hint')
   const canSplit = state.bubbles.some((b) => !b.popped && splits(b.word))
+  const hear = total > 0 && canHear(state.bubbles[state.current].word, canListen)
   const micState = state.phase === 'listening' ? 'recording' : state.phase === 'thinking' ? 'thinking' : 'idle'
 
   return (
@@ -237,10 +238,10 @@ export function WordPopView({ state, mood, beat, level, open, canListen, onListe
           })}
         </ul>
       )}
-      {!done && total > 0 && (canSplit || canListen) && (
+      {!done && total > 0 && (canSplit || hear) && (
         <div className="wp-help">
           {canSplit && <p className="wp-tip">{t('wordpop.tap')}</p>}
-          {canListen && (
+          {hear && (
             <Button variant="secondary" icon={<SpeakerIcon />} onClick={() => onListen(state.bubbles[state.current].word)}>
               {t('reading.listen')}
             </Button>

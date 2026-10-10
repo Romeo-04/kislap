@@ -10,6 +10,7 @@ export type Route =
   | { name: 'progress' }
   | { name: 'miccheck' }
   | { name: 'settings' }
+  | { name: 'mystory' }
   | { name: 'mictest' }
   | { name: 'asrtest' }
   | { name: 'bench' }
@@ -25,6 +26,7 @@ export function parseRoute(hash: string): Route {
     case 'progress': return { name: 'progress' }
     case 'miccheck': return { name: 'miccheck' }
     case 'settings': return { name: 'settings' }
+    case 'mystory': return { name: 'mystory' }
     case 'mictest': return { name: 'mictest' }
     case 'asrtest': return { name: 'asrtest' }
     case 'bench': return { name: 'bench' }

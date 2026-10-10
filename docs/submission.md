@@ -8,29 +8,48 @@ into `README.md` where the README already has that section.
 
 **Kislap** (mascot: Ningning the firefly)
 
-**The problem.** The World Bank reports that 91 percent of 10-year-olds in the Philippines
-cannot read and understand an age-appropriate text. Children learn to read by reading aloud,
-and reading aloud needs someone who listens. Many children practise alone: parents work long
-hours, classes are large, and mobile data is costly.
+**The problem.** In April 2026 the World Bank reported that 91 percent of ten-year-olds in the
+Philippines cannot read and understand a simple, age-appropriate text [1]. Behind that number are
+millions of children who are bright, curious, and willing, but who never got enough practice at the
+moment it matters most. Children learn to read by reading out loud, again and again, to someone who
+listens, notices the word they stumbled on, and gently helps them try it once more. That listener
+is exactly what many Filipino children are missing. Parents often work long hours and come home
+tired, teachers with large classes cannot hear every child read, and many reading apps need a
+steady connection or an account, or simply do not offer stories in Filipino. For a family that
+watches every peso of mobile data, that is often enough to make practice stop.
 
-**A story.** Imagine Lila, seven years old, in a barangay where the signal comes and goes. Her
-mother gets home after dark. Lila wants to read, but no one is free to listen, and when she
-stumbles on a word, no one helps her try again. With Kislap on the family phone, Ningning the
-firefly listens. Lila reads one sentence, and the words light up. The word she missed glows
-orange, and Ningning says "Subukan natin ulit!" She tries again, gets it, and earns a sticker.
-No one else sees her mistakes, nothing is uploaded, and it works with the data off.
+**A story.** Imagine Lila, a seven-year-old in a barangay where the mobile signal comes and goes.
+Her mother sells vegetables at the market and gets home after dark, and by then the house is busy
+with dinner and chores. Lila likes the picture books her teacher sends home, but when she reads
+aloud there is no one beside her, so the hard words simply stay hard. One evening her mother opens
+Kislap on the family phone. A little firefly named Ningning asks Lila to read the first sentence of
+a story about a cat and a firefly in the dark. As she reads, the words light up one by one; most of
+them glow green, and one word she rushed glows orange. Ningning does not scold her. It says
+"Subukan natin ulit!", shows the word split into syllables, and waits. Lila reads it again,
+slowly, gets it right, and earns a sticker for her jar. Nobody else hears her mistakes, nothing she
+says is sent anywhere, and all of it works with the phone's data switched off.
 
-**What Kislap is.** A free reading game for Filipino children in Grade 1 to 3. A child reads a
-short story aloud, one sentence at a time. A speech model runs in the browser, on the child's
-own device, and marks each word as correct, unclear, or missed. Ningning reacts, the child earns
-stars and stickers, and missed words are saved for practice. It understands Filipino and
-Taglish, needs no account and no server, and works with no internet after the first load. The
-child's voice never leaves the device.
+**What Kislap is.** Kislap is a free reading game for Filipino children in Grades 1 to 3. A child
+reads a short Filipino or Taglish story aloud, one sentence at a time, while a speech model runs
+inside the browser on the child's own device and marks each word as correct, unclear, or missed.
+Ningning reacts to every sentence, the child earns stars and stickers, tapping a word shows how it
+breaks into syllables, and the words that were hard are saved for practice. There is no account and
+no server, and after the first download the whole experience works without the internet.
 
-**Why it would work.** It gives every child a patient listener at any hour, without waiting
-for an adult. It is kind by design: no timers, no "wrong", and a finished story always earns a
-sticker, so a struggling reader keeps going. Because the AI runs on the device, it works where
-the signal is weak and keeps a child's voice private.
+**Why it would work.** Reading improves with practice, and practice improves when someone listens.
+Kislap gives every child that patient listener at any hour of the day, without waiting for an adult
+to be free. It is kind by design: there are no timers, no lives, and no word "wrong", and finishing
+a story always earns a sticker, so a child who struggles still wants to come back tomorrow. Because
+the speech recognition runs on the device itself, a child's voice stays private, and the app keeps
+working in the places where the signal is weakest, which are often the places where children need
+the most help.
+
+**Sources**
+
+1. World Bank, "World Bank Backs Better Learning for 21 Million Filipino Students," press release,
+   3 April 2026. https://www.worldbank.org/en/news/press-release/2026/04/03/world-bank-backs-better-learning-for-21-million-filipino-students
+2. Kislap's own measurements on the demo devices: `PROGRESS.md` (Measurements) and the
+   validation notes in `docs/validation.md`.
 
 ## D2 Team members
 
@@ -45,7 +64,8 @@ the signal is weak and keeps a child's voice private.
 
 ## D3 Public GitHub repository
 
-https://github.com/Romeo-04/kislap · Live app: https://kislap.vercel.app
+https://github.com/Romeo-04/kislap · Live app: https://romeo-04.github.io/kislap/ (mirror:
+https://kislap.vercel.app)
 
 ## D4 / D5 Demo video and posts
 
@@ -58,7 +78,7 @@ https://github.com/Romeo-04/kislap · Live app: https://kislap.vercel.app
 > Kislap ✨ a Filipino-first reading game. A child reads aloud, and Whisper runs on the device
 > to mark each word. No account, no upload, works offline. Built at #AppBuildersPH by stochastic4
 > @cognition @DevinAI
-> https://kislap.vercel.app
+> https://romeo-04.github.io/kislap/
 
 **[confirm the X handles: the event page says "tag @cognition and Devin"; check Devin's exact
 handle before posting]**
@@ -76,7 +96,7 @@ handle before posting]**
 > first load Kislap works with no internet. You can check it yourself: the on-screen privacy
 > counter shows zero requests while a child reads.
 >
-> Try it: https://kislap.vercel.app · Code: https://github.com/Romeo-04/kislap
+> Try it: https://romeo-04.github.io/kislap/ · Code: https://github.com/Romeo-04/kislap
 >
 > Team stochastic4: Jhezra Tolentino, Ric Ian Barrios, Amiel Josiah Acuna, and Marcus Ceasar Austria. Thanks to Cognition and Devin [tag both] and AppBuildersPH.
 
@@ -128,6 +148,7 @@ oxlint. **[add any library added after 18:00]**
 | Service | Used for |
 |---|---|
 | Vercel | Static hosting of the app (HTTPS). No server functions, no analytics. |
+| GitHub Pages | Static hosting of the same build (HTTPS), the main link while Vercel's daily deploy limit is reached. |
 | Hugging Face Hub (including its file CDN) | Hosting the model files, downloaded once |
 | GitHub | Source code |
 

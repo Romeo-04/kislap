@@ -18,7 +18,8 @@ export interface StickerArt {
 }
 
 export function artFor(name: StickerName): StickerArt {
-  return { name, src: `/stickers/sticker-${name}.svg`, lockedSrc: `/stickers/sticker-${name}-locked.svg` }
+  const root = `${import.meta.env.BASE_URL}stickers/sticker-${name}`
+  return { name, src: `${root}.svg`, lockedSrc: `${root}-locked.svg` }
 }
 
 export function stickerArt(id: string, stories: Story[]): StickerArt | undefined {

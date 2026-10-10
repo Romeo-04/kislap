@@ -167,7 +167,7 @@ async function serve() {
 async function prepare() {
   const ctx = await launch()
   const page = ctx.pages()[0] ?? (await ctx.newPage())
-  await page.goto(URL)
+  await page.goto(`${URL}#/settings`) // Home hides the badge once the model is ready; Settings always shows it
   const badge = page.locator('[data-status]')
   await badge.first().waitFor({ timeout: 30_000 })
   if ((await badge.first().getAttribute('data-status')) !== 'ready') {
@@ -205,12 +205,18 @@ async function record(clips) {
   await card(page, `<h1>Kislap</h1><div class="slip"><p>91 percent of 10-year-olds in the Philippines cannot read and understand an age-appropriate text.</p><small>World Bank, April 2026</small></div>`, 7000)
   await card(page, `<div class="slip"><p>Kislap is a reading game. A child reads a Filipino story aloud, and a speech model on the child's own device listens.</p></div>`, 5000)
 
-  // 2. Home, really offline-ready
+  // 2. Home, then Settings with the real offline badge
   await page.goto(`${URL}${q}#/`)
-  await page.locator('[data-status="ready"]').waitFor({ timeout: 30_000 })
   await tag(page, realOrSim)
-  await caption(page, 'The speech model downloads once. The badge says Kislap now works offline.')
-  await sleep(4500)
+  await caption(page, 'Home. One big Play button.')
+  await sleep(3000)
+  await page.goto(`${URL}${q}#/settings`)
+  const ready = page.locator('[data-status="ready"]')
+  await ready.waitFor({ timeout: 30_000 })
+  await ready.scrollIntoViewIfNeeded()
+  await tag(page, realOrSim)
+  await caption(page, 'The speech model downloads once. Settings shows Kislap now works offline.', 'top')
+  await sleep(6000)
 
   // 3. internet off
   await ctx.setOffline(true)
@@ -295,14 +301,16 @@ async function record(clips) {
     }
   }
 
-  // 7. the jar
-  await page.goto(`${URL}${q}#/progress`)
-  await tag(page, `${realOrSim}\nInternet: OFF`)
-  await caption(page, 'Stickers fill the firefly jar. No account, no server.')
-  await sleep(6000)
+  // 7. the jar; its parents panel shows reading speed, which simulated speech would make up
+  if (clips) {
+    await page.goto(`${URL}${q}#/progress`)
+    await tag(page, `${realOrSim}\nInternet: OFF`)
+    await caption(page, 'Stickers fill the firefly jar. No account, no server.')
+    await sleep(6000)
+  }
 
   // 8. why local
-  await card(page, `<div class="slip"><p>Why local? A child's voice is sensitive data. Kislap keeps it on the device, and it keeps working where the signal is weak.</p></div><p>kislap.vercel.app · open source on GitHub</p>`, 8000)
+  await card(page, `<div class="slip"><p>Why local? A child's voice is sensitive data. Kislap keeps it on the device, and it keeps working where the signal is weak.</p></div><p>romeo-04.github.io/kislap · open source on GitHub</p>`, 8000)
 
   counting = false
   const video = page.video()

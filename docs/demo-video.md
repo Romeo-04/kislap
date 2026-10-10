@@ -23,7 +23,7 @@ In the backup cut no speech model runs during reading: `?fake` returns the stub 
 captions say what Whisper does live, never that it ran.
 
 - The production build, served by `vite preview`.
-- The "Works offline" badge: the first run downloads the speech model (about 77 MB) into the
+- The "Works offline" badge in Settings: the first run downloads the speech model (about 77 MB) into the
   browser profile in `scripts/demo/.profile`, before the recording starts.
 - Internet off: the browser is set offline before the story starts, and stays offline.
 - The request count in the corner tag comes from the recorder's own log of every request the
@@ -39,7 +39,7 @@ captions say what Whisper does live, never that it ran.
 
 1. Problem card: the World Bank figure (spec §1).
 2. What Kislap is, in one sentence.
-3. Home with the real "Works offline" badge.
+3. Home, then Settings with the real "Works offline" badge (Home hides it once the model is ready).
 4. Internet off.
 5. Story map, then story 1 read sentence by sentence. Sentences 3 to the second last play faster (4x, or 8x
    with `--voice`), with a caption that says so.
@@ -48,7 +48,7 @@ captions say what Whisper does live, never that it ran.
 8. Result: stars, confetti, sticker.
 9. Word Pop: the missed words as bubbles, syllables on tap, two pops (backup cut only; the final
    cut has no single-word clips).
-10. Firefly jar.
+10. Firefly jar (final cut only: its parents panel shows reading speed, which simulated speech would make up).
 11. Why local, and the link.
 
 No "first" claim and no accuracy claim (spec §19). No music; the video is silent with captions.
