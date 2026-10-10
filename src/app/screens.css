@@ -244,7 +244,7 @@
 .jr-adults__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--s-1); font-size: 15px; }
 .jr-adults__list li { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s-3); }
 .jr-adults__note { font-size: 13px; opacity: .8; }
-.jr-adults { margin: 0 var(--s-5) var(--s-6); }
+.jr-adults { margin: 14px var(--s-5) var(--s-6); }
 
 /* Parent/teacher gate */
 .pg-card { margin-top: var(--s-2); }
