@@ -245,3 +245,7 @@
 .jr-adults__list li { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s-3); }
 .jr-adults__note { font-size: 13px; opacity: .8; }
 .jr-adults { margin: 0 var(--s-5) var(--s-6); }
+
+/* Parent/teacher gate */
+.pg-card { margin-top: var(--s-2); }
+.pg-lock { position: relative; z-index: 2; display: flex; justify-content: center; margin: 0 var(--s-5); }

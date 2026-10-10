@@ -7,6 +7,7 @@ import type { Level, Story } from '../content/stories'
 import { Button } from '../ui/Button'
 import { TopBar } from '../ui/TopBar'
 import { PaperScene } from '../ui/PaperScene'
+import { ParentGate } from '../ui/ParentGate'
 import './screens.css'
 
 const LEVELS: Level[] = ['easy', 'medium', 'hard']
@@ -41,6 +42,7 @@ export function MyStory() {
     <section className="ms-screen paper-stage">
       <PaperScene hills="low" />
       <TopBar title={t('mystory.title')} />
+      <ParentGate>
       <div className="ms-card">
         <p className="ms-intro">{t('mystory.intro')}</p>
         <label className="ms-field">
@@ -78,6 +80,7 @@ export function MyStory() {
           </ul>
         </div>
       )}
+      </ParentGate>
     </section>
   )
 }
