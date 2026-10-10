@@ -2,8 +2,9 @@
 
 Everything in Kislap that the team did not make during the hackathon, with its source and licence.
 Add a row in the same PR as any new library, font, sound, image, model, or dataset.
-`src/test/assetRegister.test.ts` fails when a `package.json` dependency, a browser dependency of a
-shipped library, or a folder in `public/` is missing from this file.
+`src/test/assetRegister.test.ts` fails when one of these is missing from this file: a `package.json`
+dependency, the runtime dependencies of a shipped library (one level down), the service-worker
+runtime listed in the test, or a committed file or folder in `public/`.
 
 Last checked: 2026-10-10, against `package.json`, `package-lock.json`, `node_modules` and the
 production build (`dist/`) on `main`.
@@ -15,7 +16,7 @@ The event rule says everything must be built during the hackathon. The repositor
 comes from an earlier project. Each teammate confirms the same for their own work in a comment on
 #35 before it closes.
 
-Two process files in `.claude/` were brought in from elsewhere. Neither is application code, and
+Two sets of process files in `.claude/` were brought in from elsewhere. Neither is application code, and
 neither ships in the app:
 
 | File | Source | Licence |
@@ -28,13 +29,14 @@ neither ships in the app:
 | Library | Version | Licence | Source | Used for |
 |---|---|---|---|---|
 | `@huggingface/transformers` | 4.3.1 | Apache-2.0 | https://github.com/huggingface/transformers.js | Runs Whisper on the device |
-| `onnxruntime-web` (via Transformers.js) | 1.31.0-dev.20260914 | MIT | https://github.com/microsoft/onnxruntime | WebAssembly inference (WebGPU only with the `?tier=large` test switch, off by default). Its `.wasm` files are served from our own site, not a CDN |
+| `onnxruntime-web` (via Transformers.js) | 1.31.0-dev.20260914 | MIT | https://github.com/microsoft/onnxruntime | WebAssembly inference (WebGPU only with the `?tier=large` test switch, off by default). Its `.wasm` files are served from our own site, not a CDN. Includes `onnxruntime-common` 1.30.0 (MIT, same repo) |
 | `@huggingface/tokenizers` (via Transformers.js) | 0.2.0 | Apache-2.0 | https://github.com/huggingface/tokenizers | Whisper's tokenizer, in the model worker |
 | `@huggingface/jinja` (via Transformers.js) | 0.5.10 | MIT | https://github.com/huggingface/huggingface.js | Bundled into the model worker by Transformers.js; Kislap does not use its chat templates |
 | `react`, `react-dom` | 19.3.0 | MIT | https://react.dev | Screens |
 | `scheduler` (via `react-dom`) | 0.28.0 | MIT | https://github.com/facebook/react | React's work scheduler |
 | `workbox-window` (via vite-plugin-pwa) | 7.4.1 | MIT | https://github.com/GoogleChrome/workbox | Registers the service worker |
-| `workbox-core`, `workbox-precaching`, `workbox-routing`, `workbox-strategies` (via vite-plugin-pwa) | 7.4.1 | MIT | https://github.com/GoogleChrome/workbox | Bundled into the service worker (`dist/workbox-*.js`): the offline shell and the runtime cache |
+| `workbox-core`, `workbox-precaching`, `workbox-routing`, `workbox-strategies`, `workbox-expiration` (via vite-plugin-pwa) | 7.4.1 | MIT | https://github.com/GoogleChrome/workbox | Bundled into the service worker (`dist/workbox-*.js`): the offline shell, the runtime cache and its size limit |
+| `idb` (via `workbox-expiration`) | 7.1.1 | ISC | https://github.com/jakearchibald/idb | Bundled into the service worker: keeps the runtime cache's expiry records in IndexedDB |
 
 ## Build and test tools (not shipped)
 
