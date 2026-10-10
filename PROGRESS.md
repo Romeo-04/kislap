@@ -50,7 +50,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #13 | Word Pop (Should) | Freeze | 🔨 PR open: paper bubbles from the Practice words, say one to pop it (similarity ≥ 0.6), pops anyway after 2 tries, tap for syllables, Listen (recording first, device voice fallback) |
 | #45 | Mic-check screen (Should) | Freeze | 🔨 PR open: Mic check + Settings in the paper look, phone and desktop |
 | #48 | Flutter spike (45 min, decide by 17:00) | 17:00 | ✅ closed, not run |
-| D4 #28, D11 #35 | Deliverables | — | ⏳ D11 draft in `docs/assets.md` |
+| D4 #28, D11 #35 | Deliverables | — | 🔨 D11: `docs/assets.md` refreshed and guarded by a test (PR open); teammates confirm on #35 |
 
 ### Model engineer (@acmrsu) — epic #43
 
@@ -127,6 +127,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 - Q1–Q7 settled (see `docs/validation.md` grill log).
 
 ## Log
+- **2026-10-10** — D11 (#35): `docs/assets.md` matches what ships on `main`. New: the libraries the bundle carries without a `package.json` line (`@huggingface/tokenizers`, `@huggingface/jinja`, React's `scheduler`, the workbox runtime in the service worker), the 85 word recordings under Sounds (the old "no audio files" line is gone), the golden test recordings, FFmpeg as the clip tool, the device voice fallback, and the vendored review toolkit (Apache-2.0) under pre-existing code. `src/test/assetRegister.test.ts` fails when a dependency, a shipped library's browser dependency, or a `public/` folder is missing from the register. Teammates still confirm their own work on #35.
 - **2026-10-10 10:10** — Background music: a quiet Web Audio loop made on the device (`src/game/music.ts`, no audio files) with a Music volume slider in Settings (default 40%, 0 = off). It never plays on mic screens (reading, Word Pop, mic check) and pauses when the app is hidden.
 - **2026-10-10 09:40** — Credits: Marcus Ceasar Austria recorded the proper sentence reads used for the golden clips and for the word marks in the launch video (`docs/submission.md` D4, `docs/assets.md`, `fixtures/README.md`).
 - **2026-10-10 09:05** — Firefly jar: the "For parents and teachers" panel no longer touches the stars card (14 px gap on phones; on desktop it has its own grid row under the stars).

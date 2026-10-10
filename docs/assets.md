@@ -2,26 +2,39 @@
 
 Everything in Kislap that the team did not make during the hackathon, with its source and licence.
 Add a row in the same PR as any new library, font, sound, image, model, or dataset.
+`src/test/assetRegister.test.ts` fails when a `package.json` dependency, a browser dependency of a
+shipped library, or a folder in `public/` is missing from this file.
 
-Last checked: 2026-10-09, against `package.json` and `node_modules` on `main` plus the open design PRs (#60, #61).
+Last checked: 2026-10-10, against `package.json`, `package-lock.json`, `node_modules` and the
+production build (`dist/`) on `main`.
 
 ## No pre-existing project code
 
 The event rule says everything must be built during the hackathon. The repository started on
-2026-10-09 (first commit `f2adcd1`). The designer's work (#8 to #13, #45) adds no code from an
-earlier project. Each teammate confirms the same for their own work in a comment on #35 before
-it closes. The only reused text found so far is the git workflow in
-`.claude/skills/git-operations/SKILL.md`, a process document ported from another project, not
-application code.
+2026-10-09 (first commit `f2adcd1`). No application code (`src/`, `public/`, `scripts/`, `art/`)
+comes from an earlier project. Each teammate confirms the same for their own work in a comment on
+#35 before it closes.
+
+Two process files in `.claude/` were brought in from elsewhere. Neither is application code, and
+neither ships in the app:
+
+| File | Source | Licence |
+|---|---|---|
+| `.claude/agents/`, `.claude/commands/review-pr.md` (pr-review-toolkit) | Anthropic's `pr-review-toolkit` Claude Code plugin (`claude-plugins-official`), copied 2026-10-09; see `.claude/pr-review-toolkit/README.md` | Apache-2.0 (`.claude/pr-review-toolkit/LICENSE`) |
+| `.claude/skills/git-operations/SKILL.md` | The git workflow of another project (Creator Loans v2), ported 2026-10-09; the file says so in its header | Process text, not code |
 
 ## Libraries shipped to the browser
 
 | Library | Version | Licence | Source | Used for |
 |---|---|---|---|---|
 | `@huggingface/transformers` | 4.3.1 | Apache-2.0 | https://github.com/huggingface/transformers.js | Runs Whisper on the device |
-| `onnxruntime-web` (via Transformers.js) | 1.31.0-dev.20260914 | MIT | https://github.com/microsoft/onnxruntime | WebAssembly inference (WebGPU only with the `?tier=large` test switch, off by default) |
+| `onnxruntime-web` (via Transformers.js) | 1.31.0-dev.20260914 | MIT | https://github.com/microsoft/onnxruntime | WebAssembly inference (WebGPU only with the `?tier=large` test switch, off by default). Its `.wasm` files are served from our own site, not a CDN |
+| `@huggingface/tokenizers` (via Transformers.js) | 0.2.0 | Apache-2.0 | https://github.com/huggingface/tokenizers | Whisper's tokenizer, in the model worker |
+| `@huggingface/jinja` (via Transformers.js) | 0.5.10 | MIT | https://github.com/huggingface/huggingface.js | Bundled into the model worker by Transformers.js; Kislap does not use its chat templates |
 | `react`, `react-dom` | 19.3.0 | MIT | https://react.dev | Screens |
-| `workbox-window` (via vite-plugin-pwa) | 7.4.1 | MIT | https://github.com/GoogleChrome/workbox | Service worker, offline shell |
+| `scheduler` (via `react-dom`) | 0.28.0 | MIT | https://github.com/facebook/react | React's work scheduler |
+| `workbox-window` (via vite-plugin-pwa) | 7.4.1 | MIT | https://github.com/GoogleChrome/workbox | Registers the service worker |
+| `workbox-core`, `workbox-precaching`, `workbox-routing`, `workbox-strategies` (via vite-plugin-pwa) | 7.4.1 | MIT | https://github.com/GoogleChrome/workbox | Bundled into the service worker (`dist/workbox-*.js`): the offline shell and the runtime cache |
 
 ## Build and test tools (not shipped)
 
@@ -35,6 +48,10 @@ application code.
 | `oxlint` | 1.87.0 | MIT | https://oxc.rs |
 | `@types/node`, `@types/react`, `@types/react-dom` | 24.19.1, 19.3.0, 19.3.0 | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 
+Outside `package.json`: **FFmpeg** (LGPL/GPL, https://ffmpeg.org) trims and converts the word
+recordings in `scripts/add-word-clips.sh`. It runs on the teammate's machine; nothing from it ships
+in the app.
+
 ## Models and datasets
 
 | Item | Licence / terms | Notes |
@@ -45,6 +62,7 @@ application code.
 | Filipino Speech Corpus (FSC) | Research use | Behind `sapinsapin/whisper-small-fsc` (tested, not shipped) |
 | PLD | Research and non-commercial use | Behind `internetoftim/whisper-small-pld-fil-ONNX` (tested, not shipped) |
 | FLEURS `fil_ph` | CC-BY-4.0 | Only if LoRA ships |
+| Golden recordings (`fixtures/`) | Own work: reads by an adult teammate, Marcus Ceasar Austria (`*_marcus` clips, `fixtures/README.md`) | Test data for the scorer and model checks. Only `fixtures/expected.json` is committed; the audio is gitignored and never ships. No child's voice |
 
 Neither Filipino model ships, so no research-use data reaches users. If one ships later, D8 and D11 must
 say so, and the App Builders Challenge rules must be checked first (`docs/validation.md` I8). The model engineer
@@ -75,19 +93,25 @@ invalidates them.
 | `src/ui/Ningning.tsx` | Ningning the paper puppet, six moods, drawn in code from the Claude Design part 2 `Ningning.dc.html` | Own work |
 | `public/stickers/sticker-{sampaguita,kubo,alitaptap,kalabaw,jeep,parol}.svg` | Six stickers | Own work |
 | `public/stickers/sticker-*-locked.svg` | The same six, not yet earned | Own work |
-| Demo-video reading (not shipped in the app) | The story sentence reads behind the word marks in the launch video | Own work: read and recorded by Marcus Ceasar Austria; played into the microphone input while the screen was recorded |
-| `public/audio/words/*.mp3` | 85 story-word recordings for the Listen button | Own work: recorded by the lead (Jhezra Tolentino), trimmed and normalized with `scripts/add-word-clips.sh` |
 
 Sticker art total: 34,810 bytes, in the Claude Design part 2 paper look: a cream die-cut edge at
 half the handoff's width, printed lines in the cut line colour, every colour from the paper tokens,
 and locked stickers in cream paper with a dashed cut line. `art/convert_stickers.py` made them from
 the v1 art, which is only in git history (commit 4121890); the script header says how to rebuild.
 
-## Sounds
+## Sounds and recordings
 
-No audio files. `src/game/sound.ts` makes four short, quiet tones (reveal, star, sticker, pop)
-with the browser's Web Audio API on the device. Own work, 0 bytes to download. They follow the
-Sound setting (on by default).
+| File | What it is | Licence |
+|---|---|---|
+| `public/audio/words/*.mp3` | 85 story-word recordings for the Listen button, precached for offline | Own work: recorded by the lead (Jhezra Tolentino), trimmed and normalized with `scripts/add-word-clips.sh` |
+| Demo-video reading (not shipped in the app) | The story sentence reads behind the word marks in the launch video | Own work: read and recorded by Marcus Ceasar Austria; played into the microphone input while the screen was recorded |
+
+Listen falls back to a voice installed on the device (`speechSynthesis`, on-device voices only) for a
+word with no recording. That voice belongs to the device's operating system; Kislap ships none.
+
+Effects: `src/game/sound.ts` makes four short, quiet tones (reveal, star, sticker, pop) with the
+browser's Web Audio API on the device. Own work, 0 bytes to download. They follow the Sound setting
+(on by default).
 
 Background music: `src/game/music.ts` makes a slow, quiet loop in C major (bass plus a pentatonic tune)
 with Web Audio on the device. Own work, 0 bytes to download. Its volume is the Music slider in
