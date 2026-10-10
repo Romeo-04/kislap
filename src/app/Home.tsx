@@ -10,19 +10,22 @@ import { PaperScene } from '../ui/PaperScene'
 import { LangToggle } from '../ui/LangToggle'
 import { OfflineBadge } from '../ui/OfflineBadge'
 import { Bush } from '../ui/Bush'
+import { useFirstVisit } from '../ui/entrance'
 import { GearIcon, JarIcon, PlayIcon } from '../ui/icons'
 import './screens.css'
 import './core.css'
+import './entrance.css'
 
 export function Home() {
   const { t } = useI18n()
+  const enter = useFirstVisit('home')
   const [streak] = useState(() => touchStreak(loadProgress(), localDate()))
   useEffect(() => {
     saveProgress({ ...loadProgress(), streak: streak.progress.streak })
     if (streak.welcomeBack) markWelcomeBack() // the jar says it once too
   }, [streak])
   return (
-    <section className="hm-screen paper-stage">
+    <section className="hm-screen paper-stage" data-enter={enter || undefined}>
       {/* the bushes grow on the hills, so a page that scrolls never pulls them off the ground */}
       <PaperScene hills="high">
         <Bush className="hm-bush hm-bush--left" />
