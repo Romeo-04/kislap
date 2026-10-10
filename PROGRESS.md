@@ -127,6 +127,7 @@ One adult reader, the final stories (`74bac56`), laptop, Chrome, scored with the
 - Q1–Q7 settled (see `docs/validation.md` grill log).
 
 ## Log
+- **2026-10-10 09:05** — Firefly jar: the "For parents and teachers" panel no longer touches the stars card (14 px gap on phones; on desktop it has its own grid row under the stars).
 - **2026-10-10 08:45** — Word clips (#46 follow-up): the lead's own recordings of all 85 story words are in `public/audio/words/` (mono MP3, 472 KB total, precached for offline). Listen now plays the lead's voice first, and the device voice only as a fallback.
 - **2026-10-10 06:30** — D8 (#32, PR #81): README, `docs/submission.md` and `docs/assets.md` now say what ships after PR #75: whisper-base q8 on WebAssembly on every device. The fp16 WebGPU tier is listed only as a test option (`?tier=large`), not shipped by default.
 - **2026-10-10 06:20** — #16 / PR #75, lead's safety pass after the freeze: the default tier is whisper-base **q8 on WebAssembly on every device**, the setup that passed the offline check. The fp16 WebGPU tier stays in the code but runs only with `?tier=large` (`GPU_BY_DEFAULT = false` in `src/asr/tier.ts`), because it has not run the full reading loop or the offline check on a real GPU. So a laptop that already cached q8 keeps Offline ready and downloads nothing new. The 64-token cap stays. A failed fallback no longer leaves a stale load behind.
