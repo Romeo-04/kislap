@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<!-- App icon: Ningning the paper puppet on the day sky and hills (Claude Design part 2, assets/app-icon-512.svg).
+     Die-cut edge thinned to dilate 3 (handoff: 9), as decided by the team. -->
+<rect width="512" height="512" rx="116" fill="#84CEF0"/>
+<path d="M0 380 Q130 330 256 366 T512 352 L512 512 L0 512 Z" fill="#5FB548"/>
+<path d="M0 380 Q130 330 256 366 T512 352" fill="none" stroke="#FFF3D1" stroke-width="8"/>
+<path d="M0 440 Q170 400 340 432 T512 420 L512 512 L0 512 Z" fill="#8ACF4E"/>
+<g transform="translate(66 50) scale(1.9)">
+<defs>
+<filter id="nn-cut" filterUnits="userSpaceOnUse" x="-60" y="-60" width="320" height="320"><feMorphology in="SourceAlpha" operator="dilate" radius="3" result="d0"/><feGaussianBlur in="d0" stdDeviation="1" result="d1"/><feComponentTransfer in="d1" result="d"><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer><feGaussianBlur in="d" stdDeviation="3" result="b"/><feOffset in="b" dy="5" result="o"/><feFlood flood-color="#1B3A52" flood-opacity="0.28"/><feComposite in2="o" operator="in" result="sh"/><feFlood flood-color="#FFF3D1"/><feComposite in2="d" operator="in" result="edge"/><feMerge><feMergeNode in="sh"/><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g style="mix-blend-mode:screen"><circle cx="100" cy="160" r="64" fill="#FFE79A" opacity="0.45"/><circle cx="100" cy="160" r="40" fill="#FFD95A" opacity="0.7"/></g>
+<g filter="url(#nn-cut)">
+<g transform="translate(64 116)"><path d="M0 0 C -10 4 -34 4 -46 14 C -56 24 -46 36 -32 30 C -18 24 -6 12 0 0 Z" fill="#E3F4FC"/><path d="M-6 3 C -18 10 -28 16 -38 24" fill="none" stroke="#B3DCF0" stroke-width="3" stroke-linecap="round"/></g>
+<g transform="translate(136 116) scale(-1 1)"><path d="M0 0 C -10 4 -34 4 -46 14 C -56 24 -46 36 -32 30 C -18 24 -6 12 0 0 Z" fill="#E3F4FC"/><path d="M-6 3 C -18 10 -28 16 -38 24" fill="none" stroke="#B3DCF0" stroke-width="3" stroke-linecap="round"/></g>
+<g transform="translate(62 82)"><path d="M0 0 C -6 -18 -40 -34 -56 -24 C -68 -16 -60 0 -42 2 C -26 4 -10 3 0 0 Z" fill="#E3F4FC"/><path d="M-6 -2 C -20 -8 -34 -14 -48 -14" fill="none" stroke="#B3DCF0" stroke-width="3" stroke-linecap="round"/><path d="M-30 -6 C -40 -4 -48 -4 -54 -8" fill="none" stroke="#B3DCF0" stroke-width="2" stroke-linecap="round"/></g>
+<g transform="translate(138 82) scale(-1 1)"><path d="M0 0 C -6 -18 -40 -34 -56 -24 C -68 -16 -60 0 -42 2 C -26 4 -10 3 0 0 Z" fill="#E3F4FC"/><path d="M-6 -2 C -20 -8 -34 -14 -48 -14" fill="none" stroke="#B3DCF0" stroke-width="3" stroke-linecap="round"/><path d="M-30 -6 C -40 -4 -48 -4 -54 -8" fill="none" stroke="#B3DCF0" stroke-width="2" stroke-linecap="round"/></g>
+<path d="M80 134 Q76 164 100 186 Q124 164 120 134 Z" fill="#FFC93C"/><path d="M106 136 L120 134 Q124 164 100 186 Q116 160 106 136 Z" fill="#F2A922"/><ellipse cx="90" cy="152" rx="5" ry="9" fill="#FFF0B8"/>
+<g fill="none" stroke="#5A3A1E" stroke-width="5" stroke-linecap="round"><path d="M88 54 Q80 32 64 26 Q53 23 55 32 Q57 38 64 34"/><path d="M112 54 Q120 32 136 26 Q147 23 145 32 Q143 38 136 34"/></g>
+<circle cx="100" cy="98" r="48" fill="#8ACF4E"/>
+<path d="M139.3 70.5 A48 48 0 0 1 72.5 137.3 A60 60 0 0 0 139.3 70.5 Z" fill="#6DB43E"/>
+<path d="M60 80 Q100 60 140 80 L137 68 Q100 48 63 68 Z" fill="#F58A2B"/>
+<path d="M118 62 Q130 66 137 68 L139 76 Q130 71 118 69 Z" fill="#D9701C"/>
+<ellipse cx="74" cy="90" rx="9" ry="5" transform="rotate(-40 74 90)" fill="#B5E27E"/>
+<ellipse cx="68" cy="122" rx="7" ry="4.5" fill="#F58A2B" opacity="0.5"/><ellipse cx="132" cy="122" rx="7" ry="4.5" fill="#F58A2B" opacity="0.5"/>
+<circle cx="82" cy="104" r="15" fill="#FFFFFF"/><circle cx="118" cy="104" r="15" fill="#FFFFFF"/><circle cx="83" cy="106" r="9" fill="#3B2412"/><circle cx="119" cy="106" r="9" fill="#3B2412"/><circle cx="86" cy="102" r="3.5" fill="#FFFFFF"/><circle cx="122" cy="102" r="3.5" fill="#FFFFFF"/>
+<path d="M94 125 L100 131 L106 125" fill="none" stroke="#5A3A1E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g><circle cx="62" cy="82" r="6" fill="#D9A441"/><circle cx="60.5" cy="80.5" r="2.5" fill="#F6D88A"/><circle cx="138" cy="82" r="6" fill="#D9A441"/><circle cx="136.5" cy="80.5" r="2.5" fill="#F6D88A"/><circle cx="64" cy="116" r="5" fill="#D9A441"/><circle cx="62.8" cy="114.8" r="2" fill="#F6D88A"/><circle cx="136" cy="116" r="5" fill="#D9A441"/><circle cx="134.8" cy="114.8" r="2" fill="#F6D88A"/></g>
+</g>
+</svg>
