@@ -120,11 +120,15 @@ reading; it is the full check. The on-screen Privacy meter shows the reading scr
 
 ## D7 What requires internet
 
-- The first load of the app from Vercel.
+- The first load of the app, from GitHub Pages (the main link) or Vercel (the mirror).
 - The first download of the speech model files from Hugging Face.
 
-Nothing else. After that, the app works with Wi-Fi and mobile data off. **[confirm with the
-final offline check on the laptop and the Poco X6 Pro]**
+Nothing else. After that, the app works with Wi-Fi and mobile data off.
+
+**Offline checks (2026-10-10).** Laptop: the lead's offline run passed (their note on #31).
+Phone: on an Android phone (Realme GT 7T, Chrome), opened the GitHub Pages link, let the model download once,
+turned off Wi-Fi and mobile data, fully closed and reopened the app, and read all of story 1
+(`/#/reading/story-1`) without a connection.
 
 ## D8 Models used
 
