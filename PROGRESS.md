@@ -15,7 +15,7 @@ Issues: https://github.com/Romeo-04/kislap/issues · Tracker: #40
 
 | Gate | Time | Must be true | Status |
 |---|---|---|---|
-| Checkpoint 1 | 19:00 Oct 9 | Model transcribes a real recording in the browser (laptop + phone). UI works with fake data. Scorer tests pass. | ✅ met late on the laptop: model in browser (#59), UI kit (#60–#63), scorer tests (#58). Phone: mic check passed; phone transcription speed not yet measured (#15) |
+| Checkpoint 1 | 19:00 Oct 9 | Model transcribes a real recording in the browser (laptop + phone). UI works with fake data. Scorer tests pass. | ✅ met late on the laptop: model in browser (#59), UI kit (#60–#63), scorer tests (#58). Phone: speed measured on a Realme GT 7T (10.5 s per sentence for `whisper-base` q8 on WebAssembly) and by the lead on a Poco X6 Pro; see Measurements |
 | Checkpoint 2 | 00:00 Oct 10 | Full Must loop works end to end | ✅ 23:10 on the integrated build: real Whisper-base, offline, Reading → Result (#72 + #59 + #58) |
 | Feature freeze | 01:00 Oct 10 | Offline check passes on laptop + Poco X6 Pro. Bug fixes only after this. | ⏳ |
 | Submission | 08:30 Oct 10 (hard 10:00) | Form submitted, X + LinkedIn posts up | ⏳ |
@@ -77,7 +77,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 | #46 | Echo reading with teammate audio (Should) | Freeze | ⏳ |
 | D14 #38 | Deliverable | — | ⏳ |
 
-## Measurements (fill at Checkpoint 1)
+## Measurements (Checkpoint 1: laptop and phone)
 
 | Device | Tier / model / dtype | Backend | Download MB | Load s | 4 s sentence s | Notes |
 |---|---|---|---|---|---|---|
@@ -95,7 +95,7 @@ Each person has one epic. Ticking an atomic issue = closing it. Legend: ⏳ open
 
 All rows used the same sentence, "si Mimi ay nasa ilalim ng lamesa", but each run used a new recording, so the transcripts compare only roughly. The golden recordings (#18) are the fair test.
 
-**What the speed numbers suggest (for #16, the lead decides; PR #75 implements it):** laptop = `whisper-base` q4 on WebGPU (1.3 s). Phone = `whisper-base` q8 on WASM (10.5 s on the Realme; `tiny` is 4.0 s but misses far more words). Phone WebGPU: never. The Filipino models are the most accurate but too slow and too large for the speed targets. See the golden-clip results below.
+**What the speed numbers say.** The shipped default is `whisper-base` q8 on WebAssembly on every device: about 3 s per sentence on the laptop and 10.5 s on the Realme phone (PR #75). The GPU tier (`whisper-base` fp16 on WebGPU, 1.0 s on the laptop) runs only with `?tier=large`, because it has not passed the full reading loop and the offline check on a real GPU. WebGPU on a phone: never (97.5 s on the Realme). The Filipino models are the most accurate but too slow and too large for the speed targets, and they were trained on research-use data. See the golden-clip results below.
 
 ### Golden clips, 32 clips on four setups (2026-10-10)
 
