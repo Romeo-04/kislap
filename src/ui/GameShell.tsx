@@ -3,6 +3,7 @@ import { STORIES } from '../content/stories'
 import { useI18n } from '../i18n'
 import { loadProgress, PROGRESS_SAVED } from '../game/progress'
 import { loadSettings, saveSettings } from '../game/settings'
+import { syncMusic } from '../game/music'
 import { GearIcon, SpeakerIcon } from './icons'
 import { GameIcon } from './GameIcon'
 import { OfflineBadge } from './OfflineBadge'
@@ -48,6 +49,8 @@ export function GameShell({ children, route }: { children: ReactNode; route: str
     if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
   }, [settings])
   useEffect(() => { document.documentElement.lang = lang }, [lang])
+  // background music: on browse screens at the chosen volume, off wherever the mic listens
+  useEffect(() => { syncMusic(route, settings.music) }, [route, settings.music])
   // While open: focus moves into the sheet, Escape closes it from anywhere, focus returns to the gear.
   const gearRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)

@@ -45,6 +45,15 @@
 .st-row:hover { background: var(--cream-hover); }
 .st-state { display: flex; align-items: center; gap: 10px; flex: none; }
 .st-word { font: 700 17px var(--font-display); }
+/* music volume: a thick paper track with a glow thumb, 48 px tall for small fingers */
+.st-volume { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--s-3); min-height: 72px; }
+.st-volume input { width: 150px; height: 48px; margin: 0; accent-color: var(--glow-under); cursor: pointer; background: none; -webkit-appearance: none; appearance: none; }
+.st-volume input::-webkit-slider-runnable-track { height: 12px; border-radius: 999px; background: var(--edge-deep); }
+.st-volume input::-moz-range-track { height: 12px; border-radius: 999px; background: var(--edge-deep); }
+.st-volume input::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; margin-top: -9px; border-radius: 50%; background: var(--glow); border: 3px solid var(--glow-under); }
+.st-volume input::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: var(--glow); border: 3px solid var(--glow-under); }
+.st-volume input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 8px; }
+.st-volume__value { min-width: 3.2em; text-align: right; }
 /* switch: 60 x 36, edge-deep track off, green on, a cream knob that moves with the pop ease */
 .st-track {
   position: relative;
