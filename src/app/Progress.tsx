@@ -6,7 +6,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import { loadProgress } from '../game/progress'
 import { DAILY_GOAL, clearWelcomeBack, hasWelcomeBack, localDay, storiesToday } from '../game/dailyGoal'
-import { STORIES } from '../content/stories'
+import { STORIES, getStory } from '../content/stories'
+import type { ReadingRecord } from '../game/fluency'
 import { stickerArt, type StickerName } from '../content/stickers'
 import { PaperScene } from '../ui/PaperScene'
 import { TopBar } from '../ui/TopBar'
@@ -170,7 +171,41 @@ export function Progress() {
           </li>
         ))}
       </ul>
+      <ForAdults readings={p.readings ?? []} mastered={p.mastered?.length ?? 0} />
       {zoom && <StickerZoom slot={zoom} onClose={closeZoom} />}
+    </section>
+  )
+}
+
+/** For parents and teachers: reading speed (words correct per minute) and words read correctly. */
+function ForAdults({ readings, mastered }: { readings: ReadingRecord[]; mastered: number }) {
+  const { t } = useI18n()
+  const last = readings[readings.length - 1]
+  const best = readings.reduce((m, r) => Math.max(m, r.wcpm), 0)
+  return (
+    <section className="jr-card jr-adults" aria-labelledby="jr-adults-title">
+      <h2 id="jr-adults-title" className="jr-adults__title">{t('adult.title')}</h2>
+      {last ? (
+        <>
+          <p className="jr-adults__speed">
+            <strong>{t('adult.wcpm').replace('{n}', String(last.wcpm))}</strong>
+            <span>{t('adult.best').replace('{n}', String(best))}</span>
+          </p>
+          <ol className="jr-adults__list">
+            {readings.slice(-5).reverse().map((r, i) => (
+              <li key={i}>
+                <span lang="fil">{getStory(r.storyId)?.title.fil ?? r.storyId}</span>
+                <span>{r.date}</span>
+                <span>{r.wcpm} · {Math.round(r.accuracy * 100)}%</span>
+              </li>
+            ))}
+          </ol>
+        </>
+      ) : (
+        <p>{t('adult.none')}</p>
+      )}
+      <p>{t('adult.mastered').replace('{n}', String(mastered))}</p>
+      <p className="jr-adults__note">{t('adult.note')}</p>
     </section>
   )
 }

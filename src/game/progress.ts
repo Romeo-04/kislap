@@ -1,6 +1,7 @@
 // On-device progress (ADR-0008): one versioned JSON object in localStorage. Issue #4.
 import type { ModelTier } from '../asr/tier'
 import type { Stars } from '../scoring/stars'
+import { isReadingRecord, MAX_MASTERED, MAX_READINGS, type ReadingRecord } from './fluency'
 
 export const PROGRESS_KEY = 'kislap.progress.v1'
 /** Fired on window after each save, so the header star count never shows a stale total. */
@@ -16,6 +17,10 @@ export interface Progress {
   stickers: string[]
   practiceWords: string[]
   streak: { days: number; lastPlayed: string }
+  /** reading speed history for parents and teachers (newest last) */
+  readings?: ReadingRecord[]
+  /** distinct words the child has read correctly */
+  mastered?: string[]
 }
 
 export function defaultProgress(): Progress {
@@ -73,7 +78,8 @@ export function loadProgress(): Progress {
       streak: {
         days: typeof streak.days === 'number' && Number.isSafeInteger(streak.days) && streak.days >= 0 ? streak.days : 0,
         lastPlayed: isCalendarDate(streak.lastPlayed) ? streak.lastPlayed : '',
-      },
+      },      ...(Array.isArray(parsed.readings) ? { readings: parsed.readings.filter(isReadingRecord).slice(-MAX_READINGS) } : {}),
+      ...(Array.isArray(parsed.mastered) ? { mastered: stringList(parsed.mastered).slice(-MAX_MASTERED) } : {}),
     }
     // Home saves on every visit, so anything dropped here is gone for good: leave a trace.
     const dropped = {
@@ -145,4 +151,16 @@ export function addPracticeWords(p: Progress, words: string[]): Progress {
 export function localDate(d = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+/** Adds one finished reading to the speed history (newest last, capped). */
+export function addReading(p: Progress, r: ReadingRecord): Progress {
+  return { ...p, readings: [...(p.readings ?? []), r].slice(-MAX_READINGS) }
+}
+
+/** Adds words read correctly to the mastered set (normalized, no repeats, capped). */
+export function addMastered(p: Progress, words: string[]): Progress {
+  const clean = words.map((w) => w.toLowerCase().replace(/[^\p{L}-]/gu, '')).filter(Boolean)
+  const merged = [...new Set([...(p.mastered ?? []), ...clean])]
+  return { ...p, mastered: merged.slice(-MAX_MASTERED) }
 }

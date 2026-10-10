@@ -90,8 +90,8 @@
   .jr-screen {
     display: grid;
     grid-template-columns: minmax(0, 560px) minmax(0, 420px);
-    grid-template-rows: auto auto auto 1fr;
-    grid-template-areas: "top top" "welcome ." "jar stats" "jar stars";
+    grid-template-rows: auto auto auto auto 1fr;
+    grid-template-areas: "top top" "welcome ." "jar stats" "jar stars" "jar adults";
     justify-content: center;
     align-content: start;
     column-gap: var(--s-8);
@@ -102,5 +102,6 @@
   .jr-welcome { grid-area: welcome; margin: var(--s-4) 0 0; }
   .jr-stats { grid-area: stats; margin: var(--s-8) 0 0; }
   .jr-stars { grid-area: stars; align-self: start; margin: var(--s-4) 0 0; padding: 14px 20px; gap: 10px; }
+  .jr-adults { grid-area: adults; align-self: start; margin: var(--s-4) 0 0; }
   .jr-story { font-size: 19px; }
 }

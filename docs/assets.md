@@ -75,6 +75,7 @@ invalidates them.
 | `src/ui/Ningning.tsx` | Ningning the paper puppet, six moods, drawn in code from the Claude Design part 2 `Ningning.dc.html` | Own work |
 | `public/stickers/sticker-{sampaguita,kubo,alitaptap,kalabaw,jeep,parol}.svg` | Six stickers | Own work |
 | `public/stickers/sticker-*-locked.svg` | The same six, not yet earned | Own work |
+| `public/audio/words/*.mp3` | 85 story-word recordings for the Listen button | Own work: recorded by the lead (Jhezra Tolentino), trimmed and normalized with `scripts/add-word-clips.sh` |
 
 Sticker art total: 34,810 bytes, in the Claude Design part 2 paper look: a cream die-cut edge at
 half the handoff's width, printed lines in the cut line colour, every colour from the paper tokens,
