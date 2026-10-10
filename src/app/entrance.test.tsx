@@ -30,7 +30,7 @@ describe('entrances', () => {
   })
 
   it('Reading enters every time a story opens', () => {
-    markVisited('reading')
+    markVisited('reading') // a guard: Reading must not start using first visits
     expect(reading()).toMatch(/class="rd-screen[^"]*"[^>]*data-enter/)
   })
 
@@ -46,7 +46,10 @@ describe('entrance.css', () => {
 
   it('animates only with translate, scale and opacity, never transform', () => {
     expect(keyframes.length).toBeGreaterThan(0)
-    for (const k of keyframes) expect(k).not.toMatch(/transform\s*:/)
+    for (const k of keyframes) {
+      const props = [...k.matchAll(/([a-z-]+)\s*:/g)].map((m) => m[1])
+      expect(props.filter((p) => !['translate', 'scale', 'opacity'].includes(p))).toEqual([])
+    }
   })
 
   it('moves only when the child has not asked for reduced motion', () => {
