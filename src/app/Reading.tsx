@@ -25,8 +25,7 @@ import { Button } from '../ui/Button'
 import { BackIcon, RetryIcon } from '../ui/icons'
 import { syllabify } from '../content/syllables'
 import { speechSeconds } from '../game/fluency'
-import { localVoice, onVoicesChanged, sayWord } from '../ui/speak'
-import { clipUrl, hasClip } from '../content/wordClips'
+import { canHear, listenWord, localVoice, onVoicesChanged } from '../ui/speak'
 import { go } from './router'
 import { goUp } from '../ui/goBack'
 import { haptic } from '../ui/haptics'
@@ -322,15 +321,6 @@ export function ReadingView({ story, index, state, words, mood, beat, glow, leve
   )
 }
 
-/** A teammate's recording first (offline, every device); the device voice if there is none or it fails. */
-function listen(word: string) {
-  if (!hasClip(word)) return sayWord(word)
-  new Audio(clipUrl(word)).play().catch((err) => {
-    console.warn('[listen] recording failed, using the device voice', err)
-    sayWord(word)
-  })
-}
-
 /** Under the card for the tapped word: how to say it (syllables, an on-device voice) and, for a
  * word that was not clear, what Ningning heard. Never "wrong": a mishearing may be the model's. */
 function WordHelp({ word, canListen }: { word: WordResult; canListen: boolean }) {
@@ -344,8 +334,8 @@ function WordHelp({ word, canListen }: { word: WordResult; canListen: boolean })
           {word.heard ? t('reading.heard').replace('{heard}', word.heard) : t('reading.notHeard')}
         </p>
       )}
-      {(canListen || hasClip(word.word)) && (
-        <Button variant="secondary" onClick={() => listen(word.word)}>
+      {canHear(word.word, canListen) && (
+        <Button variant="secondary" onClick={() => listenWord(word.word)}>
           {t('reading.listen')}
         </Button>
       )}

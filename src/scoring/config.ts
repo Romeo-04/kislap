@@ -11,6 +11,8 @@ export const SCORING = {
    * "ningning" is 0.80), and a word the child never said is marked correct.
    */
   spacing: 0.85,
+  /** Word Pop: similarity that pops a bubble. Lower than `correct`: Whisper is weak on one word alone (validation I25) */
+  wordPop: 0.6,
   /** accuracy needed for 1, 2, 3 stars */
   stars: [0.5, 0.7, 0.9],
 } as const

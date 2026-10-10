@@ -2,6 +2,8 @@
 // Only local voices are used (localService), so no text leaves the device (ADR-0007). Filipino or
 // Tagalog first; Indonesian reads Filipino spelling almost the same way, so it is the fallback.
 
+import { clipUrl, hasClip } from '../content/wordClips'
+
 export interface VoiceLike {
   lang: string
   localService: boolean
@@ -48,4 +50,18 @@ export function sayWord(word: string): void {
   u.lang = voice.lang
   u.rate = 0.7 // slow and clear for a young reader
   s.speak(u)
+}
+
+/** A teammate's recording first (offline, every device); the device voice if there is none or it fails. */
+export function listenWord(word: string): void {
+  if (!hasClip(word)) return sayWord(word)
+  new Audio(clipUrl(word)).play().catch((err) => {
+    console.warn('[listen] recording failed, using the device voice', err)
+    sayWord(word)
+  })
+}
+
+/** Listen can play this word: it has a recording, or the device has a voice (`canListen`). */
+export function canHear(word: string, canListen: boolean): boolean {
+  return canListen || hasClip(word)
 }

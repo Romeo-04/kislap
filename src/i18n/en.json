@@ -144,11 +144,16 @@
   "shell.tabHome": "Home",
   "shell.tabNav": "Tabs",
   "shell.tabStories": "Stories",
+  "wordpop.again": "Pop them again",
+  "wordpop.count": "{n} of {total} popped",
+  "wordpop.doneTitle": "You popped them all!",
   "wordpop.emptyBody": "Read a story first. Words you can practice will be waiting for you here.",
   "wordpop.emptyTitle": "A little practice, a little sparkle!",
+  "wordpop.helped": "Pop! That one was tricky. Let's meet it again in a story.",
   "wordpop.hint": "Say the word to pop the bubble!",
-  "wordpop.next": "Next word",
-  "wordpop.pick": "Pick a word and practice saying it aloud.",
-  "wordpop.title": "Word Pop",
-  "wordpop.together": "Let's say it together: {word}."
+  "wordpop.missed": "So close! Say it once more.",
+  "wordpop.popped": "{word}, popped",
+  "wordpop.said": "Pop! You said it!",
+  "wordpop.tap": "Tap a bubble to see its syllables.",
+  "wordpop.title": "Word Pop"
 }
